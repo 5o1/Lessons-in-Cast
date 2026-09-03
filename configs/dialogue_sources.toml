@@ -1,0 +1,84 @@
+# Cached inventory of dialogue-bearing Ren'Py source files.
+# Paths are relative to workspace.current_game_release.
+
+[inventory]
+generated_from_release = "LessonsInLove0.60.0-0.60.0-pc-subscribestar"
+source_root = "game"
+rpa_count = 0
+rpy_count = 72
+dialogue_source_count = 55
+
+[sources]
+main_story = [
+    "game/script.rpy",
+    "game/ch2script.rpy",
+    "game/chap3.rpy",
+    "game/chap4.rpy",
+    "game/chap4part2.rpy",
+]
+
+shared_events = [
+    "game/chap3generics.rpy",
+    "game/chap4generics.rpy",
+    "game/chap4hub.rpy",
+    "game/DormEvents.rpy",
+    "game/Dorm2Events.rpy",
+    "game/finalwarning.rpy",
+    "game/flowers.rpy",
+]
+
+character_events = [
+    "game/AmiEvents.rpy",
+    "game/AyaneEvents.rpy",
+    "game/ChikaEvents.rpy",
+    "game/ChinamiEvents.rpy",
+    "game/FutabaEvents.rpy",
+    "game/HarukaEvents.rpy",
+    "game/ImaniEvents.rpy",
+    "game/IoEvents.rpy",
+    "game/KaoriEvents.rpy",
+    "game/KarinEvents.rpy",
+    "game/KirinEvents.rpy",
+    "game/MakiEvents.rpy",
+    "game/MakotoEvents.rpy",
+    "game/MayaEvents.rpy",
+    "game/MikuEvents.rpy",
+    "game/MollyEvents.rpy",
+    "game/NaoEvents.rpy",
+    "game/NikiEvents.rpy",
+    "game/NodokaEvents.rpy",
+    "game/NorikoEvents.rpy",
+    "game/OsakoEvents.rpy",
+    "game/OtohaEvents.rpy",
+    "game/RikaEvents.rpy",
+    "game/RinEvents.rpy",
+    "game/SanaEvents.rpy",
+    "game/SaraEvents.rpy",
+    "game/ToukaEvents.rpy",
+    "game/TsubasaEvents.rpy",
+    "game/TsukasaEvents.rpy",
+    "game/TsuneyoEvents.rpy",
+    "game/UtaEvents.rpy",
+    "game/WakanaEvents.rpy",
+    "game/YasuEvents.rpy",
+    "game/YukiEvents.rpy",
+    "game/YumiEvents.rpy",
+]
+
+side_content = [
+    "game/definitions.rpy",
+    "game/headpatcentral.rpy",
+    "game/mathhomework.rpy",
+    "game/senseiquest.rpy",
+]
+
+subscriber_content = [
+    "game/scripts/subscribestar/animatedscenes.rpy",
+    "game/scripts/subscribestar/inappropriatecontent.rpy",
+    "game/scripts/subscribestar/nudes.rpy",
+]
+
+# This file contains dialogue but is not part of the normal extraction set.
+excluded_by_default = [
+    "game/deletedscenes.rpy",
+]

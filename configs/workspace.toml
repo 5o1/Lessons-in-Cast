@@ -1,0 +1,4 @@
+# Paths are resolved relative to the repository root.
+
+[workspace]
+current_game_release = "game_releases/LessonsInLove0.60.0-0.60.0-pc-subscribestar"

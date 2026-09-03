@@ -1,0 +1,41 @@
+# Third-party source checkouts
+/external/*
+!/external/README.md
+
+# Local game releases and extracted assets
+/game_releases/
+/lessons-in-love-windows.zip
+
+# Local model files and weights
+/models/
+/weights/
+
+# Python environments and caches
+/.venv/
+/venv/
+__pycache__/
+*.py[cod]
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Packaging and build output
+/build/
+/dist/
+*.egg-info/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# Editor and operating-system metadata
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~

@@ -1,0 +1,3005 @@
+# Character mapping extracted from the current Ren'Py release.
+# Model and generation-script paths are intentionally empty for now.
+
+[metadata]
+workspace_config = "configs/workspace.toml"
+dialogue_sources_config = "configs/dialogue_sources.toml"
+generated_from_release = "LessonsInLove0.60.0-0.60.0-pc-subscribestar"
+game_character_count = 364
+includes_builtin_narrator = true
+character_count = 365
+
+[characters.narrator]
+name = "Narrator"
+definition_path = "renpy/common/00definitions.rpy"
+definition_line = 447
+built_in = true
+model_path = ""
+generation_script_path = ""
+
+[characters.a]
+name = "Ami"
+definition_path = "game/definitions.rpy"
+definition_line = 2307
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.a1]
+name = "Angel 1"
+definition_path = "game/definitions.rpy"
+definition_line = 2636
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.a2]
+name = "Angel 2"
+definition_path = "game/definitions.rpy"
+definition_line = 2637
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.a3]
+name = "Angels"
+definition_path = "game/definitions.rpy"
+definition_line = 2638
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.achoir]
+name = "A Choir of Angels"
+definition_path = "game/definitions.rpy"
+definition_line = 2354
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.adam]
+name = "Adam Sapple"
+definition_path = "game/definitions.rpy"
+definition_line = 2445
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ahc]
+name = "A Huge Cock"
+definition_path = "game/definitions.rpy"
+definition_line = 2612
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ahead]
+name = "Ami (Headless)"
+definition_path = "game/definitions.rpy"
+definition_line = 2308
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ai]
+name = "Ai"
+definition_path = "game/definitions.rpy"
+definition_line = 2416
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ale]
+name = "Alexis"
+definition_path = "game/definitions.rpy"
+definition_line = 2672
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ales]
+name = "Alessandro Accetta"
+definition_path = "game/definitions.rpy"
+definition_line = 2450
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.alexa]
+name = "Alexa"
+definition_path = "game/definitions.rpy"
+definition_line = 2484
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.amb]
+name = "Amber, God of Reconstruction"
+definition_path = "game/definitions.rpy"
+definition_line = 2653
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.amimaya]
+name = "Ami & Maya"
+type = "ensemble"
+members = ["a", "m"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2510
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.amy]
+name = "Amy"
+definition_path = "game/definitions.rpy"
+definition_line = 2671
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.an]
+name = "An Angel"
+definition_path = "game/definitions.rpy"
+definition_line = 2614
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ann]
+name = "Conductor"
+definition_path = "game/definitions.rpy"
+definition_line = 2494
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.anno]
+name = "Announcer"
+definition_path = "game/definitions.rpy"
+definition_line = 2495
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.arj]
+name = "Arjuna Harish"
+definition_path = "game/definitions.rpy"
+definition_line = 2448
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.att]
+name = "Attorney"
+definition_path = "game/definitions.rpy"
+definition_line = 2552
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.av]
+name = "A Voice from Far Away"
+definition_path = "game/definitions.rpy"
+definition_line = 2643
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ay]
+name = "Ayane"
+definition_path = "game/definitions.rpy"
+definition_line = 2377
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.aymay]
+name = "Ayane & Maya"
+type = "ensemble"
+members = ["ay", "m"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2507
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ayyu]
+name = "Ayane & Yumi"
+type = "ensemble"
+members = ["ay", "y"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2537
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.b1]
+name = "Boy 1"
+definition_path = "game/definitions.rpy"
+definition_line = 2364
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.barb]
+name = "Barbara"
+definition_path = "game/definitions.rpy"
+definition_line = 2382
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.barista]
+name = "Barista Who Only Shows Up In This Event"
+definition_path = "game/definitions.rpy"
+definition_line = 2526
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.bart]
+name = "Bartender"
+definition_path = "game/definitions.rpy"
+definition_line = 2511
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.beatrice]
+name = "Beatrice the Bee"
+definition_path = "game/definitions.rpy"
+definition_line = 2410
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ben]
+name = "Benjamin Boyle"
+definition_path = "game/definitions.rpy"
+definition_line = 2442
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.bg]
+name = "Book Guy"
+definition_path = "game/definitions.rpy"
+definition_line = 2545
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.blue]
+name = "Blue"
+definition_path = "game/definitions.rpy"
+definition_line = 2383
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.both]
+name = "Both"
+definition_path = "game/definitions.rpy"
+definition_line = 2415
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.c]
+name = "Chika"
+definition_path = "game/definitions.rpy"
+definition_line = 2375
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.c1]
+name = "Regular Customer"
+definition_path = "game/definitions.rpy"
+definition_line = 2665
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.c2]
+name = "Older Customer"
+definition_path = "game/definitions.rpy"
+definition_line = 2666
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.cat1]
+name = "Cat 1"
+definition_path = "game/definitions.rpy"
+definition_line = 2328
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.cat2]
+name = "Cat 2"
+definition_path = "game/definitions.rpy"
+definition_line = 2329
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.cat3]
+name = "Cat 3"
+definition_path = "game/definitions.rpy"
+definition_line = 2330
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.cat4]
+name = "Cat 4"
+definition_path = "game/definitions.rpy"
+definition_line = 2331
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.cat5]
+name = "Cat 5"
+definition_path = "game/definitions.rpy"
+definition_line = 2332
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.catherine]
+name = "Catherine"
+definition_path = "game/definitions.rpy"
+definition_line = 2472
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.cf1]
+name = "Chika Fan #1"
+definition_path = "game/definitions.rpy"
+definition_line = 2473
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.cf2]
+name = "Chika Fan #2"
+definition_path = "game/definitions.rpy"
+definition_line = 2474
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ch]
+name = "Chinami"
+definition_path = "game/definitions.rpy"
+definition_line = 2615
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.chair]
+name = "Chair"
+definition_path = "game/definitions.rpy"
+definition_line = 2572
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.chd]
+name = "Chinami (Dog Form)"
+definition_path = "game/definitions.rpy"
+definition_line = 2618
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.chi]
+name = "Chiaki"
+definition_path = "game/definitions.rpy"
+definition_line = 2617
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.chiha]
+name = "Chika & Haruka"
+type = "ensemble"
+members = ["c", "h"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2505
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.chikauta]
+name = "Chika & Uta"
+type = "ensemble"
+members = ["c", "u"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2517
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.chinko]
+name = "Chinko"
+definition_path = "game/definitions.rpy"
+definition_line = 2376
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.chtk]
+name = "Chinami & Tsukasa"
+type = "ensemble"
+members = ["ch", "tk"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2508
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.classx]
+name = "Class"
+definition_path = "game/definitions.rpy"
+definition_line = 2459
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.connor]
+name = "Connor, God of Continuity"
+definition_path = "game/definitions.rpy"
+definition_line = 2366
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.cre]
+name = "Creatures"
+definition_path = "game/definitions.rpy"
+definition_line = 2607
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.cro1]
+name = "Crowd Member"
+definition_path = "game/definitions.rpy"
+definition_line = 2512
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.crowd]
+name = "Crowd"
+definition_path = "game/definitions.rpy"
+definition_line = 2421
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.crowd1]
+name = "Crowd Member 1"
+definition_path = "game/definitions.rpy"
+definition_line = 2422
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.crowd2]
+name = "Crowd Member 2"
+definition_path = "game/definitions.rpy"
+definition_line = 2423
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.crowd3]
+name = "Crowd Member 3"
+definition_path = "game/definitions.rpy"
+definition_line = 2424
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.cussy1]
+name = "Customer 1"
+definition_path = "game/definitions.rpy"
+definition_line = 2627
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.cussy2]
+name = "Customer 2"
+definition_path = "game/definitions.rpy"
+definition_line = 2628
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.cussy3]
+name = "Customer 3"
+definition_path = "game/definitions.rpy"
+definition_line = 2629
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.cussy4]
+name = "Customer 4"
+definition_path = "game/definitions.rpy"
+definition_line = 2630
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.cust]
+name = "Customer"
+definition_path = "game/definitions.rpy"
+definition_line = 2625
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.deathball]
+name = "Death Ball"
+definition_path = "game/definitions.rpy"
+definition_line = 2437
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.dem1]
+name = "DEMON 1"
+definition_path = "game/definitions.rpy"
+definition_line = 2431
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.dem2]
+name = "DEMON 2"
+definition_path = "game/definitions.rpy"
+definition_line = 2432
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.desk]
+name = "Desk"
+definition_path = "game/definitions.rpy"
+definition_line = 2327
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.di]
+name = "Director"
+definition_path = "game/definitions.rpy"
+definition_line = 2546
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.dia]
+name = "Diamond"
+definition_path = "game/definitions.rpy"
+definition_line = 2388
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.do]
+name = "Dolphin"
+definition_path = "game/definitions.rpy"
+definition_line = 2561
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.doc]
+name = "Doctor"
+definition_path = "game/definitions.rpy"
+definition_line = 2334
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.doubt]
+name = "DOUBT"
+definition_path = "game/definitions.rpy"
+definition_line = 2321
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ee]
+name = "Everyone, Everywhere"
+definition_path = "game/definitions.rpy"
+definition_line = 2557
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.eei]
+name = "Everyone Except Io"
+definition_path = "game/definitions.rpy"
+definition_line = 2524
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.elder]
+name = "Elderly Woman"
+definition_path = "game/definitions.rpy"
+definition_line = 2479
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.emp]
+name = "Employee"
+definition_path = "game/definitions.rpy"
+definition_line = 2481
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.erohe]
+name = "Eroge Heroine"
+definition_path = "game/definitions.rpy"
+definition_line = 2427
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.eropr]
+name = "Eroge Protagonist"
+definition_path = "game/definitions.rpy"
+definition_line = 2428
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.eve]
+name = "Eve Sapple"
+definition_path = "game/definitions.rpy"
+definition_line = 2446
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.f]
+name = "Futaba"
+definition_path = "game/definitions.rpy"
+definition_line = 2369
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.fad]
+name = "First AD"
+definition_path = "game/definitions.rpy"
+definition_line = 2547
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.fam]
+name = "Family"
+definition_path = "game/definitions.rpy"
+definition_line = 2426
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.fat]
+name = "Father"
+definition_path = "game/definitions.rpy"
+definition_line = 2435
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.femalec]
+name = "Female Customer"
+definition_path = "game/definitions.rpy"
+definition_line = 2462
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.femstud1]
+name = "Female Student 1"
+definition_path = "game/definitions.rpy"
+definition_line = 2645
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.femstud2]
+name = "Female Student 2"
+definition_path = "game/definitions.rpy"
+definition_line = 2646
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.fff]
+name = "Frank: Friend of Takoyaki Son, Son of Takoyaki Man"
+definition_path = "game/definitions.rpy"
+definition_line = 2346
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.fff2]
+name = "Frank: Friend of Tony: Takoyaki Son, Son of Takoyaki Man"
+definition_path = "game/definitions.rpy"
+definition_line = 2347
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.fg]
+name = "Fashionable Girl"
+definition_path = "game/definitions.rpy"
+definition_line = 2357
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.flo]
+name = "Floral Laura, God of the Hedgemaze"
+definition_path = "game/definitions.rpy"
+definition_line = 2655
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.foc]
+name = "Flock of Chickens"
+definition_path = "game/definitions.rpy"
+definition_line = 2560
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.foxgirl]
+name = "Student #21"
+definition_path = "game/definitions.rpy"
+definition_line = 2566
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.funeral]
+name = "Funeral Director"
+definition_path = "game/definitions.rpy"
+definition_line = 2458
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.futamak]
+name = "Futaba & Makoto"
+type = "ensemble"
+members = ["f", "mak"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2504
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.futano]
+name = "Futaba & Nodoka"
+type = "ensemble"
+members = ["f", "no"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2506
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.fv]
+name = "Familiar Voice"
+definition_path = "game/definitions.rpy"
+definition_line = 2556
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.g1]
+name = "Girl 1"
+definition_path = "game/definitions.rpy"
+definition_line = 2360
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.g2]
+name = "Girl 2"
+definition_path = "game/definitions.rpy"
+definition_line = 2361
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.g3]
+name = "Girl 3"
+definition_path = "game/definitions.rpy"
+definition_line = 2362
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.g4]
+name = "Girl 4"
+definition_path = "game/definitions.rpy"
+definition_line = 2363
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.gamergirl]
+name = "Other Gamer Girl"
+definition_path = "game/definitions.rpy"
+definition_line = 2471
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.gg]
+name = "Guitar Girl"
+definition_path = "game/definitions.rpy"
+definition_line = 2404
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.gi]
+name = "Giuseppe, God of Clowns"
+definition_path = "game/definitions.rpy"
+definition_line = 2365
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ginro]
+name = "Ginro the Stork"
+definition_path = "game/definitions.rpy"
+definition_line = 2439
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.girl1]
+name = "Kyoko"
+definition_path = "game/definitions.rpy"
+definition_line = 2320
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.gos]
+name = "Gossamer, God of Torment"
+definition_path = "game/definitions.rpy"
+definition_line = 2651
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.green]
+name = "Green"
+definition_path = "game/definitions.rpy"
+definition_line = 2317
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.gregg]
+name = "Gregg Jones"
+definition_path = "game/definitions.rpy"
+definition_line = 2443
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.h]
+name = "Haruka"
+definition_path = "game/definitions.rpy"
+definition_line = 2619
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.hailey]
+name = "Hailey the Hare"
+definition_path = "game/definitions.rpy"
+definition_line = 2407
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.hal]
+name = "Halftone, God of Save Slots"
+definition_path = "game/definitions.rpy"
+definition_line = 2654
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.hank]
+name = "Headless Hank"
+definition_path = "game/definitions.rpy"
+definition_line = 2441
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.her]
+name = "Her"
+definition_path = "game/definitions.rpy"
+definition_line = 2313
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.hi]
+name = "Himawari"
+definition_path = "game/definitions.rpy"
+definition_line = 2378
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.hi2]
+name = "Himawari?"
+definition_path = "game/definitions.rpy"
+definition_line = 2379
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.hi3]
+name = "Himawari?"
+definition_path = "game/definitions.rpy"
+definition_line = 2380
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.hid]
+name = "Hidari, God of Black-Haired Tsundere Girls"
+definition_path = "game/definitions.rpy"
+definition_line = 2430
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.him]
+name = "Him"
+definition_path = "game/definitions.rpy"
+definition_line = 2323
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ho]
+name = "HOPE"
+definition_path = "game/definitions.rpy"
+definition_line = 2640
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.hog]
+name = "HOPE, Peerless God of Light"
+definition_path = "game/definitions.rpy"
+definition_line = 2641
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.howard]
+name = "Howard the Horse"
+definition_path = "game/definitions.rpy"
+definition_line = 2408
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.i]
+name = "Io"
+definition_path = "game/definitions.rpy"
+definition_line = 2590
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ima]
+name = "Imani"
+definition_path = "game/definitions.rpy"
+definition_line = 2591
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.imarika]
+name = "Imani & Rika"
+type = "ensemble"
+members = ["ima", "ri"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2516
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.imawaka]
+name = "Imani & Wakana"
+type = "ensemble"
+members = ["ima", "w"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2515
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.inc]
+name = "Incomplete Butterfly"
+definition_path = "game/definitions.rpy"
+definition_line = 2449
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ins]
+name = "Instructor"
+definition_path = "game/definitions.rpy"
+definition_line = 2669
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.int1]
+name = "Intruder 1"
+definition_path = "game/definitions.rpy"
+definition_line = 2340
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.int2]
+name = "Intruder 2"
+definition_path = "game/definitions.rpy"
+definition_line = 2341
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.iss]
+name = "Issa"
+definition_path = "game/definitions.rpy"
+definition_line = 2592
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.jimmy]
+name = "Jimmy"
+definition_path = "game/definitions.rpy"
+definition_line = 2343
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.john]
+name = "John"
+definition_path = "game/definitions.rpy"
+definition_line = 2613
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.k]
+name = "Kaori"
+definition_path = "game/definitions.rpy"
+definition_line = 2602
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ka]
+name = "Karin"
+definition_path = "game/definitions.rpy"
+definition_line = 2661
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.kaay]
+name = "Karin & Ayane"
+type = "ensemble"
+members = ["ka", "ay"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2536
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.kanon]
+name = "Kanon"
+definition_path = "game/definitions.rpy"
+definition_line = 2579
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.kas]
+name = "Karins"
+definition_path = "game/definitions.rpy"
+definition_line = 2662
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.kb]
+name = "Knife Boy"
+definition_path = "game/definitions.rpy"
+definition_line = 2660
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ken]
+name = "Kentaro"
+definition_path = "game/definitions.rpy"
+definition_line = 2530
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.kenji]
+name = "Kenji"
+definition_path = "game/definitions.rpy"
+definition_line = 2460
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ker]
+name = "Kerubiel"
+definition_path = "game/definitions.rpy"
+definition_line = 2609
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ki]
+name = "Kirin"
+definition_path = "game/definitions.rpy"
+definition_line = 2663
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.kin]
+name = "Karate Instructor"
+definition_path = "game/definitions.rpy"
+definition_line = 2668
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.kok]
+name = "Kokabiel"
+definition_path = "game/definitions.rpy"
+definition_line = 2610
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.lamar]
+name = "Lamar the Lizard"
+definition_path = "game/definitions.rpy"
+definition_line = 2412
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.leff]
+name = "Left Face"
+definition_path = "game/definitions.rpy"
+definition_line = 2433
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.legitmom]
+name = "Totally Legitimate Mother (Mary)"
+definition_path = "game/definitions.rpy"
+definition_line = 2342
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.lhm]
+name = "Left Hand Man"
+definition_path = "game/definitions.rpy"
+definition_line = 2336
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.libp]
+name = "Librarian"
+definition_path = "game/definitions.rpy"
+definition_line = 2519
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.limo]
+name = "Limo Driver"
+definition_path = "game/definitions.rpy"
+definition_line = 2490
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.littlegirl]
+name = "Little Girl"
+definition_path = "game/definitions.rpy"
+definition_line = 2463
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ll]
+name = "Left Leg"
+definition_path = "game/definitions.rpy"
+definition_line = 2531
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.loungeguy]
+name = "Lounge Guy"
+definition_path = "game/definitions.rpy"
+definition_line = 2492
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.lt]
+name = "Librarian Thief"
+definition_path = "game/definitions.rpy"
+definition_line = 2585
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.m]
+name = "Maya"
+definition_path = "game/definitions.rpy"
+definition_line = 2310
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.m2]
+name = "Maya 2"
+definition_path = "game/definitions.rpy"
+definition_line = 2318
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mag]
+name = "Manny the Friendly Maggot"
+definition_path = "game/definitions.rpy"
+definition_line = 2355
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.maid]
+name = "Maid"
+definition_path = "game/definitions.rpy"
+definition_line = 2393
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mak]
+name = "Makoto"
+definition_path = "game/definitions.rpy"
+definition_line = 2387
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.maki]
+name = "Maki"
+definition_path = "game/definitions.rpy"
+definition_line = 2390
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.maktouk]
+name = "Makoto & Touka (?)"
+type = "ensemble"
+members = ["mak", "to"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2573
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mal]
+name = "Malvin"
+definition_path = "game/definitions.rpy"
+definition_line = 2349
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.malec]
+name = "Male Customer"
+definition_path = "game/definitions.rpy"
+definition_line = 2461
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.man]
+name = "Man"
+definition_path = "game/definitions.rpy"
+definition_line = 2453
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.man1]
+name = "Man 1"
+definition_path = "game/definitions.rpy"
+definition_line = 2456
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.man2]
+name = "Man 2"
+definition_path = "game/definitions.rpy"
+definition_line = 2457
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.manager]
+name = "Manager"
+definition_path = "game/definitions.rpy"
+definition_line = 2550
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.manny]
+name = "Manny the Unfriendly Maggot"
+definition_path = "game/definitions.rpy"
+definition_line = 2356
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.masa]
+name = "Masahiro"
+definition_path = "game/definitions.rpy"
+definition_line = 2391
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.matt]
+name = "Matthew"
+definition_path = "game/definitions.rpy"
+definition_line = 2539
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mayamaybe]
+name = "Maya Maybe"
+definition_path = "game/definitions.rpy"
+definition_line = 2314
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.me]
+name = "Meowri"
+definition_path = "game/definitions.rpy"
+definition_line = 2603
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mg]
+name = "Mystery Girl"
+definition_path = "game/definitions.rpy"
+definition_line = 2596
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mi]
+name = "Miku"
+definition_path = "game/definitions.rpy"
+definition_line = 2319
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.middlemaya]
+name = "Middle Maya"
+definition_path = "game/definitions.rpy"
+definition_line = 2316
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mig]
+name = "Migi, God of Chalk"
+definition_path = "game/definitions.rpy"
+definition_line = 2429
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mightbemaya]
+name = "Might Be Maya"
+definition_path = "game/definitions.rpy"
+definition_line = 2315
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mil]
+name = "Miles"
+definition_path = "game/definitions.rpy"
+definition_line = 2418
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.miu]
+name = "Miu"
+definition_path = "game/definitions.rpy"
+definition_line = 2575
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mman]
+name = "Middle Man"
+definition_path = "game/definitions.rpy"
+definition_line = 2337
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mo]
+name = "Molly"
+definition_path = "game/definitions.rpy"
+definition_line = 2588
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mod]
+name = "Matthew MacCormack"
+definition_path = "game/definitions.rpy"
+definition_line = 2589
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mollyami]
+name = "Ami & Molly"
+type = "ensemble"
+members = ["a", "mo"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2509
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.moon]
+name = "Moon"
+definition_path = "game/definitions.rpy"
+definition_line = 2455
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mot]
+name = "{s}MOTHER{/s}"
+definition_path = "game/definitions.rpy"
+definition_line = 2626
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.moth]
+name = "Mother"
+definition_path = "game/definitions.rpy"
+definition_line = 2436
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.moyo]
+name = "Moyo"
+definition_path = "game/definitions.rpy"
+definition_line = 2555
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mrb]
+name = "Mr. Blake"
+definition_path = "game/definitions.rpy"
+definition_line = 2414
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mt]
+name = "Molly and Tsuneyo"
+type = "ensemble"
+members = ["mo", "t"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2593
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mwoman]
+name = "Middle Woman"
+definition_path = "game/definitions.rpy"
+definition_line = 2338
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.mysdol]
+name = "Mystery Dolphin"
+definition_path = "game/definitions.rpy"
+definition_line = 2513
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.n]
+name = "Noriko"
+definition_path = "game/definitions.rpy"
+definition_line = 2396
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.na]
+name = "Nao"
+definition_path = "game/definitions.rpy"
+definition_line = 2397
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.nce]
+name = "Non Chika Employee"
+definition_path = "game/definitions.rpy"
+definition_line = 2558
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.net]
+name = "Net With Knife Nose & Melon Mouth"
+definition_path = "game/definitions.rpy"
+definition_line = 2534
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.nf1]
+name = "Nodoka Fan 1"
+definition_path = "game/definitions.rpy"
+definition_line = 2496
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.nf2]
+name = "Nodoka Fan 2"
+definition_path = "game/definitions.rpy"
+definition_line = 2497
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.nf3]
+name = "Nodoka Fan 3"
+definition_path = "game/definitions.rpy"
+definition_line = 2498
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.nf4]
+name = "Nodoka Fan 4"
+definition_path = "game/definitions.rpy"
+definition_line = 2499
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.nf5]
+name = "Nodoka Fan 5"
+definition_path = "game/definitions.rpy"
+definition_line = 2500
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.nf6]
+name = "Crowd of Nodoka Fans"
+definition_path = "game/definitions.rpy"
+definition_line = 2501
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ngk]
+name = "Net With Knife Nose & Melon Mouth"
+definition_path = "game/definitions.rpy"
+definition_line = 2533
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ni]
+name = "Niki"
+definition_path = "game/definitions.rpy"
+definition_line = 2400
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.nimom]
+name = "Niki’s Mom"
+definition_path = "game/definitions.rpy"
+definition_line = 2401
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.nki]
+name = "Noriko & Kirin"
+type = "ensemble"
+members = ["n", "ki"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2542
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.nni]
+name = "Noriko & Niki"
+type = "ensemble"
+members = ["n", "ni"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2398
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.no]
+name = "Nodoka"
+definition_path = "game/definitions.rpy"
+definition_line = 2586
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.noodles]
+name = "Noodles"
+definition_path = "game/definitions.rpy"
+definition_line = 2587
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.nr]
+name = "Not Rin"
+definition_path = "game/definitions.rpy"
+definition_line = 2600
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.nr1]
+name = "New Recruit 1"
+definition_path = "game/definitions.rpy"
+definition_line = 2464
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.nr10]
+name = "New Recruit 10"
+definition_path = "game/definitions.rpy"
+definition_line = 2466
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.nr15]
+name = "New Recruit 15"
+definition_path = "game/definitions.rpy"
+definition_line = 2467
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.nr2]
+name = "New Recruit 2"
+definition_path = "game/definitions.rpy"
+definition_line = 2465
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.nul]
+name = "NULL"
+definition_path = "game/definitions.rpy"
+definition_line = 2485
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.nyt]
+name = "Not Your Telephone"
+definition_path = "game/definitions.rpy"
+definition_line = 2563
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.o]
+name = "Otoha"
+definition_path = "game/definitions.rpy"
+definition_line = 2405
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.octavia]
+name = "Octavia the Octopus"
+definition_path = "game/definitions.rpy"
+definition_line = 2411
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.oldl]
+name = "Old Lady"
+definition_path = "game/definitions.rpy"
+definition_line = 2598
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.oli]
+name = "Oliver Oldmannington"
+definition_path = "game/definitions.rpy"
+definition_line = 2440
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.om]
+name = "Old Man"
+definition_path = "game/definitions.rpy"
+definition_line = 2599
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.onu]
+name = "Onund, God of the Hole"
+definition_path = "game/definitions.rpy"
+definition_line = 2657
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.os]
+name = "Osako"
+definition_path = "game/definitions.rpy"
+definition_line = 2670
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.osc]
+name = "Off Screen Characters"
+definition_path = "game/definitions.rpy"
+definition_line = 2425
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.p1]
+name = "Plant #1"
+definition_path = "game/definitions.rpy"
+definition_line = 2567
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.p2]
+name = "Plant #2"
+definition_path = "game/definitions.rpy"
+definition_line = 2568
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.p3]
+name = "Plant #3"
+definition_path = "game/definitions.rpy"
+definition_line = 2569
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.p4]
+name = "Plant #4"
+definition_path = "game/definitions.rpy"
+definition_line = 2570
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.para]
+name = "Paralegal"
+definition_path = "game/definitions.rpy"
+definition_line = 2553
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.parrot]
+name = "Parrot the Parrot"
+definition_path = "game/definitions.rpy"
+definition_line = 2351
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.pat]
+name = "Patrice"
+definition_path = "game/definitions.rpy"
+definition_line = 2551
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.paul]
+name = "Paul the Panther"
+definition_path = "game/definitions.rpy"
+definition_line = 2409
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.peg]
+name = "Emissary of Pegasus"
+definition_path = "game/definitions.rpy"
+definition_line = 2605
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.peggy]
+name = "Pegasus, Peerless God of Forgiveness"
+definition_path = "game/definitions.rpy"
+definition_line = 2658
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.pianoman]
+name = "Piano Man"
+definition_path = "game/definitions.rpy"
+definition_line = 2491
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.pink]
+name = "Pink"
+definition_path = "game/definitions.rpy"
+definition_line = 2309
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.plant7]
+name = "Plant #7"
+definition_path = "game/definitions.rpy"
+definition_line = 2571
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.pmee]
+name = "Pretty Much Everyone Else"
+definition_path = "game/definitions.rpy"
+definition_line = 2503
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.porn1]
+name = "Mother"
+definition_path = "game/definitions.rpy"
+definition_line = 2392
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.porn2]
+name = "Daughter"
+definition_path = "game/definitions.rpy"
+definition_line = 2389
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.porn3]
+name = "Man With a Camera"
+definition_path = "game/definitions.rpy"
+definition_line = 2325
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.porn4]
+name = "Desperate Teen"
+definition_path = "game/definitions.rpy"
+definition_line = 2616
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.porn5]
+name = "Nympho Whore"
+definition_path = "game/definitions.rpy"
+definition_line = 2395
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.porn6]
+name = "Guy With BBC"
+definition_path = "game/definitions.rpy"
+definition_line = 2326
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.porngirl]
+name = "Girl on the Screen"
+definition_path = "game/definitions.rpy"
+definition_line = 2482
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.pornguy]
+name = "Man on the Screen"
+definition_path = "game/definitions.rpy"
+definition_line = 2483
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.pro]
+name = "Producer"
+definition_path = "game/definitions.rpy"
+definition_line = 2549
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.prof]
+name = "Professor"
+definition_path = "game/definitions.rpy"
+definition_line = 2647
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.pt]
+name = "Part Timer"
+definition_path = "game/definitions.rpy"
+definition_line = 2565
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.q]
+name = "???"
+definition_path = "game/definitions.rpy"
+definition_line = 2413
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.qn]
+name = "???"
+definition_path = "game/definitions.rpy"
+definition_line = 2402
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.r]
+name = "Rin"
+definition_path = "game/definitions.rpy"
+definition_line = 2384
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.r2]
+name = "The Girl in the Corner"
+definition_path = "game/definitions.rpy"
+definition_line = 2385
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ra]
+name = "Ramen?..."
+definition_path = "game/definitions.rpy"
+definition_line = 2581
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.rab1]
+name = "Rabbit 1"
+definition_path = "game/definitions.rpy"
+definition_line = 2487
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.rab2]
+name = "Rabbit 2"
+definition_path = "game/definitions.rpy"
+definition_line = 2488
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.rab3]
+name = "Rabbit 3"
+definition_path = "game/definitions.rpy"
+definition_line = 2489
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.rabbit]
+name = "Freezer Rabbit"
+definition_path = "game/definitions.rpy"
+definition_line = 2486
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.rand]
+name = "Random Karate Person"
+definition_path = "game/definitions.rpy"
+definition_line = 2631
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.rando]
+name = "Random Bypasser"
+definition_path = "game/definitions.rpy"
+definition_line = 2632
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.red]
+name = "Red"
+definition_path = "game/definitions.rpy"
+definition_line = 2352
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.rg]
+name = "Ramen Girl"
+definition_path = "game/definitions.rpy"
+definition_line = 2580
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.rhm]
+name = "Right Hand Man"
+definition_path = "game/definitions.rpy"
+definition_line = 2335
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ri]
+name = "Rika"
+definition_path = "game/definitions.rpy"
+definition_line = 2386
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.rigf]
+name = "Right Face"
+definition_path = "game/definitions.rpy"
+definition_line = 2434
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.riri]
+name = "Rika & Rin"
+type = "ensemble"
+members = ["ri", "r"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2514
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.rl]
+name = "Right Leg"
+definition_path = "game/definitions.rpy"
+definition_line = 2532
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.rlg]
+name = "Rich Looking Girl"
+definition_path = "game/definitions.rpy"
+definition_line = 2620
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.rmo]
+name = "Random Market Stall Owner"
+definition_path = "game/definitions.rpy"
+definition_line = 2525
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.robbie]
+name = "Robbie Receptionson"
+definition_path = "game/definitions.rpy"
+definition_line = 2451
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.s]
+name = "Sensei"
+definition_path = "game/definitions.rpy"
+definition_line = 2322
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.sa]
+name = "Sana"
+definition_path = "game/definitions.rpy"
+definition_line = 2367
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.sad]
+name = "Second AD"
+definition_path = "game/definitions.rpy"
+definition_line = 2548
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.saki]
+name = "Saki"
+definition_path = "game/definitions.rpy"
+definition_line = 2574
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.sal]
+name = "Sana With an Extra Eye"
+definition_path = "game/definitions.rpy"
+definition_line = 2368
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.salvykun]
+name = "Salvador Dalí"
+definition_path = "game/definitions.rpy"
+definition_line = 2339
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.sao]
+name = "Sensei & Otoha"
+type = "ensemble"
+members = ["s", "o"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2594
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.sar]
+name = "Sara"
+definition_path = "game/definitions.rpy"
+definition_line = 2644
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.saraharuka]
+name = "Sara & Haruka"
+type = "ensemble"
+members = ["sar", "h"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2540
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.sato]
+name = "Ms. Sato"
+definition_path = "game/definitions.rpy"
+definition_line = 2480
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.sb]
+name = "Sporty Boy"
+definition_path = "game/definitions.rpy"
+definition_line = 2359
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.sch]
+name = "Sensei & Chinami"
+type = "ensemble"
+members = ["s", "ch"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2538
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.se]
+name = "Sekai"
+definition_path = "game/definitions.rpy"
+definition_line = 2348
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.seami]
+name = "Sekai & Ami"
+type = "ensemble"
+members = ["se", "a"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2350
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.seco1]
+name = "Second Year Girl"
+definition_path = "game/definitions.rpy"
+definition_line = 2475
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.seco2]
+name = "Another Second Year Girl"
+definition_path = "game/definitions.rpy"
+definition_line = 2476
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.seco3]
+name = "Volleyball Club President"
+definition_path = "game/definitions.rpy"
+definition_line = 2477
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.seco4]
+name = "Basketball Club President"
+definition_path = "game/definitions.rpy"
+definition_line = 2478
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.seinfeld]
+name = "Professional Comedian, Jerry Seinfeld"
+definition_path = "game/definitions.rpy"
+definition_line = 2664
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.sekni]
+name = "Sekai & Niki"
+type = "ensemble"
+members = ["se", "ni"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2399
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.senseimaya]
+name = "Sensei & Maya"
+type = "ensemble"
+members = ["s", "m"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2595
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.sev]
+name = "79 6f 75 64 69 64 69 74"
+definition_path = "game/definitions.rpy"
+definition_line = 2635
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.seven]
+name = "73 65 6b 61 69"
+definition_path = "game/definitions.rpy"
+definition_line = 2634
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.sg]
+name = "Soccer Girl"
+definition_path = "game/definitions.rpy"
+definition_line = 2648
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.sg2]
+name = "Soccer Girl 2"
+definition_path = "game/definitions.rpy"
+definition_line = 2649
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.sg3]
+name = "Strange Girl"
+definition_path = "game/definitions.rpy"
+definition_line = 2650
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.sha]
+name = "ShadowNinja64"
+definition_path = "game/definitions.rpy"
+definition_line = 2417
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.shi]
+name = "Shiori"
+definition_path = "game/definitions.rpy"
+definition_line = 2381
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.six]
+name = "61 6d 20 69 20 6f 6b 61 79"
+definition_path = "game/definitions.rpy"
+definition_line = 2633
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.six8]
+name = "68 6f 70 65"
+definition_path = "game/definitions.rpy"
+definition_line = 2642
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.sky]
+name = "Sky"
+definition_path = "game/definitions.rpy"
+definition_line = 2564
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.snc]
+name = "Some Nearby Cat"
+definition_path = "game/definitions.rpy"
+definition_line = 2543
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.spo]
+name = "Spork"
+definition_path = "game/definitions.rpy"
+definition_line = 2311
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.sr]
+name = "Sensei & Rin"
+type = "ensemble"
+members = ["s", "r"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2535
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.sre]
+name = "Smile Reminder"
+definition_path = "game/definitions.rpy"
+definition_line = 2527
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.steve]
+name = "Sanctimonious Steve"
+definition_path = "game/definitions.rpy"
+definition_line = 2444
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.stick]
+name = "Stick Man"
+definition_path = "game/definitions.rpy"
+definition_line = 2438
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.storec]
+name = "Store Clerk"
+definition_path = "game/definitions.rpy"
+definition_line = 2523
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.t]
+name = "Tsuneyo"
+definition_path = "game/definitions.rpy"
+definition_line = 2582
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.taco]
+name = "Taco Man"
+definition_path = "game/definitions.rpy"
+definition_line = 2544
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.taki]
+name = "Horseface Taki, God of the Track"
+definition_path = "game/definitions.rpy"
+definition_line = 2652
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.tako2]
+name = "Takoyaki Son, Son of Takoyaki Man"
+definition_path = "game/definitions.rpy"
+definition_line = 2344
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.tako3]
+name = "Tony: Takoyaki Son, Son of Takoyaki Man"
+definition_path = "game/definitions.rpy"
+definition_line = 2345
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.tb]
+name = "Tsubasa"
+definition_path = "game/definitions.rpy"
+definition_line = 2622
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.tbiso]
+name = "Tebiso"
+definition_path = "game/definitions.rpy"
+definition_line = 2576
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.tdtl]
+name = "The Dark. The Light."
+definition_path = "game/definitions.rpy"
+definition_line = 2639
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.te]
+name = "Teacher"
+definition_path = "game/definitions.rpy"
+definition_line = 2333
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.tenc]
+name = "Tenchou-Sama"
+definition_path = "game/definitions.rpy"
+definition_line = 2583
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.tf]
+name = "Tsuneyo's Friend"
+definition_path = "game/definitions.rpy"
+definition_line = 2584
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.tk]
+name = "Tsukasa"
+definition_path = "game/definitions.rpy"
+definition_line = 2623
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.to]
+name = "Touka"
+definition_path = "game/definitions.rpy"
+definition_line = 2621
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.tod]
+name = "Todd the Chicken"
+definition_path = "game/definitions.rpy"
+definition_line = 2667
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.tom]
+name = "Tom Mato, M.D."
+definition_path = "game/definitions.rpy"
+definition_line = 2452
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.train]
+name = "Train Passenger"
+definition_path = "game/definitions.rpy"
+definition_line = 2493
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.tsurumi]
+name = "Tsurumi"
+definition_path = "game/definitions.rpy"
+definition_line = 2578
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.tt]
+name = "Tree Tickler"
+definition_path = "game/definitions.rpy"
+definition_line = 2659
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ttitb]
+name = "The Tanuki in the Background"
+definition_path = "game/definitions.rpy"
+definition_line = 2518
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.tv]
+name = "TV Announcer"
+definition_path = "game/definitions.rpy"
+definition_line = 2528
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.tv2]
+name = "A Voice on Television"
+definition_path = "game/definitions.rpy"
+definition_line = 2529
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.u]
+name = "Uta"
+definition_path = "game/definitions.rpy"
+definition_line = 2394
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.uam]
+name = "Uta & Makoto"
+type = "ensemble"
+members = ["u", "mak"]
+render_mode = "unison"
+definition_path = "game/definitions.rpy"
+definition_line = 2541
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ub]
+name = "Unnamed Baby"
+definition_path = "game/definitions.rpy"
+definition_line = 2559
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.vine]
+name = "Vine Man"
+definition_path = "game/definitions.rpy"
+definition_line = 2447
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.vpa]
+name = "Voice Over PA"
+definition_path = "game/definitions.rpy"
+definition_line = 2520
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.vpo]
+name = "Voice On Phone"
+definition_path = "game/definitions.rpy"
+definition_line = 2522
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.vtv]
+name = "Voice On TV"
+definition_path = "game/definitions.rpy"
+definition_line = 2521
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.w]
+name = "Wakana"
+definition_path = "game/definitions.rpy"
+definition_line = 2403
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.wa]
+name = "Waitress"
+definition_path = "game/definitions.rpy"
+definition_line = 2601
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.watermelon]
+name = "Watermelon Sex Toy"
+definition_path = "game/definitions.rpy"
+definition_line = 2554
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.wil]
+name = "Wilford Blackhole Hands"
+definition_path = "game/definitions.rpy"
+definition_line = 2324
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.will]
+name = "William, God of the Stage"
+definition_path = "game/definitions.rpy"
+definition_line = 2656
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.willb]
+name = "Left Breastplate"
+definition_path = "game/definitions.rpy"
+definition_line = 2419
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.wilrb]
+name = "Right Breastplate"
+definition_path = "game/definitions.rpy"
+definition_line = 2420
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.wise]
+name = "Wise Turtle"
+definition_path = "game/definitions.rpy"
+definition_line = 2312
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.woman]
+name = "Woman"
+definition_path = "game/definitions.rpy"
+definition_line = 2454
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.worm]
+name = "Wormwood"
+definition_path = "game/definitions.rpy"
+definition_line = 2608
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.x]
+name = "今"
+definition_path = "game/definitions.rpy"
+definition_line = 2502
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.xoxo]
+name = "Gossip Girl"
+definition_path = "game/definitions.rpy"
+definition_line = 2358
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.y]
+name = "Yumi"
+definition_path = "game/definitions.rpy"
+definition_line = 2370
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.y1]
+name = "Yakuza 1"
+definition_path = "game/definitions.rpy"
+definition_line = 2468
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.y2]
+name = "Yakuza 2"
+definition_path = "game/definitions.rpy"
+definition_line = 2469
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.y8]
+name = "Yakuza 8"
+definition_path = "game/definitions.rpy"
+definition_line = 2470
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.ya]
+name = "Yasu"
+definition_path = "game/definitions.rpy"
+definition_line = 2604
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.yak1]
+name = "Yakuza Dude"
+definition_path = "game/definitions.rpy"
+definition_line = 2372
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.yak2]
+name = "Other Yakuza Dude"
+definition_path = "game/definitions.rpy"
+definition_line = 2373
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.yak3]
+name = "Both Yakuza Dudes"
+definition_path = "game/definitions.rpy"
+definition_line = 2374
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.yamom]
+name = "Yasu's Mother"
+definition_path = "game/definitions.rpy"
+definition_line = 2606
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.yo]
+name = "Yoshitsugu Yamaguchi"
+definition_path = "game/definitions.rpy"
+definition_line = 2371
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.yom]
+name = "Yomiel"
+definition_path = "game/definitions.rpy"
+definition_line = 2611
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.you]
+name = "You?"
+definition_path = "game/definitions.rpy"
+definition_line = 2406
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.yt]
+name = "Your Telephone"
+definition_path = "game/definitions.rpy"
+definition_line = 2562
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.yu]
+name = "Yuki"
+definition_path = "game/definitions.rpy"
+definition_line = 2597
+built_in = false
+model_path = ""
+generation_script_path = ""
+
+[characters.yuu]
+name = "Yuu"
+definition_path = "game/definitions.rpy"
+definition_line = 2577
+built_in = false
+model_path = ""
+generation_script_path = ""
