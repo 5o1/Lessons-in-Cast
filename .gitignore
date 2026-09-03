@@ -27,6 +27,9 @@ htmlcov/
 /dist/
 *.egg-info/
 
+# Pipeline artifacts
+/artifacts/
+
 # Logs and temporary files
 *.log
 *.tmp

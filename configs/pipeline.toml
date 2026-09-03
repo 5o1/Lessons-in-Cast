@@ -1,0 +1,41 @@
+[batching]
+target_size = 50
+context_before = 12
+context_after = 12
+max_characters = 40000
+
+[annotation]
+allowed_emotions = [
+    "neutral",
+    "happy",
+    "sad",
+    "angry",
+    "afraid",
+    "surprised",
+    "disgusted",
+    "embarrassed",
+    "affectionate",
+    "excited",
+    "calm",
+    "confused",
+    "sarcastic",
+    "distressed",
+]
+allowed_effects = [
+    "chorus",
+    "distortion",
+    "echo",
+    "glitch",
+    "reverb",
+    "telephone",
+]
+maximum_length_ratio = 4.0
+minimum_length_ratio = 0.15
+
+[audio]
+format = "wav"
+sample_rate = 44100
+channels = 1
+sample_width = 2
+minimum_duration_seconds = 0.05
+maximum_duration_seconds = 120.0

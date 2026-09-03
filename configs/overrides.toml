@@ -1,0 +1,4 @@
+# Human-reviewed annotation overrides keyed by stable dialogue ID.
+# Values replace the corresponding model annotation fields.
+
+[dialogue]

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lessons in Cast dialogue record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "sequence",
+    "identifier",
+    "character",
+    "dialogue",
+    "filename",
+    "line_number",
+    "renpy_script"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "minLength": 1},
+    "sequence": {"type": "integer", "minimum": 0},
+    "identifier": {"type": "string"},
+    "character": {"type": "string"},
+    "dialogue": {"type": "string"},
+    "filename": {"type": "string", "minLength": 1},
+    "line_number": {"type": "integer", "minimum": 1},
+    "renpy_script": {"type": "string"}
+  }
+}
