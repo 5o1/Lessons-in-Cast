@@ -16,7 +16,6 @@ from .config import (
     load_pipeline_config,
     load_workspace_config,
 )
-from .evaluation import evaluate_annotations
 from .pipeline import ArtifactLayout, DialoguePipeline, PipelineRequest
 from .renpy import DialogueExtractionRequest, SubprocessDialogueExtractor
 from .synthesis import (
@@ -97,11 +96,6 @@ def _parser() -> argparse.ArgumentParser:
     build_reference.add_argument("--input-dir", type=Path, required=True)
     build_reference.add_argument("--output", type=Path)
     commands.add_parser("bundle", help="Build a game-relative voice release bundle.")
-    evaluate = commands.add_parser(
-        "evaluate",
-        help="Compare validated annotations with a human gold set.",
-    )
-    evaluate.add_argument("--gold", type=Path, required=True)
     run = commands.add_parser(
         "run-mock",
         help="Run all stages with deterministic mocks.",
@@ -328,14 +322,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(
             json.dumps(
                 {"bundled_audio_count": pipeline.build_release_bundle(layout)}
-            )
-        )
-    elif args.command == "evaluate":
-        gold_path = args.gold if args.gold.is_absolute() else root / args.gold
-        print(
-            json.dumps(
-                evaluate_annotations(gold_path, layout.validated).to_dict(),
-                indent=2,
             )
         )
     elif args.command == "run-mock":
