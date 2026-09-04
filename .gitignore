@@ -1,6 +1,7 @@
 # Third-party source checkouts
 /external/*
 !/external/README.md
+!/external/sources.toml
 
 # Local game releases and extracted assets
 /game_releases/
@@ -9,6 +10,9 @@
 # Local model files and weights
 /models/
 /weights/
+# Private local notes
+/local/
+
 
 # Python environments and caches
 /.venv/
@@ -22,13 +26,12 @@ __pycache__/
 .coverage
 htmlcov/
 
-# Packaging and build output
+# Build products and pipeline intermediates
 /build/
+
+# Packaging output
 /dist/
 *.egg-info/
-
-# Pipeline artifacts
-/artifacts/
 
 # Logs and temporary files
 *.log

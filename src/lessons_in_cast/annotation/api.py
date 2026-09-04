@@ -27,7 +27,7 @@ def build_annotation_request(
     prompt_version: str = "1",
     annotation_config: AnnotationConfig | None = None,
 ) -> dict[str, Any]:
-    """Build a complete model request without selecting a model provider."""
+    """Build a portable semantic annotation request."""
 
     return {
         "schema_version": ANNOTATION_SCHEMA_VERSION,

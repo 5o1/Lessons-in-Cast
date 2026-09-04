@@ -25,6 +25,29 @@ def _safe_component(value: str, fallback: str) -> str:
     return cleaned or fallback
 
 
+def _voice_virtual_path(
+    source_filename: str,
+    identifier: str,
+    audio_format: str,
+) -> str:
+    source = PurePosixPath(source_filename.replace("\\", "/"))
+    if source.is_absolute() or any(
+        part in {"", ".", ".."} for part in source.parts
+    ):
+        raise ValueError(f"Unsafe Ren'Py source path: {source_filename!r}")
+    parts = source.parts[1:] if source.parts[0] == "game" else source.parts
+    if not parts:
+        raise ValueError(f"Empty Ren'Py source path: {source_filename!r}")
+    relative = PurePosixPath(*parts)
+    if relative.suffix.lower() in {".rpy", ".rpym", ".rpyc"}:
+        relative = relative.with_suffix("")
+    return str(
+        PurePosixPath("voice")
+        / relative
+        / f"{identifier}.{audio_format.lstrip('.')}"
+    )
+
+
 class SynthesisPlanner:
     """Create member-level TTS jobs and line-level render tasks."""
 
@@ -110,6 +133,20 @@ class SynthesisPlanner:
             if annotation.action is DialogueAction.OMIT:
                 continue
 
+            try:
+                virtual_path = _voice_virtual_path(
+                    record.filename,
+                    record.identifier,
+                    self._audio_format,
+                )
+            except ValueError as exc:
+                yield SynthesisIssue(
+                    result.dialogue_id,
+                    "unsafe_source_path",
+                    str(exc),
+                )
+                continue
+
             component_ids: list[str] = []
             if annotation.action in {
                 DialogueAction.SPEAK,
@@ -138,6 +175,7 @@ class SynthesisPlanner:
                 render_mode=render_mode,
                 effects=annotation.effects,
                 output_path=str(PurePosixPath("voice") / output_name),
+                virtual_path=virtual_path,
             )
 
     def _create_job(
@@ -155,6 +193,7 @@ class SynthesisPlanner:
             "emotion": annotation.emotion,
             "intensity": annotation.intensity,
             "delivery": annotation.delivery,
+            "base_speed": member.base_speed,
             "model_path": member.model_path,
             "generation_script_path": member.generation_script_path,
             "audio": asdict(self._audio_config),
@@ -175,6 +214,7 @@ class SynthesisPlanner:
             emotion=annotation.emotion or "neutral",
             intensity=annotation.intensity or 0.0,
             delivery=annotation.delivery,
+            base_speed=member.base_speed,
             model_path=member.model_path,
             generation_script_path=member.generation_script_path,
             output_path=output_path,

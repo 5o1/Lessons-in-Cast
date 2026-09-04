@@ -22,6 +22,7 @@ class CharacterDefinition:
     built_in: bool
     model_path: str
     generation_script_path: str
+    base_speed: float
 
     @property
     def synthesis_members(self) -> tuple[str, ...]:
@@ -127,6 +128,15 @@ def _parse_character(
         raise ConfigurationError(
             f"{source}: characters.{character_id}.render_mode must be a string"
         )
+    base_speed = raw.get("base_speed")
+    if (
+        not isinstance(base_speed, int | float)
+        or isinstance(base_speed, bool)
+        or base_speed <= 0
+    ):
+        raise ConfigurationError(
+            f"{source}: characters.{character_id}.base_speed must be positive"
+        )
     return CharacterDefinition(
         id=character_id,
         name=raw["name"],
@@ -138,4 +148,5 @@ def _parse_character(
         built_in=raw["built_in"],
         model_path=raw["model_path"],
         generation_script_path=raw["generation_script_path"],
+        base_speed=float(base_speed),
     )

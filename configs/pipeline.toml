@@ -32,6 +32,10 @@ allowed_effects = [
 maximum_length_ratio = 4.0
 minimum_length_ratio = 0.15
 
+[codex]
+batches_per_packet = 2
+source_files = ["game/script.rpy"]
+
 [audio]
 format = "wav"
 sample_rate = 44100

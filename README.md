@@ -9,3 +9,6 @@ audio for integration into a game release.
 Ren'Py scripts -> dialogue extraction -> stream processing -> annotation
               -> speech synthesis -> audio integration
 ```
+
+This is a source-workspace application. See [workspace setup](docs/setup.md)
+and the [pipeline contract](docs/pipeline.md) for installation and operation.

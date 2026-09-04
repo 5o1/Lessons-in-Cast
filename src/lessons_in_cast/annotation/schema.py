@@ -1,4 +1,4 @@
-"""JSON Schema construction for strict model responses."""
+"""JSON Schema construction for strict annotation responses."""
 
 from __future__ import annotations
 

@@ -12,6 +12,8 @@ from lessons_in_cast.synthesis import (
     SilenceSynthesizer,
     SynthesisPlanner,
     WaveRenderer,
+    apply_index_pronunciations,
+    index_emotion_vector,
 )
 
 from .helpers import accepted_annotation, record
@@ -21,6 +23,7 @@ def character(
     character_id: str,
     *,
     members: tuple[str, ...] = (),
+    base_speed: float = 1.0,
 ) -> CharacterDefinition:
     return CharacterDefinition(
         id=character_id,
@@ -33,6 +36,7 @@ def character(
         built_in=False,
         model_path="",
         generation_script_path="",
+        base_speed=base_speed,
     )
 
 
@@ -52,6 +56,17 @@ class SynthesisTests(unittest.TestCase):
         self.assertEqual(len(plan.jobs), 2)
         self.assertEqual(len(plan.render_tasks), 2)
         self.assertEqual(len(plan.render_tasks[1].component_job_ids), 2)
+
+    def test_planner_carries_character_base_speed_into_jobs_and_cache_keys(self) -> None:
+        item = record(1, character="a")
+        regular = SynthesisPlanner({"a": character("a")}).plan(
+            {item.id: item}, [accepted_annotation(item)]
+        )
+        faster = SynthesisPlanner(
+            {"a": character("a", base_speed=1.25)}
+        ).plan({item.id: item}, [accepted_annotation(item)])
+        self.assertEqual(faster.jobs[0].base_speed, 1.25)
+        self.assertNotEqual(regular.jobs[0].cache_key, faster.jobs[0].cache_key)
 
     def test_silence_synthesis_render_and_quality_check(self) -> None:
         item = record(1, character="a")
@@ -104,6 +119,23 @@ class SynthesisTests(unittest.TestCase):
         self.assertFalse(plan.render_tasks)
         self.assertFalse(plan.issues)
 
+    def test_index_tts_pronunciation(self) -> None:
+        self.assertEqual(
+            apply_index_pronunciations(
+                "Chinami met Chinamiya.", {"Chinami": "CH IY0 . N AA1 . M IY0"}
+            ),
+            "<Chinami|CH IY0 . N AA1 . M IY0> met Chinamiya.",
+        )
+
+    def test_index_tts_emotion_vector_uses_documented_axis_order(self) -> None:
+        self.assertEqual(
+            index_emotion_vector("excited", 1.0),
+            [0.608696, 0.0, 0.0, 0.0, 0.0, 0.0, 0.191304, 0.0],
+        )
+        self.assertEqual(
+            index_emotion_vector("neutral", 1.0),
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        )
 
 if __name__ == "__main__":
     unittest.main()

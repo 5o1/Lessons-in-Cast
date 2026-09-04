@@ -1,0 +1,33 @@
+# Project-owned pins for ignored third-party source checkouts.
+
+[projects.gpt_sovits]
+path = "external/GPT-SoVITS"
+url = "https://github.com/RVC-Boss/GPT-SoVITS.git"
+revision = "48b1a0169a28582a8984402f82cf438d3bfa6aca"
+role = "Supported speech backend and implementation reference"
+
+[projects.gpt_sovits_emotion_manager]
+path = "external/GPT-SoVITS-Emotion-Manager"
+url = "https://github.com/zhaomaoniu/GPT-SoVITS-Emotion-Manager.git"
+revision = "11747882ce0add2769745ebf05fff800de7075d6"
+role = "Emotion-workflow implementation reference"
+
+[projects.gpt_sovits_galgame_pipeline]
+path = "external/GPT-SoVITS-Galgame-Pipeline"
+url = "https://github.com/lhfer/GPT-SoVITS-Galgame-Pipeline.git"
+revision = "5bab64104e5806c88c24a0efa5ca95e0c76cc212"
+role = "Visual-novel integration implementation reference"
+
+[projects.index_tts]
+path = "external/index-tts"
+url = "https://github.com/index-tts/index-tts.git"
+revision = "ee40fa7d6c6b8a2c7f06105f9f1e65775b74868c"
+role = "Active IndexTTS 2.5 speech backend"
+python = "3.11"
+setup = ["uv sync --all-extras"]
+
+[projects.renpy]
+path = "external/renpy"
+url = "https://github.com/renpy/renpy.git"
+revision = "7c3ce3b2fefba64327eb2649a9b3aaf51df7fb13"
+role = "Dialogue extraction runtime and source reference"

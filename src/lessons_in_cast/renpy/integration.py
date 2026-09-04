@@ -49,7 +49,7 @@ class RenPyVoiceManifestWriter:
             },
             "action": task.action.value,
             "effects": list(task.effects),
-            "audio_path": task.output_path if quality and quality.valid else None,
+            "audio_path": task.virtual_path if quality and quality.valid else None,
             "quality": quality.to_dict() if quality else None,
         }
 
@@ -91,15 +91,38 @@ class RenPyVoiceManifestWriter:
         self,
         destination: Path,
         *,
-        audio_format: str,
+        entries: Iterable[tuple[str, str]],
     ) -> Path:
-        """Write the Ren'Py configuration required by identifier-based audio."""
+        """Write a callable auto-voice resolver for mirrored virtual paths."""
 
         destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_text(
-            "init -100 python:\n"
-            f'    config.auto_voice = "voice/{{id}}.{audio_format.lstrip(".")}"\n',
-            encoding="utf-8",
-            newline="\n",
+        descriptor, temporary_name = tempfile.mkstemp(
+            dir=destination.parent,
+            prefix=f".{destination.name}.",
+            suffix=".tmp",
         )
+        try:
+            with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as output:
+                output.write("init -100 python:\n")
+                output.write("    _lessons_in_cast_voice_paths = {\n")
+                for identifier, virtual_path in entries:
+                    output.write(
+                        f"        {json.dumps(identifier)}: "
+                        f"{json.dumps(virtual_path)},\n"
+                    )
+                output.write("    }\n\n")
+                output.write("    def _lessons_in_cast_auto_voice(identifier):\n")
+                output.write(
+                    "        return _lessons_in_cast_voice_paths.get(identifier)\n\n"
+                )
+                output.write("    config.auto_voice = _lessons_in_cast_auto_voice\n")
+                output.flush()
+                os.fsync(output.fileno())
+            os.replace(temporary_name, destination)
+        except BaseException:
+            try:
+                os.unlink(temporary_name)
+            except FileNotFoundError:
+                pass
+            raise
         return destination

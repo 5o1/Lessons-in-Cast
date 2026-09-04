@@ -35,6 +35,12 @@ class AnnotationConfig:
 
 
 @dataclass(frozen=True, slots=True)
+class CodexConfig:
+    batches_per_packet: int = 2
+    source_files: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
 class AudioConfig:
     format: str = "wav"
     sample_rate: int = 44_100
@@ -49,6 +55,7 @@ class PipelineConfig:
     batching: BatchingConfig
     annotation: AnnotationConfig
     audio: AudioConfig
+    codex: CodexConfig = CodexConfig()
 
 
 def _load_toml(path: Path) -> dict[str, Any]:
@@ -126,6 +133,14 @@ def load_pipeline_config(
     batching = data.get("batching", {})
     annotation = data.get("annotation", {})
     audio = data.get("audio", {})
+    codex = data.get("codex", {})
+    codex_source_files = codex.get("source_files", [])
+    if not isinstance(codex_source_files, list) or not all(
+        isinstance(value, str) and value for value in codex_source_files
+    ):
+        raise ConfigurationError("codex.source_files must be an array of paths")
+    if len(codex_source_files) != len(set(codex_source_files)):
+        raise ConfigurationError("codex.source_files contains duplicate paths")
     result = PipelineConfig(
         batching=BatchingConfig(**batching),
         annotation=AnnotationConfig(
@@ -135,6 +150,10 @@ def load_pipeline_config(
             minimum_length_ratio=annotation.get("minimum_length_ratio", 0.15),
         ),
         audio=AudioConfig(**audio),
+        codex=CodexConfig(
+            batches_per_packet=codex.get("batches_per_packet", 2),
+            source_files=tuple(codex_source_files),
+        ),
     )
     if result.batching.target_size < 1:
         raise ConfigurationError("batching.target_size must be positive")
@@ -146,6 +165,8 @@ def load_pipeline_config(
         raise ConfigurationError("annotation.minimum_length_ratio cannot be negative")
     if result.annotation.maximum_length_ratio < result.annotation.minimum_length_ratio:
         raise ConfigurationError("annotation length ratio range is invalid")
+    if result.codex.batches_per_packet < 1:
+        raise ConfigurationError("codex.batches_per_packet must be positive")
     if not result.annotation.allowed_emotions:
         raise ConfigurationError("annotation.allowed_emotions cannot be empty")
     if result.audio.format.strip(".") == "":

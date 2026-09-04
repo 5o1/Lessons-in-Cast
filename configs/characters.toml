@@ -1,5 +1,7 @@
 # Character mapping extracted from the current Ren'Py release.
-# Model and generation-script paths are intentionally empty for now.
+# Identity fields were extracted from the release; rendering fields are maintained here.
+# Regeneration must preserve model, generation-script, speed, type, and member fields.
+# base_speed is a speaking-rate multiplier: values above 1.0 are faster.
 
 [metadata]
 workspace_config = "configs/workspace.toml"
@@ -16,6 +18,7 @@ definition_line = 447
 built_in = true
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.a]
 name = "Ami"
@@ -24,6 +27,7 @@ definition_line = 2307
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.a1]
 name = "Angel 1"
@@ -32,6 +36,7 @@ definition_line = 2636
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.a2]
 name = "Angel 2"
@@ -40,6 +45,7 @@ definition_line = 2637
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.a3]
 name = "Angels"
@@ -48,6 +54,7 @@ definition_line = 2638
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.achoir]
 name = "A Choir of Angels"
@@ -56,6 +63,7 @@ definition_line = 2354
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.adam]
 name = "Adam Sapple"
@@ -64,6 +72,7 @@ definition_line = 2445
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ahc]
 name = "A Huge Cock"
@@ -72,6 +81,7 @@ definition_line = 2612
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ahead]
 name = "Ami (Headless)"
@@ -80,6 +90,7 @@ definition_line = 2308
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ai]
 name = "Ai"
@@ -88,6 +99,7 @@ definition_line = 2416
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ale]
 name = "Alexis"
@@ -96,6 +108,7 @@ definition_line = 2672
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ales]
 name = "Alessandro Accetta"
@@ -104,6 +117,7 @@ definition_line = 2450
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.alexa]
 name = "Alexa"
@@ -112,6 +126,7 @@ definition_line = 2484
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.amb]
 name = "Amber, God of Reconstruction"
@@ -120,6 +135,7 @@ definition_line = 2653
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.amimaya]
 name = "Ami & Maya"
@@ -131,6 +147,7 @@ definition_line = 2510
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.amy]
 name = "Amy"
@@ -139,6 +156,7 @@ definition_line = 2671
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.an]
 name = "An Angel"
@@ -147,6 +165,7 @@ definition_line = 2614
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ann]
 name = "Conductor"
@@ -155,6 +174,7 @@ definition_line = 2494
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.anno]
 name = "Announcer"
@@ -163,6 +183,7 @@ definition_line = 2495
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.arj]
 name = "Arjuna Harish"
@@ -171,6 +192,7 @@ definition_line = 2448
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.att]
 name = "Attorney"
@@ -179,6 +201,7 @@ definition_line = 2552
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.av]
 name = "A Voice from Far Away"
@@ -187,6 +210,7 @@ definition_line = 2643
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ay]
 name = "Ayane"
@@ -195,6 +219,7 @@ definition_line = 2377
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.aymay]
 name = "Ayane & Maya"
@@ -206,6 +231,7 @@ definition_line = 2507
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ayyu]
 name = "Ayane & Yumi"
@@ -217,6 +243,7 @@ definition_line = 2537
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.b1]
 name = "Boy 1"
@@ -225,6 +252,7 @@ definition_line = 2364
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.barb]
 name = "Barbara"
@@ -233,6 +261,7 @@ definition_line = 2382
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.barista]
 name = "Barista Who Only Shows Up In This Event"
@@ -241,6 +270,7 @@ definition_line = 2526
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.bart]
 name = "Bartender"
@@ -249,6 +279,7 @@ definition_line = 2511
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.beatrice]
 name = "Beatrice the Bee"
@@ -257,6 +288,7 @@ definition_line = 2410
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ben]
 name = "Benjamin Boyle"
@@ -265,6 +297,7 @@ definition_line = 2442
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.bg]
 name = "Book Guy"
@@ -273,6 +306,7 @@ definition_line = 2545
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.blue]
 name = "Blue"
@@ -281,6 +315,7 @@ definition_line = 2383
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.both]
 name = "Both"
@@ -289,6 +324,7 @@ definition_line = 2415
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.c]
 name = "Chika"
@@ -297,6 +333,7 @@ definition_line = 2375
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.c1]
 name = "Regular Customer"
@@ -305,6 +342,7 @@ definition_line = 2665
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.c2]
 name = "Older Customer"
@@ -313,6 +351,7 @@ definition_line = 2666
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.cat1]
 name = "Cat 1"
@@ -321,6 +360,7 @@ definition_line = 2328
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.cat2]
 name = "Cat 2"
@@ -329,6 +369,7 @@ definition_line = 2329
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.cat3]
 name = "Cat 3"
@@ -337,6 +378,7 @@ definition_line = 2330
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.cat4]
 name = "Cat 4"
@@ -345,6 +387,7 @@ definition_line = 2331
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.cat5]
 name = "Cat 5"
@@ -353,6 +396,7 @@ definition_line = 2332
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.catherine]
 name = "Catherine"
@@ -361,6 +405,7 @@ definition_line = 2472
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.cf1]
 name = "Chika Fan #1"
@@ -369,6 +414,7 @@ definition_line = 2473
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.cf2]
 name = "Chika Fan #2"
@@ -377,14 +423,16 @@ definition_line = 2474
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ch]
 name = "Chinami"
 definition_path = "game/definitions.rpy"
 definition_line = 2615
 built_in = false
-model_path = ""
-generation_script_path = ""
+model_path = "models/IndexTeam/IndexTTS-2.5"
+generation_script_path = "voice_pipelines/ch_index_tts.py"
+base_speed = 1.0
 
 [characters.chair]
 name = "Chair"
@@ -393,6 +441,7 @@ definition_line = 2572
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.chd]
 name = "Chinami (Dog Form)"
@@ -401,6 +450,7 @@ definition_line = 2618
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.chi]
 name = "Chiaki"
@@ -409,6 +459,7 @@ definition_line = 2617
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.chiha]
 name = "Chika & Haruka"
@@ -420,6 +471,7 @@ definition_line = 2505
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.chikauta]
 name = "Chika & Uta"
@@ -431,6 +483,7 @@ definition_line = 2517
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.chinko]
 name = "Chinko"
@@ -439,6 +492,7 @@ definition_line = 2376
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.chtk]
 name = "Chinami & Tsukasa"
@@ -450,6 +504,7 @@ definition_line = 2508
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.classx]
 name = "Class"
@@ -458,6 +513,7 @@ definition_line = 2459
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.connor]
 name = "Connor, God of Continuity"
@@ -466,6 +522,7 @@ definition_line = 2366
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.cre]
 name = "Creatures"
@@ -474,6 +531,7 @@ definition_line = 2607
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.cro1]
 name = "Crowd Member"
@@ -482,6 +540,7 @@ definition_line = 2512
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.crowd]
 name = "Crowd"
@@ -490,6 +549,7 @@ definition_line = 2421
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.crowd1]
 name = "Crowd Member 1"
@@ -498,6 +558,7 @@ definition_line = 2422
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.crowd2]
 name = "Crowd Member 2"
@@ -506,6 +567,7 @@ definition_line = 2423
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.crowd3]
 name = "Crowd Member 3"
@@ -514,6 +576,7 @@ definition_line = 2424
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.cussy1]
 name = "Customer 1"
@@ -522,6 +585,7 @@ definition_line = 2627
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.cussy2]
 name = "Customer 2"
@@ -530,6 +594,7 @@ definition_line = 2628
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.cussy3]
 name = "Customer 3"
@@ -538,6 +603,7 @@ definition_line = 2629
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.cussy4]
 name = "Customer 4"
@@ -546,6 +612,7 @@ definition_line = 2630
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.cust]
 name = "Customer"
@@ -554,6 +621,7 @@ definition_line = 2625
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.deathball]
 name = "Death Ball"
@@ -562,6 +630,7 @@ definition_line = 2437
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.dem1]
 name = "DEMON 1"
@@ -570,6 +639,7 @@ definition_line = 2431
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.dem2]
 name = "DEMON 2"
@@ -578,6 +648,7 @@ definition_line = 2432
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.desk]
 name = "Desk"
@@ -586,6 +657,7 @@ definition_line = 2327
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.di]
 name = "Director"
@@ -594,6 +666,7 @@ definition_line = 2546
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.dia]
 name = "Diamond"
@@ -602,6 +675,7 @@ definition_line = 2388
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.do]
 name = "Dolphin"
@@ -610,6 +684,7 @@ definition_line = 2561
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.doc]
 name = "Doctor"
@@ -618,6 +693,7 @@ definition_line = 2334
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.doubt]
 name = "DOUBT"
@@ -626,6 +702,7 @@ definition_line = 2321
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ee]
 name = "Everyone, Everywhere"
@@ -634,6 +711,7 @@ definition_line = 2557
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.eei]
 name = "Everyone Except Io"
@@ -642,6 +720,7 @@ definition_line = 2524
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.elder]
 name = "Elderly Woman"
@@ -650,6 +729,7 @@ definition_line = 2479
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.emp]
 name = "Employee"
@@ -658,6 +738,7 @@ definition_line = 2481
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.erohe]
 name = "Eroge Heroine"
@@ -666,6 +747,7 @@ definition_line = 2427
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.eropr]
 name = "Eroge Protagonist"
@@ -674,6 +756,7 @@ definition_line = 2428
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.eve]
 name = "Eve Sapple"
@@ -682,6 +765,7 @@ definition_line = 2446
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.f]
 name = "Futaba"
@@ -690,6 +774,7 @@ definition_line = 2369
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.fad]
 name = "First AD"
@@ -698,6 +783,7 @@ definition_line = 2547
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.fam]
 name = "Family"
@@ -706,6 +792,7 @@ definition_line = 2426
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.fat]
 name = "Father"
@@ -714,6 +801,7 @@ definition_line = 2435
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.femalec]
 name = "Female Customer"
@@ -722,6 +810,7 @@ definition_line = 2462
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.femstud1]
 name = "Female Student 1"
@@ -730,6 +819,7 @@ definition_line = 2645
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.femstud2]
 name = "Female Student 2"
@@ -738,6 +828,7 @@ definition_line = 2646
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.fff]
 name = "Frank: Friend of Takoyaki Son, Son of Takoyaki Man"
@@ -746,6 +837,7 @@ definition_line = 2346
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.fff2]
 name = "Frank: Friend of Tony: Takoyaki Son, Son of Takoyaki Man"
@@ -754,6 +846,7 @@ definition_line = 2347
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.fg]
 name = "Fashionable Girl"
@@ -762,6 +855,7 @@ definition_line = 2357
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.flo]
 name = "Floral Laura, God of the Hedgemaze"
@@ -770,6 +864,7 @@ definition_line = 2655
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.foc]
 name = "Flock of Chickens"
@@ -778,6 +873,7 @@ definition_line = 2560
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.foxgirl]
 name = "Student #21"
@@ -786,6 +882,7 @@ definition_line = 2566
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.funeral]
 name = "Funeral Director"
@@ -794,6 +891,7 @@ definition_line = 2458
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.futamak]
 name = "Futaba & Makoto"
@@ -805,6 +903,7 @@ definition_line = 2504
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.futano]
 name = "Futaba & Nodoka"
@@ -816,6 +915,7 @@ definition_line = 2506
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.fv]
 name = "Familiar Voice"
@@ -824,6 +924,7 @@ definition_line = 2556
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.g1]
 name = "Girl 1"
@@ -832,6 +933,7 @@ definition_line = 2360
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.g2]
 name = "Girl 2"
@@ -840,6 +942,7 @@ definition_line = 2361
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.g3]
 name = "Girl 3"
@@ -848,6 +951,7 @@ definition_line = 2362
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.g4]
 name = "Girl 4"
@@ -856,6 +960,7 @@ definition_line = 2363
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.gamergirl]
 name = "Other Gamer Girl"
@@ -864,6 +969,7 @@ definition_line = 2471
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.gg]
 name = "Guitar Girl"
@@ -872,6 +978,7 @@ definition_line = 2404
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.gi]
 name = "Giuseppe, God of Clowns"
@@ -880,6 +987,7 @@ definition_line = 2365
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ginro]
 name = "Ginro the Stork"
@@ -888,6 +996,7 @@ definition_line = 2439
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.girl1]
 name = "Kyoko"
@@ -896,6 +1005,7 @@ definition_line = 2320
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.gos]
 name = "Gossamer, God of Torment"
@@ -904,6 +1014,7 @@ definition_line = 2651
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.green]
 name = "Green"
@@ -912,6 +1023,7 @@ definition_line = 2317
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.gregg]
 name = "Gregg Jones"
@@ -920,6 +1032,7 @@ definition_line = 2443
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.h]
 name = "Haruka"
@@ -928,6 +1041,7 @@ definition_line = 2619
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.hailey]
 name = "Hailey the Hare"
@@ -936,6 +1050,7 @@ definition_line = 2407
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.hal]
 name = "Halftone, God of Save Slots"
@@ -944,6 +1059,7 @@ definition_line = 2654
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.hank]
 name = "Headless Hank"
@@ -952,6 +1068,7 @@ definition_line = 2441
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.her]
 name = "Her"
@@ -960,6 +1077,7 @@ definition_line = 2313
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.hi]
 name = "Himawari"
@@ -968,6 +1086,7 @@ definition_line = 2378
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.hi2]
 name = "Himawari?"
@@ -976,6 +1095,7 @@ definition_line = 2379
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.hi3]
 name = "Himawari?"
@@ -984,6 +1104,7 @@ definition_line = 2380
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.hid]
 name = "Hidari, God of Black-Haired Tsundere Girls"
@@ -992,6 +1113,7 @@ definition_line = 2430
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.him]
 name = "Him"
@@ -1000,6 +1122,7 @@ definition_line = 2323
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ho]
 name = "HOPE"
@@ -1008,6 +1131,7 @@ definition_line = 2640
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.hog]
 name = "HOPE, Peerless God of Light"
@@ -1016,6 +1140,7 @@ definition_line = 2641
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.howard]
 name = "Howard the Horse"
@@ -1024,6 +1149,7 @@ definition_line = 2408
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.i]
 name = "Io"
@@ -1032,6 +1158,7 @@ definition_line = 2590
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ima]
 name = "Imani"
@@ -1040,6 +1167,7 @@ definition_line = 2591
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.imarika]
 name = "Imani & Rika"
@@ -1051,6 +1179,7 @@ definition_line = 2516
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.imawaka]
 name = "Imani & Wakana"
@@ -1062,6 +1191,7 @@ definition_line = 2515
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.inc]
 name = "Incomplete Butterfly"
@@ -1070,6 +1200,7 @@ definition_line = 2449
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ins]
 name = "Instructor"
@@ -1078,6 +1209,7 @@ definition_line = 2669
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.int1]
 name = "Intruder 1"
@@ -1086,6 +1218,7 @@ definition_line = 2340
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.int2]
 name = "Intruder 2"
@@ -1094,6 +1227,7 @@ definition_line = 2341
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.iss]
 name = "Issa"
@@ -1102,6 +1236,7 @@ definition_line = 2592
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.jimmy]
 name = "Jimmy"
@@ -1110,6 +1245,7 @@ definition_line = 2343
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.john]
 name = "John"
@@ -1118,6 +1254,7 @@ definition_line = 2613
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.k]
 name = "Kaori"
@@ -1126,6 +1263,7 @@ definition_line = 2602
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ka]
 name = "Karin"
@@ -1134,6 +1272,7 @@ definition_line = 2661
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.kaay]
 name = "Karin & Ayane"
@@ -1145,6 +1284,7 @@ definition_line = 2536
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.kanon]
 name = "Kanon"
@@ -1153,6 +1293,7 @@ definition_line = 2579
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.kas]
 name = "Karins"
@@ -1161,6 +1302,7 @@ definition_line = 2662
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.kb]
 name = "Knife Boy"
@@ -1169,6 +1311,7 @@ definition_line = 2660
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ken]
 name = "Kentaro"
@@ -1177,6 +1320,7 @@ definition_line = 2530
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.kenji]
 name = "Kenji"
@@ -1185,6 +1329,7 @@ definition_line = 2460
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ker]
 name = "Kerubiel"
@@ -1193,6 +1338,7 @@ definition_line = 2609
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ki]
 name = "Kirin"
@@ -1201,6 +1347,7 @@ definition_line = 2663
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.kin]
 name = "Karate Instructor"
@@ -1209,6 +1356,7 @@ definition_line = 2668
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.kok]
 name = "Kokabiel"
@@ -1217,6 +1365,7 @@ definition_line = 2610
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.lamar]
 name = "Lamar the Lizard"
@@ -1225,6 +1374,7 @@ definition_line = 2412
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.leff]
 name = "Left Face"
@@ -1233,6 +1383,7 @@ definition_line = 2433
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.legitmom]
 name = "Totally Legitimate Mother (Mary)"
@@ -1241,6 +1392,7 @@ definition_line = 2342
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.lhm]
 name = "Left Hand Man"
@@ -1249,6 +1401,7 @@ definition_line = 2336
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.libp]
 name = "Librarian"
@@ -1257,6 +1410,7 @@ definition_line = 2519
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.limo]
 name = "Limo Driver"
@@ -1265,6 +1419,7 @@ definition_line = 2490
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.littlegirl]
 name = "Little Girl"
@@ -1273,6 +1428,7 @@ definition_line = 2463
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ll]
 name = "Left Leg"
@@ -1281,6 +1437,7 @@ definition_line = 2531
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.loungeguy]
 name = "Lounge Guy"
@@ -1289,6 +1446,7 @@ definition_line = 2492
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.lt]
 name = "Librarian Thief"
@@ -1297,6 +1455,7 @@ definition_line = 2585
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.m]
 name = "Maya"
@@ -1305,6 +1464,7 @@ definition_line = 2310
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.m2]
 name = "Maya 2"
@@ -1313,6 +1473,7 @@ definition_line = 2318
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mag]
 name = "Manny the Friendly Maggot"
@@ -1321,6 +1482,7 @@ definition_line = 2355
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.maid]
 name = "Maid"
@@ -1329,6 +1491,7 @@ definition_line = 2393
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mak]
 name = "Makoto"
@@ -1337,6 +1500,7 @@ definition_line = 2387
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.maki]
 name = "Maki"
@@ -1345,6 +1509,7 @@ definition_line = 2390
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.maktouk]
 name = "Makoto & Touka (?)"
@@ -1356,6 +1521,7 @@ definition_line = 2573
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mal]
 name = "Malvin"
@@ -1364,6 +1530,7 @@ definition_line = 2349
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.malec]
 name = "Male Customer"
@@ -1372,6 +1539,7 @@ definition_line = 2461
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.man]
 name = "Man"
@@ -1380,6 +1548,7 @@ definition_line = 2453
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.man1]
 name = "Man 1"
@@ -1388,6 +1557,7 @@ definition_line = 2456
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.man2]
 name = "Man 2"
@@ -1396,6 +1566,7 @@ definition_line = 2457
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.manager]
 name = "Manager"
@@ -1404,6 +1575,7 @@ definition_line = 2550
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.manny]
 name = "Manny the Unfriendly Maggot"
@@ -1412,6 +1584,7 @@ definition_line = 2356
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.masa]
 name = "Masahiro"
@@ -1420,6 +1593,7 @@ definition_line = 2391
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.matt]
 name = "Matthew"
@@ -1428,6 +1602,7 @@ definition_line = 2539
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mayamaybe]
 name = "Maya Maybe"
@@ -1436,6 +1611,7 @@ definition_line = 2314
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.me]
 name = "Meowri"
@@ -1444,6 +1620,7 @@ definition_line = 2603
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mg]
 name = "Mystery Girl"
@@ -1452,6 +1629,7 @@ definition_line = 2596
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mi]
 name = "Miku"
@@ -1460,6 +1638,7 @@ definition_line = 2319
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.middlemaya]
 name = "Middle Maya"
@@ -1468,6 +1647,7 @@ definition_line = 2316
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mig]
 name = "Migi, God of Chalk"
@@ -1476,6 +1656,7 @@ definition_line = 2429
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mightbemaya]
 name = "Might Be Maya"
@@ -1484,6 +1665,7 @@ definition_line = 2315
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mil]
 name = "Miles"
@@ -1492,6 +1674,7 @@ definition_line = 2418
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.miu]
 name = "Miu"
@@ -1500,6 +1683,7 @@ definition_line = 2575
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mman]
 name = "Middle Man"
@@ -1508,6 +1692,7 @@ definition_line = 2337
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mo]
 name = "Molly"
@@ -1516,6 +1701,7 @@ definition_line = 2588
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mod]
 name = "Matthew MacCormack"
@@ -1524,6 +1710,7 @@ definition_line = 2589
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mollyami]
 name = "Ami & Molly"
@@ -1535,6 +1722,7 @@ definition_line = 2509
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.moon]
 name = "Moon"
@@ -1543,6 +1731,7 @@ definition_line = 2455
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mot]
 name = "{s}MOTHER{/s}"
@@ -1551,6 +1740,7 @@ definition_line = 2626
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.moth]
 name = "Mother"
@@ -1559,6 +1749,7 @@ definition_line = 2436
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.moyo]
 name = "Moyo"
@@ -1567,6 +1758,7 @@ definition_line = 2555
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mrb]
 name = "Mr. Blake"
@@ -1575,6 +1767,7 @@ definition_line = 2414
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mt]
 name = "Molly and Tsuneyo"
@@ -1586,6 +1779,7 @@ definition_line = 2593
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mwoman]
 name = "Middle Woman"
@@ -1594,6 +1788,7 @@ definition_line = 2338
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.mysdol]
 name = "Mystery Dolphin"
@@ -1602,6 +1797,7 @@ definition_line = 2513
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.n]
 name = "Noriko"
@@ -1610,6 +1806,7 @@ definition_line = 2396
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.na]
 name = "Nao"
@@ -1618,6 +1815,7 @@ definition_line = 2397
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.nce]
 name = "Non Chika Employee"
@@ -1626,6 +1824,7 @@ definition_line = 2558
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.net]
 name = "Net With Knife Nose & Melon Mouth"
@@ -1634,6 +1833,7 @@ definition_line = 2534
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.nf1]
 name = "Nodoka Fan 1"
@@ -1642,6 +1842,7 @@ definition_line = 2496
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.nf2]
 name = "Nodoka Fan 2"
@@ -1650,6 +1851,7 @@ definition_line = 2497
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.nf3]
 name = "Nodoka Fan 3"
@@ -1658,6 +1860,7 @@ definition_line = 2498
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.nf4]
 name = "Nodoka Fan 4"
@@ -1666,6 +1869,7 @@ definition_line = 2499
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.nf5]
 name = "Nodoka Fan 5"
@@ -1674,6 +1878,7 @@ definition_line = 2500
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.nf6]
 name = "Crowd of Nodoka Fans"
@@ -1682,6 +1887,7 @@ definition_line = 2501
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ngk]
 name = "Net With Knife Nose & Melon Mouth"
@@ -1690,6 +1896,7 @@ definition_line = 2533
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ni]
 name = "Niki"
@@ -1698,6 +1905,7 @@ definition_line = 2400
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.nimom]
 name = "Niki’s Mom"
@@ -1706,6 +1914,7 @@ definition_line = 2401
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.nki]
 name = "Noriko & Kirin"
@@ -1717,6 +1926,7 @@ definition_line = 2542
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.nni]
 name = "Noriko & Niki"
@@ -1728,6 +1938,7 @@ definition_line = 2398
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.no]
 name = "Nodoka"
@@ -1736,6 +1947,7 @@ definition_line = 2586
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.noodles]
 name = "Noodles"
@@ -1744,6 +1956,7 @@ definition_line = 2587
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.nr]
 name = "Not Rin"
@@ -1752,6 +1965,7 @@ definition_line = 2600
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.nr1]
 name = "New Recruit 1"
@@ -1760,6 +1974,7 @@ definition_line = 2464
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.nr10]
 name = "New Recruit 10"
@@ -1768,6 +1983,7 @@ definition_line = 2466
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.nr15]
 name = "New Recruit 15"
@@ -1776,6 +1992,7 @@ definition_line = 2467
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.nr2]
 name = "New Recruit 2"
@@ -1784,6 +2001,7 @@ definition_line = 2465
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.nul]
 name = "NULL"
@@ -1792,6 +2010,7 @@ definition_line = 2485
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.nyt]
 name = "Not Your Telephone"
@@ -1800,6 +2019,7 @@ definition_line = 2563
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.o]
 name = "Otoha"
@@ -1808,6 +2028,7 @@ definition_line = 2405
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.octavia]
 name = "Octavia the Octopus"
@@ -1816,6 +2037,7 @@ definition_line = 2411
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.oldl]
 name = "Old Lady"
@@ -1824,6 +2046,7 @@ definition_line = 2598
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.oli]
 name = "Oliver Oldmannington"
@@ -1832,6 +2055,7 @@ definition_line = 2440
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.om]
 name = "Old Man"
@@ -1840,6 +2064,7 @@ definition_line = 2599
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.onu]
 name = "Onund, God of the Hole"
@@ -1848,6 +2073,7 @@ definition_line = 2657
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.os]
 name = "Osako"
@@ -1856,6 +2082,7 @@ definition_line = 2670
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.osc]
 name = "Off Screen Characters"
@@ -1864,6 +2091,7 @@ definition_line = 2425
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.p1]
 name = "Plant #1"
@@ -1872,6 +2100,7 @@ definition_line = 2567
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.p2]
 name = "Plant #2"
@@ -1880,6 +2109,7 @@ definition_line = 2568
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.p3]
 name = "Plant #3"
@@ -1888,6 +2118,7 @@ definition_line = 2569
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.p4]
 name = "Plant #4"
@@ -1896,6 +2127,7 @@ definition_line = 2570
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.para]
 name = "Paralegal"
@@ -1904,6 +2136,7 @@ definition_line = 2553
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.parrot]
 name = "Parrot the Parrot"
@@ -1912,6 +2145,7 @@ definition_line = 2351
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.pat]
 name = "Patrice"
@@ -1920,6 +2154,7 @@ definition_line = 2551
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.paul]
 name = "Paul the Panther"
@@ -1928,6 +2163,7 @@ definition_line = 2409
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.peg]
 name = "Emissary of Pegasus"
@@ -1936,6 +2172,7 @@ definition_line = 2605
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.peggy]
 name = "Pegasus, Peerless God of Forgiveness"
@@ -1944,6 +2181,7 @@ definition_line = 2658
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.pianoman]
 name = "Piano Man"
@@ -1952,6 +2190,7 @@ definition_line = 2491
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.pink]
 name = "Pink"
@@ -1960,6 +2199,7 @@ definition_line = 2309
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.plant7]
 name = "Plant #7"
@@ -1968,6 +2208,7 @@ definition_line = 2571
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.pmee]
 name = "Pretty Much Everyone Else"
@@ -1976,6 +2217,7 @@ definition_line = 2503
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.porn1]
 name = "Mother"
@@ -1984,6 +2226,7 @@ definition_line = 2392
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.porn2]
 name = "Daughter"
@@ -1992,6 +2235,7 @@ definition_line = 2389
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.porn3]
 name = "Man With a Camera"
@@ -2000,6 +2244,7 @@ definition_line = 2325
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.porn4]
 name = "Desperate Teen"
@@ -2008,6 +2253,7 @@ definition_line = 2616
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.porn5]
 name = "Nympho Whore"
@@ -2016,6 +2262,7 @@ definition_line = 2395
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.porn6]
 name = "Guy With BBC"
@@ -2024,6 +2271,7 @@ definition_line = 2326
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.porngirl]
 name = "Girl on the Screen"
@@ -2032,6 +2280,7 @@ definition_line = 2482
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.pornguy]
 name = "Man on the Screen"
@@ -2040,6 +2289,7 @@ definition_line = 2483
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.pro]
 name = "Producer"
@@ -2048,6 +2298,7 @@ definition_line = 2549
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.prof]
 name = "Professor"
@@ -2056,6 +2307,7 @@ definition_line = 2647
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.pt]
 name = "Part Timer"
@@ -2064,6 +2316,7 @@ definition_line = 2565
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.q]
 name = "???"
@@ -2072,6 +2325,7 @@ definition_line = 2413
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.qn]
 name = "???"
@@ -2080,6 +2334,7 @@ definition_line = 2402
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.r]
 name = "Rin"
@@ -2088,6 +2343,7 @@ definition_line = 2384
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.r2]
 name = "The Girl in the Corner"
@@ -2096,6 +2352,7 @@ definition_line = 2385
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ra]
 name = "Ramen?..."
@@ -2104,6 +2361,7 @@ definition_line = 2581
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.rab1]
 name = "Rabbit 1"
@@ -2112,6 +2370,7 @@ definition_line = 2487
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.rab2]
 name = "Rabbit 2"
@@ -2120,6 +2379,7 @@ definition_line = 2488
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.rab3]
 name = "Rabbit 3"
@@ -2128,6 +2388,7 @@ definition_line = 2489
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.rabbit]
 name = "Freezer Rabbit"
@@ -2136,6 +2397,7 @@ definition_line = 2486
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.rand]
 name = "Random Karate Person"
@@ -2144,6 +2406,7 @@ definition_line = 2631
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.rando]
 name = "Random Bypasser"
@@ -2152,6 +2415,7 @@ definition_line = 2632
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.red]
 name = "Red"
@@ -2160,6 +2424,7 @@ definition_line = 2352
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.rg]
 name = "Ramen Girl"
@@ -2168,6 +2433,7 @@ definition_line = 2580
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.rhm]
 name = "Right Hand Man"
@@ -2176,6 +2442,7 @@ definition_line = 2335
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ri]
 name = "Rika"
@@ -2184,6 +2451,7 @@ definition_line = 2386
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.rigf]
 name = "Right Face"
@@ -2192,6 +2460,7 @@ definition_line = 2434
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.riri]
 name = "Rika & Rin"
@@ -2203,6 +2472,7 @@ definition_line = 2514
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.rl]
 name = "Right Leg"
@@ -2211,6 +2481,7 @@ definition_line = 2532
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.rlg]
 name = "Rich Looking Girl"
@@ -2219,6 +2490,7 @@ definition_line = 2620
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.rmo]
 name = "Random Market Stall Owner"
@@ -2227,6 +2499,7 @@ definition_line = 2525
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.robbie]
 name = "Robbie Receptionson"
@@ -2235,6 +2508,7 @@ definition_line = 2451
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.s]
 name = "Sensei"
@@ -2243,6 +2517,7 @@ definition_line = 2322
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.sa]
 name = "Sana"
@@ -2251,6 +2526,7 @@ definition_line = 2367
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.sad]
 name = "Second AD"
@@ -2259,6 +2535,7 @@ definition_line = 2548
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.saki]
 name = "Saki"
@@ -2267,6 +2544,7 @@ definition_line = 2574
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.sal]
 name = "Sana With an Extra Eye"
@@ -2275,6 +2553,7 @@ definition_line = 2368
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.salvykun]
 name = "Salvador Dalí"
@@ -2283,6 +2562,7 @@ definition_line = 2339
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.sao]
 name = "Sensei & Otoha"
@@ -2294,6 +2574,7 @@ definition_line = 2594
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.sar]
 name = "Sara"
@@ -2302,6 +2583,7 @@ definition_line = 2644
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.saraharuka]
 name = "Sara & Haruka"
@@ -2313,6 +2595,7 @@ definition_line = 2540
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.sato]
 name = "Ms. Sato"
@@ -2321,6 +2604,7 @@ definition_line = 2480
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.sb]
 name = "Sporty Boy"
@@ -2329,6 +2613,7 @@ definition_line = 2359
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.sch]
 name = "Sensei & Chinami"
@@ -2340,6 +2625,7 @@ definition_line = 2538
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.se]
 name = "Sekai"
@@ -2348,6 +2634,7 @@ definition_line = 2348
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.seami]
 name = "Sekai & Ami"
@@ -2359,6 +2646,7 @@ definition_line = 2350
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.seco1]
 name = "Second Year Girl"
@@ -2367,6 +2655,7 @@ definition_line = 2475
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.seco2]
 name = "Another Second Year Girl"
@@ -2375,6 +2664,7 @@ definition_line = 2476
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.seco3]
 name = "Volleyball Club President"
@@ -2383,6 +2673,7 @@ definition_line = 2477
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.seco4]
 name = "Basketball Club President"
@@ -2391,6 +2682,7 @@ definition_line = 2478
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.seinfeld]
 name = "Professional Comedian, Jerry Seinfeld"
@@ -2399,6 +2691,7 @@ definition_line = 2664
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.sekni]
 name = "Sekai & Niki"
@@ -2410,6 +2703,7 @@ definition_line = 2399
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.senseimaya]
 name = "Sensei & Maya"
@@ -2421,6 +2715,7 @@ definition_line = 2595
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.sev]
 name = "79 6f 75 64 69 64 69 74"
@@ -2429,6 +2724,7 @@ definition_line = 2635
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.seven]
 name = "73 65 6b 61 69"
@@ -2437,6 +2733,7 @@ definition_line = 2634
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.sg]
 name = "Soccer Girl"
@@ -2445,6 +2742,7 @@ definition_line = 2648
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.sg2]
 name = "Soccer Girl 2"
@@ -2453,6 +2751,7 @@ definition_line = 2649
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.sg3]
 name = "Strange Girl"
@@ -2461,6 +2760,7 @@ definition_line = 2650
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.sha]
 name = "ShadowNinja64"
@@ -2469,6 +2769,7 @@ definition_line = 2417
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.shi]
 name = "Shiori"
@@ -2477,6 +2778,7 @@ definition_line = 2381
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.six]
 name = "61 6d 20 69 20 6f 6b 61 79"
@@ -2485,6 +2787,7 @@ definition_line = 2633
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.six8]
 name = "68 6f 70 65"
@@ -2493,6 +2796,7 @@ definition_line = 2642
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.sky]
 name = "Sky"
@@ -2501,6 +2805,7 @@ definition_line = 2564
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.snc]
 name = "Some Nearby Cat"
@@ -2509,6 +2814,7 @@ definition_line = 2543
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.spo]
 name = "Spork"
@@ -2517,6 +2823,7 @@ definition_line = 2311
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.sr]
 name = "Sensei & Rin"
@@ -2528,6 +2835,7 @@ definition_line = 2535
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.sre]
 name = "Smile Reminder"
@@ -2536,6 +2844,7 @@ definition_line = 2527
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.steve]
 name = "Sanctimonious Steve"
@@ -2544,6 +2853,7 @@ definition_line = 2444
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.stick]
 name = "Stick Man"
@@ -2552,6 +2862,7 @@ definition_line = 2438
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.storec]
 name = "Store Clerk"
@@ -2560,6 +2871,7 @@ definition_line = 2523
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.t]
 name = "Tsuneyo"
@@ -2568,6 +2880,7 @@ definition_line = 2582
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.taco]
 name = "Taco Man"
@@ -2576,6 +2889,7 @@ definition_line = 2544
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.taki]
 name = "Horseface Taki, God of the Track"
@@ -2584,6 +2898,7 @@ definition_line = 2652
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.tako2]
 name = "Takoyaki Son, Son of Takoyaki Man"
@@ -2592,6 +2907,7 @@ definition_line = 2344
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.tako3]
 name = "Tony: Takoyaki Son, Son of Takoyaki Man"
@@ -2600,6 +2916,7 @@ definition_line = 2345
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.tb]
 name = "Tsubasa"
@@ -2608,6 +2925,7 @@ definition_line = 2622
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.tbiso]
 name = "Tebiso"
@@ -2616,6 +2934,7 @@ definition_line = 2576
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.tdtl]
 name = "The Dark. The Light."
@@ -2624,6 +2943,7 @@ definition_line = 2639
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.te]
 name = "Teacher"
@@ -2632,6 +2952,7 @@ definition_line = 2333
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.tenc]
 name = "Tenchou-Sama"
@@ -2640,6 +2961,7 @@ definition_line = 2583
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.tf]
 name = "Tsuneyo's Friend"
@@ -2648,6 +2970,7 @@ definition_line = 2584
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.tk]
 name = "Tsukasa"
@@ -2656,6 +2979,7 @@ definition_line = 2623
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.to]
 name = "Touka"
@@ -2664,6 +2988,7 @@ definition_line = 2621
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.tod]
 name = "Todd the Chicken"
@@ -2672,6 +2997,7 @@ definition_line = 2667
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.tom]
 name = "Tom Mato, M.D."
@@ -2680,6 +3006,7 @@ definition_line = 2452
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.train]
 name = "Train Passenger"
@@ -2688,6 +3015,7 @@ definition_line = 2493
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.tsurumi]
 name = "Tsurumi"
@@ -2696,6 +3024,7 @@ definition_line = 2578
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.tt]
 name = "Tree Tickler"
@@ -2704,6 +3033,7 @@ definition_line = 2659
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ttitb]
 name = "The Tanuki in the Background"
@@ -2712,6 +3042,7 @@ definition_line = 2518
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.tv]
 name = "TV Announcer"
@@ -2720,6 +3051,7 @@ definition_line = 2528
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.tv2]
 name = "A Voice on Television"
@@ -2728,6 +3060,7 @@ definition_line = 2529
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.u]
 name = "Uta"
@@ -2736,6 +3069,7 @@ definition_line = 2394
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.uam]
 name = "Uta & Makoto"
@@ -2747,6 +3081,7 @@ definition_line = 2541
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ub]
 name = "Unnamed Baby"
@@ -2755,6 +3090,7 @@ definition_line = 2559
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.vine]
 name = "Vine Man"
@@ -2763,6 +3099,7 @@ definition_line = 2447
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.vpa]
 name = "Voice Over PA"
@@ -2771,6 +3108,7 @@ definition_line = 2520
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.vpo]
 name = "Voice On Phone"
@@ -2779,6 +3117,7 @@ definition_line = 2522
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.vtv]
 name = "Voice On TV"
@@ -2787,6 +3126,7 @@ definition_line = 2521
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.w]
 name = "Wakana"
@@ -2795,6 +3135,7 @@ definition_line = 2403
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.wa]
 name = "Waitress"
@@ -2803,6 +3144,7 @@ definition_line = 2601
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.watermelon]
 name = "Watermelon Sex Toy"
@@ -2811,6 +3153,7 @@ definition_line = 2554
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.wil]
 name = "Wilford Blackhole Hands"
@@ -2819,6 +3162,7 @@ definition_line = 2324
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.will]
 name = "William, God of the Stage"
@@ -2827,6 +3171,7 @@ definition_line = 2656
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.willb]
 name = "Left Breastplate"
@@ -2835,6 +3180,7 @@ definition_line = 2419
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.wilrb]
 name = "Right Breastplate"
@@ -2843,6 +3189,7 @@ definition_line = 2420
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.wise]
 name = "Wise Turtle"
@@ -2851,6 +3198,7 @@ definition_line = 2312
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.woman]
 name = "Woman"
@@ -2859,6 +3207,7 @@ definition_line = 2454
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.worm]
 name = "Wormwood"
@@ -2867,6 +3216,7 @@ definition_line = 2608
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.x]
 name = "今"
@@ -2875,6 +3225,7 @@ definition_line = 2502
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.xoxo]
 name = "Gossip Girl"
@@ -2883,6 +3234,7 @@ definition_line = 2358
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.y]
 name = "Yumi"
@@ -2891,6 +3243,7 @@ definition_line = 2370
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.y1]
 name = "Yakuza 1"
@@ -2899,6 +3252,7 @@ definition_line = 2468
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.y2]
 name = "Yakuza 2"
@@ -2907,6 +3261,7 @@ definition_line = 2469
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.y8]
 name = "Yakuza 8"
@@ -2915,6 +3270,7 @@ definition_line = 2470
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.ya]
 name = "Yasu"
@@ -2923,6 +3279,7 @@ definition_line = 2604
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.yak1]
 name = "Yakuza Dude"
@@ -2931,6 +3288,7 @@ definition_line = 2372
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.yak2]
 name = "Other Yakuza Dude"
@@ -2939,6 +3297,7 @@ definition_line = 2373
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.yak3]
 name = "Both Yakuza Dudes"
@@ -2947,6 +3306,7 @@ definition_line = 2374
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.yamom]
 name = "Yasu's Mother"
@@ -2955,6 +3315,7 @@ definition_line = 2606
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.yo]
 name = "Yoshitsugu Yamaguchi"
@@ -2963,6 +3324,7 @@ definition_line = 2371
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.yom]
 name = "Yomiel"
@@ -2971,6 +3333,7 @@ definition_line = 2611
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.you]
 name = "You?"
@@ -2979,6 +3342,7 @@ definition_line = 2406
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.yt]
 name = "Your Telephone"
@@ -2987,6 +3351,7 @@ definition_line = 2562
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.yu]
 name = "Yuki"
@@ -2995,6 +3360,7 @@ definition_line = 2597
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0
 
 [characters.yuu]
 name = "Yuu"
@@ -3003,3 +3369,4 @@ definition_line = 2577
 built_in = false
 model_path = ""
 generation_script_path = ""
+base_speed = 1.0

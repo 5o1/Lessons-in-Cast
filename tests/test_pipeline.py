@@ -52,6 +52,7 @@ class PipelineTests(unittest.TestCase):
                 built_in=False,
                 model_path="",
                 generation_script_path="",
+                base_speed=1.0,
             )
             pipeline = DialoguePipeline(
                 config=config,
@@ -59,7 +60,7 @@ class PipelineTests(unittest.TestCase):
                 annotator=MockDialogueAnnotator(),
                 synthesizer=SilenceSynthesizer(config.audio),
             )
-            artifacts = root / "artifacts"
+            artifacts = root / "build"
             result = pipeline.run(
                 PipelineRequest(
                     artifact_root=artifacts,
@@ -79,6 +80,15 @@ class PipelineTests(unittest.TestCase):
                     result.artifacts.release_bundle
                     / "game"
                     / "lessons_in_cast_voice.rpy"
+                ).is_file()
+            )
+            self.assertTrue(
+                (
+                    result.artifacts.release_bundle
+                    / "game"
+                    / "voice"
+                    / "AmiEvents"
+                    / "one.wav"
                 ).is_file()
             )
 
@@ -111,13 +121,14 @@ class PipelineTests(unittest.TestCase):
                 built_in=False,
                 model_path="",
                 generation_script_path="",
+                base_speed=1.0,
             )
             pipeline = DialoguePipeline(
                 config=config,
                 characters={"a": character},
                 annotator=MockDialogueAnnotator(),
             )
-            artifacts = root / "artifacts"
+            artifacts = root / "build"
             request = PipelineRequest(
                 artifact_root=artifacts,
                 dialogue_tab_path=dialogue_tab,
@@ -129,9 +140,9 @@ class PipelineTests(unittest.TestCase):
 
             artifact_layout = ArtifactLayout(layout)
             pipeline.annotate(artifact_layout)
-            envelopes = list(read_jsonl(artifact_layout.model_responses))
+            envelopes = list(read_jsonl(artifact_layout.annotation_responses))
             envelopes[0]["response"]["annotations"].pop()
-            write_jsonl(envelopes, artifact_layout.model_responses)
+            write_jsonl(envelopes, artifact_layout.annotation_responses)
             summary = pipeline.validate(artifact_layout)
             self.assertEqual(summary.retryable_count, 1)
             retry_requests = list(read_jsonl(artifact_layout.retry_requests))

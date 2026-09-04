@@ -1,4 +1,4 @@
-"""Independent validation gate for untrusted model output."""
+"""Independent validation gate for untrusted semantic annotations."""
 
 from __future__ import annotations
 
@@ -64,7 +64,7 @@ class AnnotationValidator:
             return self._all_retryable(
                 batch,
                 "response_type",
-                "Model response must be a JSON object.",
+                "Annotation response must be a JSON object.",
                 input_hash,
                 prompt_version,
                 config_hash,
@@ -85,7 +85,7 @@ class AnnotationValidator:
             return self._all_retryable(
                 batch,
                 "batch_id_mismatch",
-                "Model response batch_id does not match the request.",
+                "Annotation response batch_id does not match the request.",
                 input_hash,
                 prompt_version,
                 config_hash,
@@ -96,7 +96,7 @@ class AnnotationValidator:
             return self._all_retryable(
                 batch,
                 "annotations_type",
-                "Model response annotations must be an array.",
+                "Annotation response annotations must be an array.",
                 input_hash,
                 prompt_version,
                 config_hash,

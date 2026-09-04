@@ -17,6 +17,7 @@ class TtsJob:
     emotion: str
     intensity: float
     delivery: dict[str, str]
+    base_speed: float
     model_path: str
     generation_script_path: str
     output_path: str
@@ -31,6 +32,7 @@ class TtsJob:
             "emotion": self.emotion,
             "intensity": self.intensity,
             "delivery": self.delivery,
+            "base_speed": self.base_speed,
             "model_path": self.model_path,
             "generation_script_path": self.generation_script_path,
             "output_path": self.output_path,
@@ -51,6 +53,7 @@ class RenderTask:
     render_mode: str
     effects: tuple[str, ...]
     output_path: str
+    virtual_path: str
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -61,6 +64,7 @@ class RenderTask:
             "render_mode": self.render_mode,
             "effects": list(self.effects),
             "output_path": self.output_path,
+            "virtual_path": self.virtual_path,
         }
 
     @classmethod
@@ -73,6 +77,7 @@ class RenderTask:
             render_mode=value["render_mode"],
             effects=tuple(value["effects"]),
             output_path=value["output_path"],
+            virtual_path=value["virtual_path"],
         )
 
 
