@@ -14,23 +14,36 @@ python -m pip install -e .
 ```
 
 The control process uses the standard library. Speech backends run in their own
-environments. Third-party repositories are ignored by Git; their URLs, pinned
-commits, roles, and setup notes are recorded in
-`external/sources.toml`. Local model directories are also ignored, with their
-Hugging Face repositories and revisions recorded in
-`configs/model_sources.toml`.
+environments. Third-party repositories are tracked as Git submodules: their URLs
+are stored in `.gitmodules`, their revisions are pinned by the parent gitlinks,
+and project-specific roles and setup notes are recorded in
+`external/sources.toml`. Local model directories remain ignored, with their
+Hugging Face repositories and revisions recorded in the ignored local file
+`configs/model_sources.toml`. Create it from the tracked
+`configs/model_sources.default.toml` template.
+
+Clone the workspace and its external projects together:
+
+```bash
+git clone --recurse-submodules <repository-url>
+```
+
+For an existing clone, initialize or synchronize them with:
+
+```bash
+git submodule update --init --recursive
+```
 
 The active IndexTTS checkout uses Python 3.11 and its own environment:
 
 ```bash
-git clone https://github.com/index-tts/index-tts.git external/index-tts
-git -C external/index-tts checkout REVISION_FROM_EXTERNAL_SOURCES_TOML
 cd external/index-tts
 uv sync --all-extras
 ```
 
-Download model files at the revisions listed in `configs/model_sources.toml`.
-Model licenses remain authoritative and must be reviewed before redistribution.
+Download model files at the revisions listed in the local
+`configs/model_sources.toml`. Model licenses remain authoritative and must be
+reviewed before redistribution.
 
 ## Generated files
 
@@ -43,7 +56,7 @@ build/
 ├── auditions/     listening tests
 └── references/    generated model-ready reference audio and manifests
 
-external/          pinned third-party source checkouts
+external/          third-party submodule worktrees pinned by the parent repo
 models/            local weights and source samples
 game_releases/     local Ren'Py releases used for analysis
 ```

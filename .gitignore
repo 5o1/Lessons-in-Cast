@@ -1,8 +1,3 @@
-# Third-party source checkouts
-/external/*
-!/external/README.md
-!/external/sources.toml
-
 # Local game releases and extracted assets
 /game_releases/
 /lessons-in-love-windows.zip
@@ -10,6 +5,7 @@
 # Local model files and weights
 /models/
 /weights/
+/configs/model_sources.toml
 # Private local notes
 /local/
 

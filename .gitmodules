@@ -1,0 +1,15 @@
+[submodule "external/GPT-SoVITS"]
+	path = external/GPT-SoVITS
+	url = https://github.com/RVC-Boss/GPT-SoVITS.git
+[submodule "external/GPT-SoVITS-Emotion-Manager"]
+	path = external/GPT-SoVITS-Emotion-Manager
+	url = https://github.com/zhaomaoniu/GPT-SoVITS-Emotion-Manager.git
+[submodule "external/GPT-SoVITS-Galgame-Pipeline"]
+	path = external/GPT-SoVITS-Galgame-Pipeline
+	url = https://github.com/lhfer/GPT-SoVITS-Galgame-Pipeline.git
+[submodule "external/index-tts"]
+	path = external/index-tts
+	url = https://github.com/index-tts/index-tts.git
+[submodule "external/renpy"]
+	path = external/renpy
+	url = https://github.com/renpy/renpy.git

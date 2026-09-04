@@ -1,0 +1,16 @@
+# Default model source registry.
+#
+# Copy this file to `configs/model_sources.toml` and define the models available
+# in the local workspace. The populated local file is intentionally ignored by
+# Git because model choices and paths are machine-specific.
+
+[models]
+
+# Example:
+#
+# [models.example]
+# path = "models/provider/repository"
+# provider = "huggingface"
+# repository = "provider/repository"
+# revision = "pinned-revision"
+# license = "license-identifier"
