@@ -10,7 +10,6 @@ from .index_tts import (
     normalize_index_emotion_vector,
 )
 from .index_tts_pipeline import IndexTtsPipeline
-from .mock import SilenceSynthesizer
 from .planner import SynthesisPlanner
 from .reference_builder import (
     ReferenceBuildError,
@@ -57,7 +56,6 @@ __all__ = [
     "ReferenceBuildSettings",
     "build_reference_from_directory",
     "RenderTask",
-    "SilenceSynthesizer",
     "SpeechSynthesizer",
     "SynthesisIssue",
     "SynthesisPlan",

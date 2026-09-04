@@ -4,11 +4,11 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from lessons_in_cast.annotation import MockDialogueAnnotator
 from lessons_in_cast.characters import CharacterDefinition
 from lessons_in_cast.config import AnnotationConfig, AudioConfig, BatchingConfig, PipelineConfig
 from lessons_in_cast.pipeline import ArtifactLayout, DialoguePipeline, PipelineRequest
-from lessons_in_cast.synthesis import SilenceSynthesizer
+
+from .fakes import SilenceSynthesizer, write_mock_responses
 
 
 HEADER = "Identifier\tCharacter\tDialogue\tFilename\tLine Number\tRen'Py Script\n"
@@ -53,11 +53,13 @@ class ProductionPipelineTests(unittest.TestCase):
             annotation_pipeline = DialoguePipeline(
                 config=config,
                 characters={"a": character},
-                annotator=MockDialogueAnnotator(),
             )
             annotation_pipeline.prepare(request)
             annotation_layout = ArtifactLayout(annotation_root)
-            annotation_pipeline.annotate(annotation_layout)
+            write_mock_responses(
+                annotation_layout.annotation_requests,
+                annotation_layout.annotation_responses,
+            )
 
             production_root = root / "production"
             production_root.mkdir()

@@ -1,9 +1,9 @@
 # Workspace setup
 
 Lessons in Cast is a source-workspace application. The installed Python package
-contains reusable orchestration code, while game configuration, prompts,
-schemas, and character voice pipelines remain project files at the repository
-root. Run the CLI from this checkout or one of its descendants.
+contains reusable orchestration code, while game configuration, prompts, and
+character voice pipelines remain project files at the repository root. Run the
+CLI from this checkout or one of its descendants.
 
 ## Local installation
 
@@ -41,8 +41,7 @@ build/
 ├── current/       active restartable pipeline run
 ├── runs/          named historical and production runs
 ├── auditions/     listening tests
-├── references/    generated model-ready reference audio and manifests
-└── archive/       legacy local artifacts
+└── references/    generated model-ready reference audio and manifests
 
 external/          pinned third-party source checkouts
 models/            local weights and source samples

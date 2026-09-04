@@ -150,15 +150,14 @@ Use `--build-dir` to select another generated-file root.
     lessons-in-cast codex-status --retry
     lessons-in-cast validate --retry
     lessons-in-cast plan-tts
-    lessons-in-cast synthesize-mock
     lessons-in-cast prepare-voices
     lessons-in-cast bundle
 
     lessons-in-cast build-reference --character ch --input-dir SAMPLE_DIRECTORY
     lessons-in-cast synthesize
     lessons-in-cast run-production --input dialogue.tab --responses responses.jsonl
-The annotate-mock, synthesize-mock, and run-mock commands exist only for
-automated tests. Semantic cleaning remains an independent Codex file workflow;
+
+Semantic cleaning remains an independent Codex file workflow;
 the production runner only consumes its response JSONL and never invokes Codex.
 
 run-production performs preparation, validation, TTS planning, IndexTTS

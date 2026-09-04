@@ -4,14 +4,11 @@ from __future__ import annotations
 
 import json
 import shutil
-from contextlib import nullcontext
 from dataclasses import asdict
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 from .annotation import (
-    DialogueAnnotator,
     ValidatedAnnotation,
     build_annotation_request,
 )
@@ -62,13 +59,11 @@ class DialoguePipeline:
         *,
         config: PipelineConfig,
         characters: dict[str, CharacterDefinition],
-        annotator: DialogueAnnotator | None = None,
         synthesizer: SpeechSynthesizer | None = None,
         renderer: WaveRenderer | None = None,
     ) -> None:
         self._config = config
         self._characters = characters
-        self._annotator = annotator
         self._synthesizer = synthesizer
         self._renderer = renderer or WaveRenderer()
         self._validation = AnnotationValidationStage(config)
@@ -177,58 +172,6 @@ class DialoguePipeline:
             },
         )
         return dialogue_count, batch_count
-
-    def annotate(
-        self,
-        layout: ArtifactLayout,
-        *,
-        requests_path: Path | None = None,
-        responses_path: Path | None = None,
-    ) -> int:
-        """Run the configured annotator with content-addressed response reuse."""
-
-        if self._annotator is None:
-            raise RuntimeError("No dialogue annotator is configured")
-        requests_path = requests_path or layout.annotation_requests
-        responses_path = responses_path or layout.annotation_responses
-        index_context = (
-            JsonlIndex(responses_path, "request_hash")
-            if responses_path.exists()
-            else nullcontext(None)
-        )
-        reused = 0
-        with index_context as existing, AtomicJsonlWriter(responses_path) as output:
-            for request in read_jsonl(requests_path):
-                request_hash = content_hash(request)
-                cached = existing.get(request_hash) if existing is not None else None
-                if (
-                    cached is not None
-                    and cached.get("annotator_configuration")
-                    == self._annotator.configuration
-                ):
-                    output.write(cached)
-                    reused += 1
-                    continue
-                response = self._annotator.annotate(request)
-                output.write(
-                    {
-                        "request_hash": request_hash,
-                        "batch_id": request["batch"]["batch_id"],
-                        "prompt_version": request["prompt_version"],
-                        "annotator_configuration": self._annotator.configuration,
-                        "generated_at": datetime.now(timezone.utc).isoformat(),
-                        "response": response,
-                    }
-                )
-        update_run_manifest(
-            layout,
-            {
-                "annotation_response_count": output.count,
-                "annotation_response_reused": reused,
-                "annotator_configuration": self._annotator.configuration,
-            },
-        )
-        return output.count
 
     def validate(
         self,
@@ -417,26 +360,6 @@ class DialoguePipeline:
             {"release_bundle_audio_count": result.audio_count},
         )
         return result.audio_count
-
-    def run(self, request: PipelineRequest) -> PipelineResult:
-        dialogue_count, batch_count = self.prepare(request)
-        self.annotate(ArtifactLayout(request.artifact_root.resolve()))
-        layout = ArtifactLayout(request.artifact_root.resolve())
-        validated = self.validate(layout, overrides_path=request.overrides_path)
-        tts_job_count, _ = self.plan_synthesis(layout)
-        _, rendered_count = self.synthesize(layout)
-        self.build_release_bundle(layout)
-        return PipelineResult(
-            artifacts=layout,
-            dialogue_count=dialogue_count,
-            batch_count=batch_count,
-            accepted_count=validated.accepted_count,
-            review_count=validated.review_required_count,
-            retryable_count=validated.retryable_count,
-            rejected_count=validated.rejected_count,
-            tts_job_count=tts_job_count,
-            rendered_count=rendered_count,
-        )
 
     def run_from_responses(
         self,

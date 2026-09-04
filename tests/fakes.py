@@ -1,0 +1,85 @@
+"""Deterministic test doubles for annotation and speech synthesis."""
+
+from __future__ import annotations
+
+import wave
+from dataclasses import asdict
+from pathlib import Path
+from typing import Any
+
+from lessons_in_cast.config import AudioConfig
+from lessons_in_cast.hashing import content_hash
+from lessons_in_cast.jsonl import read_jsonl, write_jsonl
+from lessons_in_cast.synthesis.types import TtsJob
+
+
+class MockDialogueAnnotator:
+    @property
+    def configuration(self) -> dict[str, Any]:
+        return {"adapter": "mock", "version": 1}
+
+    def annotate(self, request: dict[str, Any]) -> dict[str, Any]:
+        batch = request["batch"]
+        return {
+            "batch_id": batch["batch_id"],
+            "annotations": [
+                {
+                    "id": item["id"],
+                    "action": "speak",
+                    "spoken_text": item["dialogue"],
+                    "emotion": "neutral",
+                    "intensity": 0.5,
+                    "delivery": {},
+                    "effects": [],
+                    "confidence": 1.0,
+                    "review_required": False,
+                    "reason": "Deterministic mock annotation.",
+                }
+                for item in batch["targets"]
+            ],
+        }
+
+def write_mock_responses(requests_path: Path, responses_path: Path) -> int:
+    annotator = MockDialogueAnnotator()
+    envelopes = []
+    for request in read_jsonl(requests_path):
+        envelopes.append(
+            {
+                "request_hash": content_hash(request),
+                "batch_id": request["batch"]["batch_id"],
+                "prompt_version": request["prompt_version"],
+                "annotator_configuration": annotator.configuration,
+                "generated_at": "2026-09-05T00:00:00+00:00",
+                "response": annotator.annotate(request),
+            }
+        )
+    return write_jsonl(envelopes, responses_path)
+
+
+
+class SilenceSynthesizer:
+    def __init__(self, config: AudioConfig) -> None:
+        self._config = config
+
+    @property
+    def name(self) -> str:
+        return "silence"
+
+    @property
+    def configuration(self) -> dict[str, Any]:
+        return {"adapter": self.name, "audio": asdict(self._config)}
+
+    def synthesize(self, job: TtsJob, artifact_root: Path) -> Path:
+        destination = artifact_root / job.output_path
+        if destination.is_file():
+            return destination
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        duration = min(max(len(job.text) / 12.0, 0.1), 10.0)
+        frame_count = round(duration * self._config.sample_rate)
+        frame = b"\x00" * self._config.sample_width * self._config.channels
+        with wave.open(str(destination), "wb") as output:
+            output.setnchannels(self._config.channels)
+            output.setsampwidth(self._config.sample_width)
+            output.setframerate(self._config.sample_rate)
+            output.writeframes(frame * frame_count)
+        return destination

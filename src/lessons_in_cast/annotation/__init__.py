@@ -1,13 +1,12 @@
 """Semantic dialogue annotation, Codex exchange, and validation."""
 
-from .api import DialogueAnnotator, build_annotation_request
+from .api import build_annotation_request
 from .codex import (
     CodexAnnotationWorkflow,
     CodexExportResult,
     CodexWorkflowStatus,
     CodexWorkspace,
 )
-from .mock import MockDialogueAnnotator
 from .overrides import apply_override, apply_overrides, load_overrides
 from .schema import annotation_response_schema
 from .types import (
@@ -29,8 +28,6 @@ __all__ = [
     "CodexWorkflowStatus",
     "CodexWorkspace",
     "DialogueAction",
-    "DialogueAnnotator",
-    "MockDialogueAnnotator",
     "ValidatedAnnotation",
     "ValidationIssue",
     "ValidationStatus",

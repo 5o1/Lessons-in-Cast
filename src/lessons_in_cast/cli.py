@@ -7,7 +7,6 @@ import json
 from pathlib import Path
 from typing import Sequence
 
-from .annotation import MockDialogueAnnotator
 from .characters import CharacterDefinition, load_characters
 from .config import (
     PipelineConfig,
@@ -21,7 +20,6 @@ from .renpy import DialogueExtractionRequest, SubprocessDialogueExtractor
 from .synthesis import (
     ReferenceBuildRequest,
     ReferenceVoicePipeline,
-    SilenceSynthesizer,
     VoicePipelineSynthesizer,
     load_configured_voice_pipelines,
     load_voice_pipeline,
@@ -52,11 +50,6 @@ def _parser() -> argparse.ArgumentParser:
         help="Convert dialogue.tab to raw JSONL and annotation requests.",
     )
     prepare.add_argument("--input", type=Path)
-    annotate_mock = commands.add_parser(
-        "annotate-mock",
-        help="Write deterministic mock responses.",
-    )
-    annotate_mock.add_argument("--retry", action="store_true")
     codex_next = commands.add_parser(
         "codex-next",
         help="Export the next continuous transcript packet for Codex.",
@@ -80,7 +73,6 @@ def _parser() -> argparse.ArgumentParser:
     )
     validate.add_argument("--retry", action="store_true")
     commands.add_parser("plan-tts", help="Create cached TTS and render jobs.")
-    commands.add_parser("synthesize-mock", help="Generate silent WAV test artifacts.")
     commands.add_parser(
         "prepare-voices",
         help="Prepare generated dependencies for configured voice pipelines.",
@@ -96,11 +88,6 @@ def _parser() -> argparse.ArgumentParser:
     build_reference.add_argument("--input-dir", type=Path, required=True)
     build_reference.add_argument("--output", type=Path)
     commands.add_parser("bundle", help="Build a game-relative voice release bundle.")
-    run = commands.add_parser(
-        "run-mock",
-        help="Run all stages with deterministic mocks.",
-    )
-    run.add_argument("--input", type=Path, required=True)
     production = commands.add_parser(
         "run-production",
         help="Validate external annotations, synthesize, and build the Ren'Py bundle.",
@@ -273,20 +260,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(json.dumps(workflow.status(requests_path, responses_path).to_dict()))
         return 0
 
-    use_voice_pipelines = args.command in {
-        "synthesize",
-        "run-production",
-    }
-    use_mock_annotator = args.command in {"annotate-mock", "run-mock"}
+    synthesizer = None
+    if args.command in {"synthesize", "run-production"}:
+        synthesizer = _voice_synthesizer(root, config, characters)
     pipeline = DialoguePipeline(
         config=config,
         characters=characters,
-        annotator=MockDialogueAnnotator() if use_mock_annotator else None,
-        synthesizer=(
-            _voice_synthesizer(root, config, characters)
-            if use_voice_pipelines
-            else SilenceSynthesizer(config.audio)
-        ),
+        synthesizer=synthesizer,
     )
     if args.command == "prepare":
         source = args.input or layout.dialogue_tab
@@ -298,13 +278,6 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
         )
         print(json.dumps({"dialogue_count": counts[0], "batch_count": counts[1]}))
-    elif args.command == "annotate-mock":
-        count = pipeline.annotate(
-            layout,
-            requests_path=layout.retry_requests if args.retry else None,
-            responses_path=layout.retry_responses if args.retry else None,
-        )
-        print(json.dumps({"response_count": count}))
     elif args.command == "validate":
         summary = pipeline.validate(
             layout,
@@ -315,38 +288,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     elif args.command == "plan-tts":
         jobs, renders = pipeline.plan_synthesis(layout)
         print(json.dumps({"tts_job_count": jobs, "render_task_count": renders}))
-    elif args.command in {"synthesize-mock", "synthesize"}:
+    elif args.command == "synthesize":
         jobs, rendered = pipeline.synthesize(layout)
         print(json.dumps({"tts_job_count": jobs, "rendered_count": rendered}))
     elif args.command == "bundle":
         print(
             json.dumps(
                 {"bundled_audio_count": pipeline.build_release_bundle(layout)}
-            )
-        )
-    elif args.command == "run-mock":
-        input_path = args.input if args.input.is_absolute() else root / args.input
-        result = pipeline.run(
-            PipelineRequest(
-                artifact_root=layout.root,
-                dialogue_tab_path=input_path,
-                allowed_sources=sources,
-                overrides_path=root / "configs" / "overrides.toml",
-            )
-        )
-        print(
-            json.dumps(
-                {
-                    "dialogue_count": result.dialogue_count,
-                    "batch_count": result.batch_count,
-                    "accepted_count": result.accepted_count,
-                    "review_count": result.review_count,
-                    "retryable_count": result.retryable_count,
-                    "rejected_count": result.rejected_count,
-                    "tts_job_count": result.tts_job_count,
-                    "rendered_count": result.rendered_count,
-                },
-                indent=2,
             )
         )
     elif args.command == "run-production":

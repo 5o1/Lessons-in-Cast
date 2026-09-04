@@ -9,13 +9,13 @@ from lessons_in_cast.annotation import DialogueAction
 from lessons_in_cast.config import AudioConfig
 from lessons_in_cast.synthesis import (
     AudioQualityChecker,
-    SilenceSynthesizer,
     SynthesisPlanner,
     WaveRenderer,
     apply_index_pronunciations,
     index_emotion_vector,
 )
 
+from .fakes import SilenceSynthesizer
 from .helpers import accepted_annotation, record
 
 

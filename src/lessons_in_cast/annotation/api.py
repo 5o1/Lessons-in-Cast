@@ -1,8 +1,8 @@
-"""Annotation adapter interface and portable request construction."""
+"""Portable annotation-request construction."""
 
 from __future__ import annotations
 
-from typing import Any, Protocol
+from typing import Any
 
 from ..config import AnnotationConfig
 from ..dialogue import DialogueBatch
@@ -10,15 +10,6 @@ from .schema import annotation_response_schema
 
 
 ANNOTATION_SCHEMA_VERSION = 1
-
-
-class DialogueAnnotator(Protocol):
-    """Return a raw annotation response for one dialogue batch."""
-
-    @property
-    def configuration(self) -> dict[str, Any]: ...
-
-    def annotate(self, request: dict[str, Any]) -> dict[str, Any]: ...
 
 
 def build_annotation_request(

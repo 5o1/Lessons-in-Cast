@@ -4,7 +4,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from lessons_in_cast.annotation import MockDialogueAnnotator
 from lessons_in_cast.characters import CharacterDefinition
 from lessons_in_cast.config import (
     AnnotationConfig,
@@ -12,9 +11,10 @@ from lessons_in_cast.config import (
     BatchingConfig,
     PipelineConfig,
 )
-from lessons_in_cast.pipeline import DialoguePipeline, PipelineRequest
+from lessons_in_cast.pipeline import ArtifactLayout, DialoguePipeline, PipelineRequest
 from lessons_in_cast.jsonl import read_jsonl, write_jsonl
-from lessons_in_cast.synthesis import SilenceSynthesizer
+
+from .fakes import SilenceSynthesizer, write_mock_responses
 
 
 HEADER = (
@@ -23,7 +23,7 @@ HEADER = (
 
 
 class PipelineTests(unittest.TestCase):
-    def test_mock_pipeline_runs_end_to_end(self) -> None:
+    def test_pipeline_stages_run_end_to_end(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             dialogue_tab = root / "dialogue.tab"
@@ -57,34 +57,42 @@ class PipelineTests(unittest.TestCase):
             pipeline = DialoguePipeline(
                 config=config,
                 characters={"a": character},
-                annotator=MockDialogueAnnotator(),
                 synthesizer=SilenceSynthesizer(config.audio),
             )
             artifacts = root / "build"
-            result = pipeline.run(
-                PipelineRequest(
-                    artifact_root=artifacts,
-                    dialogue_tab_path=dialogue_tab,
-                    allowed_sources=(Path("game/AmiEvents.rpy"),),
-                )
+            request = PipelineRequest(
+                artifact_root=artifacts,
+                dialogue_tab_path=dialogue_tab,
+                allowed_sources=(Path("game/AmiEvents.rpy"),),
             )
-            self.assertEqual(result.dialogue_count, 2)
-            self.assertEqual(result.batch_count, 2)
-            self.assertEqual(result.accepted_count, 2)
-            self.assertEqual(result.rendered_count, 2)
-            self.assertTrue(result.artifacts.voice_manifest.is_file())
-            self.assertTrue(result.artifacts.run_manifest.is_file())
-            self.assertTrue(result.artifacts.renpy_script.is_file())
+            dialogue_count, batch_count = pipeline.prepare(request)
+            layout = ArtifactLayout(artifacts)
+            write_mock_responses(
+                layout.annotation_requests,
+                layout.annotation_responses,
+            )
+            validated = pipeline.validate(layout)
+            pipeline.plan_synthesis(layout)
+            _, rendered_count = pipeline.synthesize(layout)
+            pipeline.build_release_bundle(layout)
+
+            self.assertEqual(dialogue_count, 2)
+            self.assertEqual(batch_count, 2)
+            self.assertEqual(validated.accepted_count, 2)
+            self.assertEqual(rendered_count, 2)
+            self.assertTrue(layout.voice_manifest.is_file())
+            self.assertTrue(layout.run_manifest.is_file())
+            self.assertTrue(layout.renpy_script.is_file())
             self.assertTrue(
                 (
-                    result.artifacts.release_bundle
+                    layout.release_bundle
                     / "game"
                     / "lessons_in_cast_voice.rpy"
                 ).is_file()
             )
             self.assertTrue(
                 (
-                    result.artifacts.release_bundle
+                    layout.release_bundle
                     / "game"
                     / "voice"
                     / "AmiEvents"
@@ -126,7 +134,6 @@ class PipelineTests(unittest.TestCase):
             pipeline = DialoguePipeline(
                 config=config,
                 characters={"a": character},
-                annotator=MockDialogueAnnotator(),
             )
             artifacts = root / "build"
             request = PipelineRequest(
@@ -135,11 +142,11 @@ class PipelineTests(unittest.TestCase):
                 allowed_sources=(Path("game/AmiEvents.rpy"),),
             )
             pipeline.prepare(request)
-            layout = request.artifact_root
-            from lessons_in_cast.pipeline import ArtifactLayout
-
-            artifact_layout = ArtifactLayout(layout)
-            pipeline.annotate(artifact_layout)
+            artifact_layout = ArtifactLayout(request.artifact_root)
+            write_mock_responses(
+                artifact_layout.annotation_requests,
+                artifact_layout.annotation_responses,
+            )
             envelopes = list(read_jsonl(artifact_layout.annotation_responses))
             envelopes[0]["response"]["annotations"].pop()
             write_jsonl(envelopes, artifact_layout.annotation_responses)
@@ -148,10 +155,9 @@ class PipelineTests(unittest.TestCase):
             retry_requests = list(read_jsonl(artifact_layout.retry_requests))
             self.assertEqual(len(retry_requests), 1)
             self.assertEqual(len(retry_requests[0]["batch"]["targets"]), 1)
-            pipeline.annotate(
-                artifact_layout,
-                requests_path=artifact_layout.retry_requests,
-                responses_path=artifact_layout.retry_responses,
+            write_mock_responses(
+                artifact_layout.retry_requests,
+                artifact_layout.retry_responses,
             )
             retried = pipeline.validate(artifact_layout, retry=True)
             self.assertEqual(retried.accepted_count, 2)

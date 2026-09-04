@@ -6,7 +6,6 @@ import unittest
 from lessons_in_cast.annotation import (
     AnnotationValidator,
     DialogueAction,
-    MockDialogueAnnotator,
     ValidationStatus,
     apply_overrides,
     build_annotation_request,
@@ -14,6 +13,7 @@ from lessons_in_cast.annotation import (
 from lessons_in_cast.config import AnnotationConfig
 from lessons_in_cast.dialogue import DialogueBatch
 
+from .fakes import MockDialogueAnnotator
 from .helpers import record
 
 
