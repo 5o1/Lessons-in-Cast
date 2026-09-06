@@ -4,9 +4,15 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from lessons_in_cast.characters import CharacterDefinition
-from lessons_in_cast.config import AnnotationConfig, AudioConfig, BatchingConfig, PipelineConfig
-from lessons_in_cast.pipeline import ArtifactLayout, DialoguePipeline, PipelineRequest
+from lessons_in_cast_core.characters import CharacterDefinition
+from lessons_in_cast_core.config import (
+    AnnotationConfig,
+    AudioConfig,
+    BatchingConfig,
+    PipelineConfig,
+)
+from lessons_in_cast_core.galgame.renpy import RenPyBackend
+from lessons_in_cast_core.pipeline import ArtifactLayout, DialoguePipeline, PipelineRequest
 
 from .fakes import SilenceSynthesizer, write_mock_responses
 
@@ -40,9 +46,7 @@ class ProductionPipelineTests(unittest.TestCase):
                 definition_path="game/definitions.rpy",
                 definition_line=1,
                 built_in=False,
-                model_path="",
-                generation_script_path="",
-                base_speed=1.0,
+                default_voice_profile="",
             )
             annotation_root = root / "annotation"
             request = PipelineRequest(
@@ -53,6 +57,7 @@ class ProductionPipelineTests(unittest.TestCase):
             annotation_pipeline = DialoguePipeline(
                 config=config,
                 characters={"a": character},
+                galgame_backend=RenPyBackend(),
             )
             annotation_pipeline.prepare(request)
             annotation_layout = ArtifactLayout(annotation_root)
@@ -68,6 +73,7 @@ class ProductionPipelineTests(unittest.TestCase):
                 config=config,
                 characters={"a": character},
                 synthesizer=SilenceSynthesizer(config.audio),
+                galgame_backend=RenPyBackend(),
             )
             result = production_pipeline.run_from_responses(
                 PipelineRequest(
@@ -80,18 +86,16 @@ class ProductionPipelineTests(unittest.TestCase):
 
             self.assertEqual(
                 {path.name for path in production_root.iterdir()},
-                {"release_bundle", "run_manifest.json", "unrelated.txt"},
+                {"release_bundle", "lessons_in_cast_voice_patch.zip", "run_manifest.json", "unrelated.txt"},
             )
             self.assertTrue(
                 (
                     result.artifacts.release_bundle
                     / "game"
-                    / "voice"
-                    / "chapter"
-                    / "main"
-                    / "one.wav"
+                    / "lessons_in_cast_voice.rpa"
                 ).is_file()
             )
+            self.assertTrue(result.artifacts.release_patch.is_file())
 
 
 if __name__ == "__main__":

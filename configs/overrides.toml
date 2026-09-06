@@ -2,3 +2,9 @@
 # Values replace the corresponding model annotation fields.
 
 [dialogue]
+
+[dialogue.22190eff8313c50fbeae18d8]
+spoken_text = "Hmm?"
+emotion = "confused"
+intensity = 0.08
+approved = true

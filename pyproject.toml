@@ -5,13 +5,13 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "lessons-in-cast"
 version = "0.1.0"
-description = "A model-agnostic dialogue-to-voice pipeline for Ren'Py games."
+description = "A backend-agnostic dialogue-to-voice pipeline for visual novels."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []
 
 [project.scripts]
-lessons-in-cast = "lessons_in_cast.cli:main"
+lessons-in-cast = "lessons_in_cast_core.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

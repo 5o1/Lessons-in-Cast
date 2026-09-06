@@ -4,15 +4,14 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from lessons_in_cast.config import BatchingConfig
-from lessons_in_cast.dialogue import (
+from lessons_in_cast_core.config import BatchingConfig
+from lessons_in_cast_core.dialogue import (
     DialogueBatchBuilder,
-    DialogueTabError,
     JsonlDialogueReader,
     JsonlDialogueWriter,
-    TabDialogueReader,
     audit_dialogue,
 )
+from lessons_in_cast_core.galgame.renpy import DialogueTabError, TabDialogueReader
 
 from .helpers import record
 
@@ -103,7 +102,10 @@ class DialogueBatchTests(unittest.TestCase):
         batches = list(builder.build(records))
         self.assertTrue(all(len(batch.targets) == 1 for batch in batches))
         self.assertTrue(
-            all(not batch.context_before and not batch.context_after for batch in batches)
+            all(
+                not batch.context_before and not batch.context_after
+                for batch in batches
+            )
         )
 
     def test_structural_audit_reports_unknown_characters(self) -> None:

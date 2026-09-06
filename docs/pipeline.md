@@ -1,12 +1,12 @@
 # Pipeline
 
 Lessons in Cast keeps extraction, semantic annotation, validation, synthesis,
-and Ren'Py integration as independent, restartable stages. All generated
+and game integration as independent, restartable stages. All generated
 intermediates and build products are contained under build/current/ by default.
 
 ## Data flow
 
-    Ren'Py release
+    configured game release (Ren'Py by default)
       -> build/current/dialogue.tab
       -> build/current/raw.jsonl
       -> build/current/annotation_requests.jsonl
@@ -14,11 +14,15 @@ intermediates and build products are contained under build/current/ by default.
       -> build/current/annotation_responses.jsonl
       -> build/current/validated.jsonl
       -> build/current/tts_jobs.jsonl + build/current/render_tasks.jsonl
-      -> build/current/voice/<dialogue-id>.wav
-      -> build/current/release_bundle/game/voice/<source-script>/<dialogue-id>.wav
+      -> build/current/audio/raw/<character>/<cache-key>.wav
+      -> build/current/voice/<dialogue-id>.opus
+      -> build/current/release_bundle/game/lessons_in_cast_voice.rpa
       -> build/current/release_bundle/game/lessons_in_cast_voice.rpy
+      -> build/current/lessons_in_cast_voice_patch.zip
 
-build/current/raw.jsonl is a lossless representation of the six columns emitted by Ren'Py.
+build/current/raw.jsonl is the backend-normalized, lossless dialogue
+representation. For Ren'Py, it preserves all six columns emitted by the native
+dialogue command.
 No semantic cleaning or source-level control-flow reconstruction occurs before
 annotation.
 
@@ -33,6 +37,20 @@ rules, configured emotion/effect values, placeholders, tags, control
 characters, and suspicious text-length changes. Records become accepted,
 review_required, retryable, or rejected. Only accepted records can become TTS
 jobs.
+
+## Galgame backends
+
+The `[galgame]` section of `configs/pipeline.toml` selects a backend by stable
+ID; the current default is `renpy`. `GalgameBackend` is the public contract in
+`src/lessons_in_cast_core/galgame/api.py`. Each implementation owns extraction,
+normalization of its native dialogue export, virtual voice-path construction,
+integration-artifact generation, and release-bundle installation. The main
+pipeline depends only on this contract.
+
+Ren'Py-specific code lives under `src/lessons_in_cast_core/galgame/renpy/`. To
+add another engine, implement `GalgameBackend` in a sibling package and register
+its stable ID in `galgame/loader.py`; speech profiles and synthesis backends do
+not need to change.
 
 ## Codex annotation workflow
 
@@ -56,7 +74,7 @@ configured chapter range.
 
 Prepare the first packet:
 
-    lessons-in-cast prepare
+    lessons-in-cast prepare --scope amnesia_ami_maya
     lessons-in-cast codex-status
     lessons-in-cast codex-next
 
@@ -90,12 +108,15 @@ Human overrides in configs/overrides.toml are keyed by stable dialogue ID. Set
 approved = true to approve a structurally valid warning, or status = "rejected"
 to prevent synthesis.
 
-TTS jobs are cached by text, character, emotion, delivery, model paths, backend
-configuration, and audio configuration. Ensemble characters generate one job
+TTS jobs are cached by text, character, emotion, delivery, resolved
+voice-profile configuration, and audio configuration. Ensemble characters
+generate one job
 per configured member and a line-level unison render task. Effects remain on
 the render task rather than the character.
 
-Final audio uses Ren'Py dialogue identifiers as filenames. The generated
+The configured backend owns dialogue export parsing, virtual audio paths,
+integration artifacts, and release installation. The default Ren'Py backend
+uses dialogue identifiers as filenames. The generated
 lessons_in_cast_voice.rpy configures automatic voice lookup as:
 
     config.auto_voice = _lessons_in_cast_auto_voice
@@ -103,36 +124,43 @@ lessons_in_cast_voice.rpy configures automatic voice lookup as:
 The release bundle is produced separately and never mutates the configured
 game release.
 Each render task carries both an internal build path and an install-time virtual
-path. For example, dialogue from game/chapter/main.rpy is installed below
-game/voice/chapter/main/. The generated callable maps each Ren'Py dialogue
-identifier to that exact virtual path. Rebuilding replaces the bundle's game
-tree, so audio removed from the current plan cannot survive as a stale file.
+path. For example, dialogue from game/chapter/main.rpy receives a virtual path
+below voice/chapter/main/. Delivery audio is 48 kHz mono Opus and is packed into
+game/lessons_in_cast_voice.rpa; individual audio files are not emitted in the
+release tree. The generated callable maps each Ren.Py dialogue identifier to its
+RPA member path. The sibling lessons_in_cast_voice_patch.zip contains a top-level
+game/ directory and can be overlaid onto a Ren.Py release root. Rebuilding
+replaces the bundle.s game tree and patch ZIP, so removed audio cannot survive
+as a stale file.
 
 IndexTTS 2.5 runs in its own configured Python environment through one
-persistent JSON-lines worker. Before synthesis, each character pipeline
-automatically selects and combines source samples, applies the held-open silence
-gate, and writes a generated reference below `build/references/`. A sidecar
-manifest binds that reference to source hashes, processing settings, and the
-pipeline ID, so unchanged references are reused and changed inputs are rebuilt.
-The worker consumes this single prepared artifact directly instead of applying
-the silence gate a second time. IndexTTS itself hard-truncates the prepared
-reference to its first 15 seconds.
+persistent JSON-lines worker. Each profile points to a curated reference below
+its local `assets/` directory and records the ordered source filenames used to
+build it. Profile assets are ignored by Git and must be provisioned locally.
+When the prepared reference is missing, `prepare-voices` deterministically
+rebuilds it from those ordered sources with the configured held-open silence
+gate. The worker consumes the prepared artifact directly instead of applying
+the gate a second time. IndexTTS itself hard-truncates the reference to its
+first 15 seconds.
 
-Character rendering is selected by `generation_script_path`. The backend-neutral
-`VoicePipeline` interface and reusable backend-family bases live under
-`src/lessons_in_cast/synthesis/`. The root `voice_pipelines/` directory is the
-game-specific extension layer: each character/backend/strategy combination
-lives there in a separate module.
+Character rendering is selected by `default_voice_profile`. Public contracts and profile loading live under
+`src/lessons_in_cast_core/synthesis/profiles/`; reference preparation lives under
+`synthesis/references/`; concrete backend families live under
+`synthesis/backends/`. The model-neutral planner, job types, renderer, and backend
+protocol remain directly under `synthesis/`. The root `profiles/` directory is the
+user-configurable project layer. It supports both single-file entrypoints and
+bundles containing `pipeline.py`, configuration, and profile-owned assets.
 
-The character pipeline TOML also configures minimum detected speech,
+The active bundle owns its model ID, reference settings, `base_speed`,
 pronunciation, language, seed, precision, segmentation, and acoustic-token
-generation. Project
-emotions are mapped to the official eight axes, biased and capped to a total
-strength of 0.8 like the official WebUI; neutral uses a zero vector. The worker
-also overrides the upstream hard-coded sampling flag so configured
-`do_sample=false` actually reaches the token generator. Each character has a
-required `base_speed` multiplier in `configs/characters.toml`; values above 1.0
-are faster, and values below 1.0 are slower.
+generation. Project emotions are mapped to the official eight axes, biased and
+capped to a total strength of 0.8 like the official WebUI; neutral uses a zero
+vector. The worker also overrides the upstream hard-coded sampling flag so
+configured `do_sample=false` actually reaches the token generator. Model IDs are
+resolved through `configs/model_sources.toml`; resolved source metadata is part
+of the effective profile configuration. Per-dialogue profile selection is
+reserved for a future extension and is not part of the
+current dialogue schema.
 
 Use `--build-dir` to select another generated-file root.
 
@@ -160,10 +188,9 @@ Use `--build-dir` to select another generated-file root.
 Semantic cleaning remains an independent Codex file workflow;
 the production runner only consumes its response JSONL and never invokes Codex.
 
-run-production performs preparation, validation, TTS planning, IndexTTS
-synthesis, audio validation, and Ren'Py installation in one process. By default
+run-production performs preparation, validation, TTS planning, speech synthesis, audio validation, and installation through the selected galgame backend in one process. By default
 it starts from a fresh set of pipeline-owned artifacts and, after success,
-retains only release_bundle/ and run_manifest.json. Input dialogue and response
+retains release_bundle/, lessons_in_cast_voice_patch.zip, and run_manifest.json. Input dialogue and response
 files must therefore be outside the selected build directory. Pass
 --cache-intermediates while debugging to retain request/validation JSONL, raw
 TTS audio, rendered audio, and manifests.

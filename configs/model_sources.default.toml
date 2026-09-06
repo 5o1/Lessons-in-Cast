@@ -1,8 +1,9 @@
-# Default model source registry.
+# Default runtime model registry.
 #
 # Copy this file to `configs/model_sources.toml` and define the models available
-# in the local workspace. The populated local file is intentionally ignored by
-# Git because model choices and paths are machine-specific.
+# in the local workspace. Voice profiles reference these entries by model ID. The
+# populated local file is intentionally ignored by Git because model choices and
+# paths are machine-specific.
 
 [models]
 

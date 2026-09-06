@@ -2,8 +2,8 @@
 
 Lessons in Cast is a source-workspace application. The installed Python package
 contains reusable orchestration code, while game configuration, prompts, and
-character voice pipelines remain project files at the repository root. Run the
-CLI from this checkout or one of its descendants.
+character voice profiles remain project files under `profiles/` at the
+repository root. Run the CLI from this checkout or one of its descendants.
 
 ## Local installation
 
@@ -14,12 +14,16 @@ python -m pip install -e .
 ```
 
 The control process uses the standard library. Speech backends run in their own
-environments. Third-party repositories are tracked as Git submodules: their URLs
+environments. Final Opus encoding and validation require `ffmpeg` and `ffprobe`
+with libopus support on `PATH`; their commands and speech bitrate are configurable
+in `configs/pipeline.toml`. Third-party repositories are tracked as Git submodules: their URLs
 are stored in `.gitmodules`, their revisions are pinned by the parent gitlinks,
 and project-specific roles and setup notes are recorded in
-`external/sources.toml`. Local model directories remain ignored, with their
-Hugging Face repositories and revisions recorded in the ignored local file
-`configs/model_sources.toml`. Create it from the tracked
+`external/sources.toml`. Local model directories remain ignored. The runtime
+model registry in the ignored local file `configs/model_sources.toml` maps
+stable model IDs to local paths and records their providers, repositories,
+revisions, and licenses. Voice profiles select models through those IDs. Create
+it from the tracked
 `configs/model_sources.default.toml` template.
 
 Clone the workspace and its external projects together:
@@ -53,17 +57,18 @@ Generated and downloaded data are intentionally kept out of Git:
 build/
 ├── current/       active restartable pipeline run
 ├── runs/          named historical and production runs
-├── auditions/     listening tests
-└── references/    generated model-ready reference audio and manifests
+└── auditions/     listening tests
 
+profiles/*/assets/ local reference audio and ordered source clips
 external/          third-party submodule worktrees pinned by the parent repo
 models/            local weights and source samples
-game_releases/     local Ren'Py releases used for analysis
+game_releases/     local game releases used for analysis
 ```
 
-`lessons-in-cast prepare-voices` constructs or reuses every configured generated
-voice dependency. Synthesis also prepares the required character pipeline
-lazily, so deleting `build/references/` never requires manual reconstruction.
+`lessons-in-cast prepare-voices` validates or rebuilds every configured voice
+reference. Synthesis does the same lazily. Profile asset directories are ignored
+by Git and must be backed up or reconstructed from locally retained sources;
+they are never uploaded with the repository.
 
 ## Verification
 

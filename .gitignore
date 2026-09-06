@@ -24,6 +24,8 @@ htmlcov/
 
 # Build products and pipeline intermediates
 /build/
+/temp/
+/profiles/**/assets/
 
 # Packaging output
 /dist/

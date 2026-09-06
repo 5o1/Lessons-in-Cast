@@ -1,0 +1,26 @@
+# Named dialogue ranges used for small, reproducible pipeline demonstrations.
+# Dialogue identifiers are the canonical boundaries; line numbers are retained for review.
+
+[scopes.amnesia_ami_maya]
+description = "From Ami waking Sensei after his memory loss through Maya leaving for the dorm."
+source = "game/script.rpy"
+start_identifier = "start2_4e03ca9b"
+start_line = 456
+end_identifier = "nextstart_a20cefa7_1"
+end_line = 912
+inclusive = true
+
+# All of these speakers remain in the transcript so the annotator receives the
+# complete conversational context. Only Ami and Maya are synthesis targets.
+context_characters = ["narrator", "s", "a", "m"]
+voice_characters = ["a", "m"]
+context_only_characters = ["narrator", "s"]
+
+# Ami is initially emitted as the generic unknown speaker until she gives her
+# name. This override is deliberately limited to that opening portion.
+[[scopes.amnesia_ami_maya.speaker_overrides]]
+source_character = "q"
+target_character = "a"
+start_identifier = "start2_4e03ca9b"
+end_identifier = "nextstartt_1ceb5455"
+inclusive = true

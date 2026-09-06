@@ -4,10 +4,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from lessons_in_cast.characters import CharacterDefinition
-from lessons_in_cast.annotation import DialogueAction
-from lessons_in_cast.config import AudioConfig
-from lessons_in_cast.synthesis import (
+from lessons_in_cast_core.characters import CharacterDefinition
+from lessons_in_cast_core.annotation import DialogueAction
+from lessons_in_cast_core.config import AudioConfig
+from lessons_in_cast_core.synthesis import (
     AudioQualityChecker,
     SynthesisPlanner,
     WaveRenderer,
@@ -23,7 +23,6 @@ def character(
     character_id: str,
     *,
     members: tuple[str, ...] = (),
-    base_speed: float = 1.0,
 ) -> CharacterDefinition:
     return CharacterDefinition(
         id=character_id,
@@ -34,9 +33,7 @@ def character(
         definition_path="game/definitions.rpy",
         definition_line=1,
         built_in=False,
-        model_path="",
-        generation_script_path="",
-        base_speed=base_speed,
+        default_voice_profile="",
     )
 
 
@@ -57,15 +54,27 @@ class SynthesisTests(unittest.TestCase):
         self.assertEqual(len(plan.render_tasks), 2)
         self.assertEqual(len(plan.render_tasks[1].component_job_ids), 2)
 
-    def test_planner_carries_character_base_speed_into_jobs_and_cache_keys(self) -> None:
+    def test_planner_separates_wav_intermediate_from_opus_delivery(self) -> None:
         item = record(1, character="a")
-        regular = SynthesisPlanner({"a": character("a")}).plan(
-            {item.id: item}, [accepted_annotation(item)]
-        )
-        faster = SynthesisPlanner(
-            {"a": character("a", base_speed=1.25)}
+        plan = SynthesisPlanner(
+            {"a": character("a")},
+            audio_config=AudioConfig(format="opus", intermediate_format="wav"),
         ).plan({item.id: item}, [accepted_annotation(item)])
-        self.assertEqual(faster.jobs[0].base_speed, 1.25)
+        self.assertTrue(plan.jobs[0].output_path.endswith(".wav"))
+        self.assertTrue(plan.render_tasks[0].output_path.endswith(".opus"))
+        self.assertTrue(plan.render_tasks[0].virtual_path.endswith(".opus"))
+
+    def test_planner_uses_synthesizer_configuration_in_cache_keys(self) -> None:
+        item = record(1, character="a")
+        regular = SynthesisPlanner(
+            {"a": character("a")},
+            synthesizer_configuration={"profiles": {"a": {"base_speed": 1.0}}},
+        ).plan({item.id: item}, [accepted_annotation(item)])
+        faster = SynthesisPlanner(
+            {"a": character("a")},
+            synthesizer_configuration={"profiles": {"a": {"base_speed": 1.25}}},
+        ).plan({item.id: item}, [accepted_annotation(item)])
+        self.assertFalse(hasattr(faster.jobs[0], "base_speed"))
         self.assertNotEqual(regular.jobs[0].cache_key, faster.jobs[0].cache_key)
 
     def test_silence_synthesis_render_and_quality_check(self) -> None:
@@ -90,7 +99,7 @@ class SynthesisTests(unittest.TestCase):
             self.assertTrue(result.valid)
             self.assertGreater(result.duration_seconds or 0, 0)
 
-    def test_unsafe_renpy_identifier_is_not_planned(self) -> None:
+    def test_unsafe_identifier_is_not_planned(self) -> None:
         item = record(1, character="a")
         item = type(item)(
             id=item.id,
@@ -100,7 +109,7 @@ class SynthesisTests(unittest.TestCase):
             dialogue=item.dialogue,
             filename=item.filename,
             line_number=item.line_number,
-            renpy_script=item.renpy_script,
+            source_statement=item.source_statement,
         )
         plan = SynthesisPlanner({"a": character("a")}).plan(
             {item.id: item},
@@ -122,9 +131,9 @@ class SynthesisTests(unittest.TestCase):
     def test_index_tts_pronunciation(self) -> None:
         self.assertEqual(
             apply_index_pronunciations(
-                "Chinami met Chinamiya.", {"Chinami": "CH IY0 . N AA1 . M IY0"}
+                "chinami met Chinamiya.", {"Chinami": "CH IY1 . N AA0 . M IY0"}
             ),
-            "<Chinami|CH IY0 . N AA1 . M IY0> met Chinamiya.",
+            "<chinami|CH IY1 . N AA0 . M IY0> met Chinamiya.",
         )
 
     def test_index_tts_emotion_vector_uses_documented_axis_order(self) -> None:

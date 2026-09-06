@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from lessons_in_cast.annotation import (
+from lessons_in_cast_core.annotation import (
     Annotation,
     DialogueAction,
     ValidatedAnnotation,
     ValidationStatus,
 )
-from lessons_in_cast.dialogue import DialogueRecord
+from lessons_in_cast_core.dialogue import DialogueRecord
 
 
 def record(
@@ -24,7 +24,7 @@ def record(
         dialogue=dialogue,
         filename=filename,
         line_number=sequence + 1,
-        renpy_script=f'{character} "[what]"',
+        source_statement=f'{character} "[what]"',
     )
 
 

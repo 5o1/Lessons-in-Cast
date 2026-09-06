@@ -4,15 +4,16 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from lessons_in_cast.characters import CharacterDefinition
-from lessons_in_cast.config import (
+from lessons_in_cast_core.characters import CharacterDefinition
+from lessons_in_cast_core.config import (
     AnnotationConfig,
     AudioConfig,
     BatchingConfig,
     PipelineConfig,
 )
-from lessons_in_cast.pipeline import ArtifactLayout, DialoguePipeline, PipelineRequest
-from lessons_in_cast.jsonl import read_jsonl, write_jsonl
+from lessons_in_cast_core.galgame.renpy import RenPyBackend
+from lessons_in_cast_core.pipeline import ArtifactLayout, DialoguePipeline, PipelineRequest
+from lessons_in_cast_core.jsonl import read_jsonl, write_jsonl
 
 from .fakes import SilenceSynthesizer, write_mock_responses
 
@@ -34,7 +35,9 @@ class PipelineTests(unittest.TestCase):
                 encoding="utf-8",
             )
             config = PipelineConfig(
-                batching=BatchingConfig(target_size=1, context_before=1, context_after=1),
+                batching=BatchingConfig(
+                    target_size=1, context_before=1, context_after=1
+                ),
                 annotation=AnnotationConfig(
                     allowed_emotions=frozenset({"neutral"}),
                     allowed_effects=frozenset(),
@@ -50,14 +53,13 @@ class PipelineTests(unittest.TestCase):
                 definition_path="game/definitions.rpy",
                 definition_line=1,
                 built_in=False,
-                model_path="",
-                generation_script_path="",
-                base_speed=1.0,
+                default_voice_profile="",
             )
             pipeline = DialoguePipeline(
                 config=config,
                 characters={"a": character},
                 synthesizer=SilenceSynthesizer(config.audio),
+                galgame_backend=RenPyBackend(),
             )
             artifacts = root / "build"
             request = PipelineRequest(
@@ -82,7 +84,11 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(rendered_count, 2)
             self.assertTrue(layout.voice_manifest.is_file())
             self.assertTrue(layout.run_manifest.is_file())
-            self.assertTrue(layout.renpy_script.is_file())
+            self.assertTrue(
+                (
+                    layout.galgame_artifacts / "lessons_in_cast_voice.rpy"
+                ).is_file()
+            )
             self.assertTrue(
                 (
                     layout.release_bundle
@@ -94,11 +100,10 @@ class PipelineTests(unittest.TestCase):
                 (
                     layout.release_bundle
                     / "game"
-                    / "voice"
-                    / "AmiEvents"
-                    / "one.wav"
+                    / "lessons_in_cast_voice.rpa"
                 ).is_file()
             )
+            self.assertTrue(layout.release_patch.is_file())
 
     def test_validation_exports_only_failed_targets_for_retry(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -111,7 +116,9 @@ class PipelineTests(unittest.TestCase):
                 encoding="utf-8",
             )
             config = PipelineConfig(
-                batching=BatchingConfig(target_size=2, context_before=1, context_after=1),
+                batching=BatchingConfig(
+                    target_size=2, context_before=1, context_after=1
+                ),
                 annotation=AnnotationConfig(
                     allowed_emotions=frozenset({"neutral"}),
                     allowed_effects=frozenset(),
@@ -127,13 +134,12 @@ class PipelineTests(unittest.TestCase):
                 definition_path="game/definitions.rpy",
                 definition_line=1,
                 built_in=False,
-                model_path="",
-                generation_script_path="",
-                base_speed=1.0,
+                default_voice_profile="",
             )
             pipeline = DialoguePipeline(
                 config=config,
                 characters={"a": character},
+                galgame_backend=RenPyBackend(),
             )
             artifacts = root / "build"
             request = PipelineRequest(

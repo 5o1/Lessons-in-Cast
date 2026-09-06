@@ -5,14 +5,14 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from lessons_in_cast.annotation import (
+from lessons_in_cast_core.annotation import (
     CodexAnnotationWorkflow,
     CodexWorkspace,
     build_annotation_request,
 )
-from lessons_in_cast.config import AnnotationConfig, BatchingConfig
-from lessons_in_cast.dialogue import DialogueBatchBuilder
-from lessons_in_cast.jsonl import read_jsonl, write_jsonl
+from lessons_in_cast_core.config import AnnotationConfig, BatchingConfig
+from lessons_in_cast_core.dialogue import DialogueBatchBuilder
+from lessons_in_cast_core.jsonl import read_jsonl, write_jsonl
 
 from .helpers import record
 

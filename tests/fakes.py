@@ -7,10 +7,10 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
-from lessons_in_cast.config import AudioConfig
-from lessons_in_cast.hashing import content_hash
-from lessons_in_cast.jsonl import read_jsonl, write_jsonl
-from lessons_in_cast.synthesis.types import TtsJob
+from lessons_in_cast_core.config import AudioConfig
+from lessons_in_cast_core.hashing import content_hash
+from lessons_in_cast_core.jsonl import read_jsonl, write_jsonl
+from lessons_in_cast_core.synthesis.types import TtsJob
 
 
 class MockDialogueAnnotator:

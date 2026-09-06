@@ -3,15 +3,15 @@ from __future__ import annotations
 import copy
 import unittest
 
-from lessons_in_cast.annotation import (
+from lessons_in_cast_core.annotation import (
     AnnotationValidator,
     DialogueAction,
     ValidationStatus,
     apply_overrides,
     build_annotation_request,
 )
-from lessons_in_cast.config import AnnotationConfig
-from lessons_in_cast.dialogue import DialogueBatch
+from lessons_in_cast_core.config import AnnotationConfig
+from lessons_in_cast_core.dialogue import DialogueBatch
 
 from .fakes import MockDialogueAnnotator
 from .helpers import record

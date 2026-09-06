@@ -1,3 +1,6 @@
+[galgame]
+backend = "renpy"
+
 [batching]
 target_size = 50
 context_before = 12
@@ -37,9 +40,13 @@ batches_per_packet = 2
 source_files = ["game/script.rpy"]
 
 [audio]
-format = "wav"
-sample_rate = 44100
+format = "opus"
+intermediate_format = "wav"
+sample_rate = 48000
 channels = 1
 sample_width = 2
+bitrate_kbps = 48
+ffmpeg_executable = "ffmpeg"
+ffprobe_executable = "ffprobe"
 minimum_duration_seconds = 0.05
 maximum_duration_seconds = 120.0

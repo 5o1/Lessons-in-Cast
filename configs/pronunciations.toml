@@ -1,0 +1,14 @@
+schema_version = 1
+
+# Backend-specific pronunciations for proper nouns used in dialogue text.
+[proper_nouns.Ami]
+arpabet = "EY1 . M IY0"
+
+[proper_nouns.Maya]
+arpabet = "M AY1 . Y AH0"
+
+[proper_nouns.Ayane]
+arpabet = "AA0 . Y AA1 . N EH0"
+
+[proper_nouns.Chinami]
+arpabet = "CH IY1 . N AA0 . M IY0"
