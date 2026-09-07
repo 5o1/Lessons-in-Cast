@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from ...performance import SpeechAdaptation
 from ..references.builder import ReferenceBuildResult
 from ..types import TtsJob
 
@@ -40,6 +41,18 @@ class VoicePipeline(ABC):
         """Prepare generated dependencies and return their paths."""
 
         return ()
+
+    def adapt(self, job: TtsJob) -> SpeechAdaptation:
+        """Compile a job for diagnostics before rendering."""
+
+        return SpeechAdaptation(
+            job_id=job.id,
+            dialogue_id=job.dialogue_id,
+            backend=self.pipeline_id,
+            text=job.text,
+            emotion=job.emotion,
+            parameters={"performance": job.performance.to_dict()},
+        )
 
     @abstractmethod
     def render(self, job: TtsJob, artifact_root: Path) -> Path:

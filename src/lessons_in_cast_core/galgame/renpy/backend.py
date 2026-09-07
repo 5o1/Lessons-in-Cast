@@ -82,8 +82,12 @@ class RenPyBackend(GalgameBackend):
         source: Path,
         *,
         allowed_sources: Iterable[Path | str] | None = None,
+        source_root: Path | None = None,
     ) -> Iterator[DialogueRecord]:
-        return TabDialogueReader(allowed_sources).read(source)
+        return TabDialogueReader(
+            allowed_sources,
+            source_root=source_root,
+        ).read(source)
 
     def voice_virtual_path(
         self,

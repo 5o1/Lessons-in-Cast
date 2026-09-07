@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
+from ...performance import SpeechAdaptation
 from ...characters import CharacterDefinition
 from ...config import PipelineConfig
 from ...model_registry import ModelRegistry, load_model_registry
@@ -76,24 +78,42 @@ def load_voice_profile(
 
 
 class VoiceProfileSynthesizer:
-    """SpeechSynthesizer adapter routing jobs to configured voice profiles."""
+    """Route speech jobs by character ID and resolved profile entrypoint."""
 
-    def __init__(self, pipelines: dict[str, VoicePipeline]) -> None:
+    def __init__(
+        self,
+        pipelines: dict[tuple[str, str], VoicePipeline],
+        default_profiles: dict[str, str],
+    ) -> None:
         if not pipelines:
             raise ValueError("At least one character voice profile is required")
         self._pipelines = dict(pipelines)
+        self._default_profiles = dict(default_profiles)
+        self._active_pipeline: VoicePipeline | None = None
+        self._closed_pipeline_ids: set[int] = set()
 
     @property
     def name(self) -> str:
         return "character-voice-profiles"
+
+    def _display_key(self, character_id: str, entrypoint: str) -> str:
+        if self._default_profiles.get(character_id) == entrypoint:
+            return character_id
+        return f"{character_id}@{entrypoint}"
 
     @property
     def configuration(self) -> dict[str, Any]:
         return {
             "adapter": self.name,
             "profiles": {
-                character_id: pipeline.configuration
-                for character_id, pipeline in sorted(self._pipelines.items())
+                self._display_key(character_id, entrypoint): {
+                    "character_id": character_id,
+                    "entrypoint": entrypoint,
+                    "pipeline": pipeline.configuration,
+                }
+                for (character_id, entrypoint), pipeline in sorted(
+                    self._pipelines.items()
+                )
             },
         }
 
@@ -101,21 +121,75 @@ class VoiceProfileSynthesizer:
         """Prepare generated dependencies for every configured profile."""
 
         return {
-            character_id: pipeline.prepare()
-            for character_id, pipeline in sorted(self._pipelines.items())
+            self._display_key(character_id, entrypoint): pipeline.prepare()
+            for (character_id, entrypoint), pipeline in sorted(self._pipelines.items())
         }
 
-    def synthesize(self, job: TtsJob, artifact_root: Path) -> Path:
-        pipeline = self._pipelines.get(job.character_id)
+    def supports(
+        self,
+        character_id: str,
+        entrypoint: str | None = None,
+    ) -> bool:
+        """Return whether a resolved character/profile route can be rendered."""
+
+        resolved = entrypoint or self._default_profiles.get(character_id, "")
+        return (character_id, resolved) in self._pipelines
+
+    def order_jobs(self, jobs: Iterable[TtsJob]) -> tuple[TtsJob, ...]:
+        """Group jobs by profile so large models are loaded once per route."""
+
+        return tuple(
+            sorted(
+                jobs,
+                key=lambda job: (
+                    job.voice_profile
+                    or self._default_profiles.get(job.character_id, ""),
+                    job.character_id,
+                    job.id,
+                ),
+            )
+        )
+
+    def _pipeline_for(self, job: TtsJob) -> VoicePipeline:
+        entrypoint = job.voice_profile or self._default_profiles.get(
+            job.character_id,
+            "",
+        )
+        pipeline = self._pipelines.get((job.character_id, entrypoint))
         if pipeline is None:
             raise RuntimeError(
-                f"No voice profile is configured for {job.character_id!r}"
+                f"No voice profile is configured for {job.character_id!r} "
+                f"at entrypoint {entrypoint!r}"
             )
+        return pipeline
+
+    def _activate(self, pipeline: VoicePipeline) -> None:
+        if self._active_pipeline is pipeline:
+            return
+        if self._active_pipeline is not None:
+            self._active_pipeline.close()
+            self._closed_pipeline_ids.add(id(self._active_pipeline))
+        self._active_pipeline = pipeline
+        self._closed_pipeline_ids.discard(id(pipeline))
+
+    def synthesize(self, job: TtsJob, artifact_root: Path) -> Path:
+        pipeline = self._pipeline_for(job)
+        self._activate(pipeline)
         return pipeline.render(job, artifact_root)
 
+    def adapt(self, job: TtsJob) -> SpeechAdaptation:
+        """Route backend lowering while retaining a serializable audit record."""
+
+        pipeline = self._pipeline_for(job)
+        return pipeline.adapt(job)
+
     def close(self) -> None:
-        for pipeline in self._pipelines.values():
-            pipeline.close()
+        unique = {id(pipeline): pipeline for pipeline in self._pipelines.values()}
+        for identity, pipeline in unique.items():
+            if identity not in self._closed_pipeline_ids:
+                pipeline.close()
+        self._active_pipeline = None
+        self._closed_pipeline_ids = set(unique)
 
 
 def load_configured_voice_profiles(
@@ -125,20 +199,28 @@ def load_configured_voice_profiles(
     *,
     model_registry: ModelRegistry | None = None,
 ) -> VoiceProfileSynthesizer:
-    """Load each character's non-empty default voice profile."""
+    """Load every distinct global or contextual character voice profile."""
 
     models = model_registry
     if models is None:
         models = load_model_registry(repository_root=repository_root)
-    pipelines: dict[str, VoicePipeline] = {}
-    for character_id, character in characters.items():
-        if not character.default_voice_profile:
-            continue
-        pipelines[character_id] = load_voice_profile(
-            repository_root,
-            Path(character.default_voice_profile),
-            character,
-            project_config,
-            model_registry=models,
-        )
-    return VoiceProfileSynthesizer(pipelines)
+    pipelines: dict[tuple[str, str], VoicePipeline] = {}
+    default_profiles: dict[str, str] = {}
+    for character_id, base in characters.items():
+        if base.default_voice_profile:
+            default_profiles[character_id] = base.default_voice_profile
+        for character in base.configured_variants():
+            entrypoint = character.default_voice_profile
+            if not entrypoint:
+                continue
+            route = (character_id, entrypoint)
+            if route in pipelines:
+                continue
+            pipelines[route] = load_voice_profile(
+                repository_root,
+                Path(entrypoint),
+                character,
+                project_config,
+                model_registry=models,
+            )
+    return VoiceProfileSynthesizer(pipelines, default_profiles)

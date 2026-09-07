@@ -18,6 +18,7 @@ class PipelineRequest:
     prompt_version: str = "codex-v1"
     overrides_path: Path | None = None
     dialogue_scope: DialogueScope | None = None
+    source_root: Path | None = None
 
 
 @dataclass(frozen=True, slots=True)

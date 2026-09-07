@@ -35,6 +35,7 @@ class SynthesisPlanner:
         audio_config: AudioConfig | None = None,
         synthesizer_configuration: dict[str, Any] | None = None,
         virtual_path_resolver: Callable[[str, str, str], str] | None = None,
+        voice_route_available: Callable[[str, str | None], bool] | None = None,
     ) -> None:
         self._characters = characters
         self._audio_config = audio_config or AudioConfig()
@@ -50,6 +51,7 @@ class SynthesisPlanner:
                 f"voice/{identifier}.{audio_format.lstrip('.')}"
             )
         )
+        self._voice_route_available = voice_route_available
 
     def plan(
         self,
@@ -115,6 +117,11 @@ class SynthesisPlanner:
                     f"Character {character_id!r} is not configured.",
                 )
                 continue
+            character = character.resolve(
+                record.filename,
+                record.label,
+                record.scene,
+            )
 
             if annotation.action is DialogueAction.OMIT:
                 continue
@@ -141,7 +148,25 @@ class SynthesisPlanner:
                 assert annotation.emotion is not None
                 assert annotation.intensity is not None
                 for member_id in character.synthesis_members:
-                    member = self._characters[member_id]
+                    member = self._characters[member_id].resolve(
+                        record.filename,
+                        record.label,
+                        record.scene,
+                    )
+                    if (
+                        self._voice_route_available is not None
+                        and not self._voice_route_available(
+                            member.id,
+                            member.default_voice_profile or None,
+                        )
+                    ):
+                        yield SynthesisIssue(
+                            result.dialogue_id,
+                            "missing_voice_profile",
+                            f"Character {member.id!r} has no available voice "
+                            "profile for this source context; speech was skipped.",
+                        )
+                        continue
                     job = self._create_job(record, annotation, member)
                     existing_id = job_id_by_cache_key.get(job.cache_key)
                     if existing_id is None:
@@ -151,6 +176,12 @@ class SynthesisPlanner:
                     else:
                         component_ids.append(existing_id)
 
+            if (
+                annotation.action
+                in {DialogueAction.SPEAK, DialogueAction.SPEAK_WITH_EFFECT}
+                and not component_ids
+            ):
+                continue
             render_mode = character.render_mode or "single"
             output_name = f"{record.identifier}.{self._audio_format}"
             yield RenderTask(
@@ -179,8 +210,10 @@ class SynthesisPlanner:
             "emotion": annotation.emotion,
             "intensity": annotation.intensity,
             "delivery": annotation.delivery,
+            "performance": annotation.performance.to_dict(),
             "audio": asdict(self._audio_config),
             "synthesizer": self._synthesizer_configuration,
+            "voice_profile": member.default_voice_profile,
         }
         cache_key = content_hash(identity)
         member_path = _safe_component(member.id, "character")
@@ -199,4 +232,6 @@ class SynthesisPlanner:
             delivery=annotation.delivery,
             output_path=output_path,
             cache_key=cache_key,
+            voice_profile=member.default_voice_profile,
+            performance=annotation.performance,
         )

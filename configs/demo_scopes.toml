@@ -24,3 +24,32 @@ target_character = "a"
 start_identifier = "start2_4e03ca9b"
 end_identifier = "nextstartt_1ceb5455"
 inclusive = true
+
+[scopes.chapter_1]
+description = "The complete Chapter 1 main story, voicing only characters with configured profiles."
+source = "game/script.rpy"
+start_identifier = "start_d36d1b28"
+start_line = 297
+end_identifier = "christmas7_883ef503"
+end_line = 40688
+inclusive = true
+
+# Every line remains visible to the annotator as ordered context. Only these
+# speakers require semantic annotations and downstream voice rendering.
+voice_characters = [
+    "a", "ay", "c", "ch", "f", "h", "k", "ka", "ki", "m", "mak",
+    "maki", "mi", "mo", "mt", "r", "sa", "sar", "t", "y",
+]
+context_only_characters = [
+    "narrator", "s", "q", "ho", "mg", "a1", "a2", "nce", "six",
+    "ub", "do", "av", "saki", "ra", "rg", "nyt", "di", "sky",
+    "you", "rmo", "oldl", "watermelon", "sal", "yt", "foc",
+]
+
+# The opening uses the unknown-speaker variable before Ami introduces herself.
+[[scopes.chapter_1.speaker_overrides]]
+source_character = "q"
+target_character = "a"
+start_identifier = "start2_4e03ca9b"
+end_identifier = "nextstartt_1ceb5455"
+inclusive = true

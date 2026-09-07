@@ -18,6 +18,7 @@ from .types import (
     ValidationStatus,
 )
 from .validation import AnnotationValidator
+from ..performance import PerformanceCue, PerformanceCueKind, SpeechPerformance, VocalMode
 
 __all__ = [
     "Annotation",
@@ -28,9 +29,13 @@ __all__ = [
     "CodexWorkflowStatus",
     "CodexWorkspace",
     "DialogueAction",
+    "PerformanceCue",
+    "PerformanceCueKind",
+    "SpeechPerformance",
     "ValidatedAnnotation",
     "ValidationIssue",
     "ValidationStatus",
+    "VocalMode",
     "apply_overrides",
     "apply_override",
     "annotation_response_schema",

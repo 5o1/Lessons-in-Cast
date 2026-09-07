@@ -22,6 +22,7 @@ from .dialogue import (
     audit_dialogue,
 )
 from .hashing import content_hash, file_hash
+from .performance import SpeechAdaptation
 from .jsonl import AtomicJsonlWriter, JsonlIndex, read_jsonl, write_jsonl
 from .galgame import (
     DialogueExtractionRequest,
@@ -113,9 +114,17 @@ class DialoguePipeline:
             dialogue_hash=dialogue_tab_hash,
         )
         source_filter = request.allowed_sources or None
+        if request.dialogue_scope is not None:
+            scoped_source = Path(request.dialogue_scope.source)
+            if source_filter is not None and scoped_source not in source_filter:
+                raise ValueError(
+                    f"Dialogue scope source is not allowed: {scoped_source}"
+                )
+            source_filter = (scoped_source,)
         records = self._require_galgame_backend().read_dialogue(
             request.dialogue_tab_path,
             allowed_sources=source_filter,
+            source_root=request.source_root,
         )
         if request.dialogue_scope is not None:
             records = iter(request.dialogue_scope.apply(records))
@@ -124,7 +133,13 @@ class DialoguePipeline:
             layout.raw_dialogue,
         )
         batches = DialogueBatchBuilder(self._config.batching).build(
-            JsonlDialogueReader().read(layout.raw_dialogue)
+            JsonlDialogueReader().read(layout.raw_dialogue),
+            target_characters=(
+                request.dialogue_scope.voice_characters
+                if request.dialogue_scope is not None
+                and request.dialogue_scope.voice_characters
+                else None
+            ),
         )
         batch_count = write_jsonl(
             (
@@ -215,6 +230,7 @@ class DialoguePipeline:
         )
 
     def plan_synthesis(self, layout: ArtifactLayout) -> tuple[int, int]:
+        route_checker = getattr(self._synthesizer, "supports", None)
         planner = SynthesisPlanner(
             self._characters,
             audio_config=self._config.audio,
@@ -225,6 +241,9 @@ class DialoguePipeline:
             ),
             virtual_path_resolver=(
                 self._require_galgame_backend().voice_virtual_path
+            ),
+            voice_route_available=(
+                route_checker if callable(route_checker) else None
             ),
         )
         with JsonlIndex(layout.raw_dialogue, "id") as record_index:
@@ -243,10 +262,33 @@ class DialoguePipeline:
                 AtomicJsonlWriter(layout.tts_jobs) as job_writer,
                 AtomicJsonlWriter(layout.render_tasks) as render_writer,
                 AtomicJsonlWriter(layout.synthesis_issues) as issue_writer,
+                AtomicJsonlWriter(
+                    layout.synthesis_adaptations
+                ) as adaptation_writer,
             ):
                 for item in planner.iter_plan(records_and_results()):
                     if isinstance(item, TtsJob):
                         job_writer.write(item.to_dict())
+                        adapter = getattr(self._synthesizer, "adapt", None)
+                        adaptation = (
+                            adapter(item)
+                            if callable(adapter)
+                            else SpeechAdaptation(
+                                job_id=item.id,
+                                dialogue_id=item.dialogue_id,
+                                backend=(
+                                    self._synthesizer.name
+                                    if self._synthesizer is not None
+                                    else "unconfigured"
+                                ),
+                                text=item.text,
+                                emotion=item.emotion,
+                                parameters={
+                                    "performance": item.performance.to_dict()
+                                },
+                            )
+                        )
+                        adaptation_writer.write(adaptation.to_dict())
                     elif isinstance(item, RenderTask):
                         render_writer.write(item.to_dict())
                     elif isinstance(item, SynthesisIssue):
@@ -256,12 +298,14 @@ class DialoguePipeline:
         job_count = job_writer.count
         render_count = render_writer.count
         issue_count = issue_writer.count
+        adaptation_count = adaptation_writer.count
         update_run_manifest(
             layout,
             {
                 "tts_job_count": job_count,
                 "render_task_count": render_count,
                 "synthesis_issue_count": issue_count,
+                "synthesis_adaptation_count": adaptation_count,
             },
         )
         return job_count, render_count
@@ -271,8 +315,13 @@ class DialoguePipeline:
             raise RuntimeError("No speech synthesizer is configured")
         job_count = 0
         reused_job_count = 0
-        for value in read_jsonl(layout.tts_jobs):
-            job = TtsJob.from_dict(value)
+        jobs = (
+            TtsJob.from_dict(value)
+            for value in read_jsonl(layout.tts_jobs)
+        )
+        order_jobs = getattr(self._synthesizer, "order_jobs", None)
+        scheduled_jobs = order_jobs(jobs) if callable(order_jobs) else jobs
+        for job in scheduled_jobs:
             job_count += 1
             if (layout.root / job.output_path).is_file():
                 reused_job_count += 1

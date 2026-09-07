@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Iterator
+from collections.abc import Collection, Iterable, Iterator
 from dataclasses import dataclass
 from itertools import groupby
 from typing import Any
@@ -12,7 +12,7 @@ from ..hashing import content_hash
 from .types import DialogueRecord
 
 
-BATCH_SCHEMA_VERSION = 1
+BATCH_SCHEMA_VERSION = 2
 
 
 @dataclass(frozen=True, slots=True)
@@ -21,6 +21,7 @@ class DialogueBatch:
     context_before: tuple[DialogueRecord, ...]
     targets: tuple[DialogueRecord, ...]
     context_after: tuple[DialogueRecord, ...]
+    context_interleaved: tuple[DialogueRecord, ...] = ()
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -29,6 +30,9 @@ class DialogueBatch:
             "context_before": [item.model_view() for item in self.context_before],
             "targets": [item.model_view() for item in self.targets],
             "context_after": [item.model_view() for item in self.context_after],
+            "context_interleaved": [
+                item.model_view() for item in self.context_interleaved
+            ],
         }
 
     @classmethod
@@ -93,6 +97,7 @@ class DialogueBatch:
             context_before=resolve("context_before"),
             targets=resolve("targets"),
             context_after=resolve("context_after"),
+            context_interleaved=resolve("context_interleaved"),
         )
 
 
@@ -102,14 +107,24 @@ class DialogueBatchBuilder:
     def __init__(self, config: BatchingConfig) -> None:
         self._config = config
 
-    def build(self, records: Iterable[DialogueRecord]) -> Iterator[DialogueBatch]:
+    def build(
+        self,
+        records: Iterable[DialogueRecord],
+        *,
+        target_characters: Collection[str] | None = None,
+    ) -> Iterator[DialogueBatch]:
         seen_ids: set[str] = set()
         checked_records = self._check_unique_ids(records, seen_ids)
+        target_set = (
+            frozenset(target_characters)
+            if target_characters is not None
+            else None
+        )
         for _filename, segment in groupby(
             checked_records,
             key=lambda record: record.filename,
         ):
-            yield from self._build_segment(segment)
+            yield from self._build_segment(segment, target_set)
 
     @staticmethod
     def _check_unique_ids(
@@ -125,6 +140,7 @@ class DialogueBatchBuilder:
     def _build_segment(
         self,
         records: Iterable[DialogueRecord],
+        target_characters: frozenset[str] | None,
     ) -> Iterator[DialogueBatch]:
         source = iter(records)
         buffer: list[DialogueRecord] = []
@@ -152,21 +168,37 @@ class DialogueBatchBuilder:
                 if self._config.context_before
                 else []
             )
-            targets = list(buffer[:end])
+            window = list(buffer[:end])
             after = list(buffer[end:end + self._config.context_after])
-            self._trim_context(before, targets, after)
+            self._trim_context(before, window, after)
+            if target_characters is None:
+                targets = window
+                interleaved: list[DialogueRecord] = []
+            else:
+                targets = [
+                    item
+                    for item in window
+                    if (item.character or "narrator") in target_characters
+                ]
+                target_ids = {item.id for item in targets}
+                interleaved = [
+                    item for item in window if item.id not in target_ids
+                ]
             identity = {
                 "before": [item.id for item in before],
                 "targets": [item.id for item in targets],
+                "interleaved": [item.id for item in interleaved],
                 "after": [item.id for item in after],
             }
-            yield DialogueBatch(
-                id=content_hash(identity)[:24],
-                context_before=tuple(before),
-                targets=tuple(targets),
-                context_after=tuple(after),
-            )
-            before_history.extend(targets)
+            if targets:
+                yield DialogueBatch(
+                    id=content_hash(identity)[:24],
+                    context_before=tuple(before),
+                    targets=tuple(targets),
+                    context_after=tuple(after),
+                    context_interleaved=tuple(interleaved),
+                )
+            before_history.extend(window)
             if self._config.context_before == 0:
                 before_history.clear()
             elif len(before_history) > self._config.context_before:

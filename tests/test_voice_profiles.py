@@ -8,12 +8,39 @@ from lessons_in_cast_core.characters import load_characters
 from lessons_in_cast_core.config import load_pipeline_config
 from lessons_in_cast_core.model_registry import ModelDefinition, ModelRegistry
 from lessons_in_cast_core.synthesis import (
+    TtsJob,
     VoicePipeline,
     VoiceProfileContext,
+    VoiceProfileSynthesizer,
     load_configured_voice_profiles,
     load_voice_profile,
 )
 from lessons_in_cast_core.synthesis.backends.index_tts import IndexTtsPipeline
+
+
+class RoutingPipeline(VoicePipeline):
+    def __init__(self, character_id: str, filename: str) -> None:
+        self._character_id = character_id
+        self._filename = filename
+        self.closed = 0
+
+    @property
+    def pipeline_id(self) -> str:
+        return self._filename
+
+    @property
+    def character_id(self) -> str:
+        return self._character_id
+
+    @property
+    def configuration(self) -> dict[str, str]:
+        return {"filename": self._filename}
+
+    def render(self, job: TtsJob, artifact_root: Path) -> Path:
+        return artifact_root / self._filename
+
+    def close(self) -> None:
+        self.closed += 1
 
 
 class VoiceProfileTests(unittest.TestCase):
@@ -146,6 +173,69 @@ class VoiceProfileTests(unittest.TestCase):
         finally:
             pipeline.close()
 
+    def test_synthesizer_routes_a_contextual_profile_entrypoint(self) -> None:
+        synthesizer = VoiceProfileSynthesizer(
+            {
+                ("a", "profiles/default.py"): RoutingPipeline("a", "default.wav"),
+                ("a", "profiles/scene.py"): RoutingPipeline("a", "scene.wav"),
+            },
+            {"a": "profiles/default.py"},
+        )
+        job = TtsJob(
+            id="job",
+            dialogue_id="dialogue",
+            character_id="a",
+            text="Hello.",
+            emotion="neutral",
+            intensity=0.0,
+            delivery={},
+            output_path="audio.wav",
+            cache_key="cache",
+            voice_profile="profiles/scene.py",
+        )
+
+        self.assertEqual(
+            synthesizer.synthesize(job, self.root),
+            self.root / "scene.wav",
+        )
+
+    def test_synthesizer_groups_profiles_and_releases_inactive_backend(self) -> None:
+        first = RoutingPipeline("a", "a.wav")
+        second = RoutingPipeline("m", "m.wav")
+        synthesizer = VoiceProfileSynthesizer(
+            {
+                ("a", "profiles/a.py"): first,
+                ("m", "profiles/m.py"): second,
+            },
+            {"a": "profiles/a.py", "m": "profiles/m.py"},
+        )
+
+        def job(character_id: str, profile: str) -> TtsJob:
+            return TtsJob(
+                id=f"job-{character_id}",
+                dialogue_id=f"dialogue-{character_id}",
+                character_id=character_id,
+                text="Hello.",
+                emotion="neutral",
+                intensity=0.0,
+                delivery={},
+                output_path=f"{character_id}.wav",
+                cache_key=f"cache-{character_id}",
+                voice_profile=profile,
+            )
+
+        ordered = synthesizer.order_jobs(
+            (job("m", "profiles/m.py"), job("a", "profiles/a.py"))
+        )
+        self.assertEqual([item.character_id for item in ordered], ["a", "m"])
+        for item in ordered:
+            synthesizer.synthesize(item, self.root)
+        self.assertEqual(first.closed, 1)
+        self.assertEqual(second.closed, 0)
+        synthesizer.close()
+        self.assertEqual(first.closed, 1)
+        self.assertEqual(second.closed, 1)
+
     def test_main_synthesizer_routes_configured_character_pipelines(self) -> None:
         config = load_pipeline_config(repository_root=self.root)
         characters = load_characters(repository_root=self.root)
@@ -158,7 +248,13 @@ class VoiceProfileTests(unittest.TestCase):
         try:
             self.assertEqual(
                 list(synthesizer.configuration["profiles"]),
-                ["a", "ch", "m"],
+                [
+                    "a", "ay", "c", "ch", "f", "h", "i", "ima",
+                    "k", "ka", "ki", "m", "mak", "maki", "mi",
+                    "mo", "n", "ni", "no", "o", "os", "r", "sa",
+                    "sar", "t", "tb", "tk", "to", "u", "w", "y",
+                    "ya", "yu",
+                ],
             )
         finally:
             synthesizer.close()

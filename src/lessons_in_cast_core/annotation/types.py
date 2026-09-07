@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any
 
+from ..performance import SpeechPerformance
+
 
 class DialogueAction(StrEnum):
     SPEAK = "speak"
@@ -33,6 +35,7 @@ class Annotation:
     confidence: float | None
     review_required: bool
     reason: str | None = None
+    performance: SpeechPerformance = SpeechPerformance()
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -46,6 +49,7 @@ class Annotation:
             "confidence": self.confidence,
             "review_required": self.review_required,
             "reason": self.reason,
+            "performance": self.performance.to_dict(),
         }
 
     @classmethod
@@ -61,6 +65,7 @@ class Annotation:
             confidence=value.get("confidence"),
             review_required=value.get("review_required", False),
             reason=value.get("reason"),
+            performance=SpeechPerformance.from_dict(value.get("performance")),
         )
 
 

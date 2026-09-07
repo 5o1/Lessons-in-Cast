@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Protocol
 
+from ..performance import SpeechAdaptation
 from .types import TtsJob
 
 
@@ -16,6 +17,8 @@ class SpeechSynthesizer(Protocol):
 
     @property
     def configuration(self) -> dict[str, Any]: ...
+
+    def adapt(self, job: TtsJob) -> SpeechAdaptation: ...
 
     def synthesize(self, job: TtsJob, artifact_root: Path) -> Path: ...
 

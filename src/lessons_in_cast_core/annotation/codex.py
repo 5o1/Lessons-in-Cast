@@ -335,6 +335,7 @@ class CodexAnnotationWorkflow:
         records = [
             *batch.get("context_before", []),
             *batch.get("targets", []),
+            *batch.get("context_interleaved", []),
             *batch.get("context_after", []),
         ]
         filenames = {
@@ -379,12 +380,20 @@ class CodexAnnotationWorkflow:
                     "target_ids": current_target_ids,
                 }
             )
-            for section in ("context_before", "targets", "context_after"):
+            for section in (
+                "context_before",
+                "targets",
+                "context_interleaved",
+                "context_after",
+            ):
                 for record in batch[section]:
                     ordered_records.setdefault(record["id"], dict(record))
 
         records = []
-        for record_id, record in ordered_records.items():
+        for record_id, record in sorted(
+            ordered_records.items(),
+            key=lambda item: (item[1]["line_number"], item[0]),
+        ):
             character_id = record["character"] or "narrator"
             records.append(
                 {

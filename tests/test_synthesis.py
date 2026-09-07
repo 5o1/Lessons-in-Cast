@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import tempfile
+from dataclasses import replace
 import unittest
 from pathlib import Path
 
@@ -53,6 +54,66 @@ class SynthesisTests(unittest.TestCase):
         self.assertEqual(len(plan.jobs), 2)
         self.assertEqual(len(plan.render_tasks), 2)
         self.assertEqual(len(plan.render_tasks[1].component_job_ids), 2)
+
+    def test_planner_selects_contextual_voice_profile(self) -> None:
+        item = replace(
+            record(1, character="a", filename="game/chapter/a.rpy"),
+            label="opening",
+            scene="classroom",
+        )
+        base = character("a")
+        variant = replace(
+            base,
+            default_voice_profile="profiles/a_scene/pipeline.py",
+            context=("game/chapter/a.rpy", "opening", "classroom"),
+        )
+        configured = replace(base, variants=(variant,))
+
+        plan = SynthesisPlanner({"a": configured}).plan(
+            {item.id: item},
+            [accepted_annotation(item)],
+        )
+
+        self.assertEqual(
+            plan.jobs[0].voice_profile,
+            "profiles/a_scene/pipeline.py",
+        )
+
+    def test_planner_skips_speech_without_an_available_voice_route(self) -> None:
+        item = record(1, character="a")
+        plan = SynthesisPlanner(
+            {"a": character("a")},
+            voice_route_available=lambda _character, _profile: False,
+        ).plan({item.id: item}, [accepted_annotation(item)])
+
+        self.assertFalse(plan.jobs)
+        self.assertFalse(plan.render_tasks)
+        self.assertEqual(
+            [issue.code for issue in plan.issues],
+            ["missing_voice_profile"],
+        )
+
+    def test_ensemble_keeps_members_with_available_voice_routes(self) -> None:
+        item = record(1, character="am")
+        characters = {
+            "a": character("a"),
+            "m": character("m"),
+            "am": character("am", members=("a", "m")),
+        }
+        plan = SynthesisPlanner(
+            characters,
+            voice_route_available=(
+                lambda character_id, _profile: character_id == "a"
+            ),
+        ).plan({item.id: item}, [accepted_annotation(item)])
+
+        self.assertEqual([job.character_id for job in plan.jobs], ["a"])
+        self.assertEqual(len(plan.render_tasks), 1)
+        self.assertEqual(len(plan.render_tasks[0].component_job_ids), 1)
+        self.assertEqual(
+            [issue.code for issue in plan.issues],
+            ["missing_voice_profile"],
+        )
 
     def test_planner_separates_wav_intermediate_from_opus_delivery(self) -> None:
         item = record(1, character="a")

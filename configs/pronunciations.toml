@@ -1,14 +1,66 @@
-schema_version = 1
+schema_version = 2
 
-# Backend-specific pronunciations for proper nouns used in dialogue text.
+# Backend-neutral pronunciations for proper nouns used in dialogue text.
+# Optional lexical prosody is aligned to syllables, morae, or phonemes. This
+# describes the F0 movement inside each unit, not merely lexical stress:
+#
+# [proper_nouns.Example.prosody]
+# unit_kind = "syllable"
+# pitch_reference = "local_baseline"
+# interpolation = "smooth"
+# duration_scale = 1.05
+# units = [
+#   { label = "ex", forms = { ipa = "ɪɡ", arpabet = "IH G" },
+#     duration_scale = 0.95,
+#     pitch_contour = [
+#       { position = 0.0, semitones = -1.0 },
+#       { position = 0.55, semitones = 1.5 },
+#       { position = 1.0, semitones = 0.5 },
+#     ] },
+#   { label = "ample", forms = { ipa = "zæmpəl",
+#       arpabet = "Z AE M P AH L" },
+#     pitch_contour = [
+#       { position = 0.0, semitones = 0.5 },
+#       { position = 0.35, semitones = 2.0 },
+#       { position = 1.0, semitones = -2.0 },
+#     ] },
+# ]
+#
+# Every unit gets its own normalized time axis. Semitones are relative to the
+# phrase-local F0 baseline, so the contour survives changes in speaker register
+# and sentence intonation. Do not add a contour until it is confirmed by ear.
 [proper_nouns.Ami]
+language = "en"
+case_sensitive = false
+whole_word = true
+[proper_nouns.Ami.forms]
 arpabet = "EY1 . M IY0"
+ipa = "ˈeɪ.mi"
+respelling = "AY-mee"
 
 [proper_nouns.Maya]
+language = "en"
+case_sensitive = false
+whole_word = true
+[proper_nouns.Maya.forms]
 arpabet = "M AY1 . Y AH0"
+ipa = "ˈmaɪ.jə"
+respelling = "MY-yuh"
 
 [proper_nouns.Ayane]
+language = "en"
+case_sensitive = false
+whole_word = true
+[proper_nouns.Ayane.forms]
 arpabet = "AA0 . Y AA1 . N EH0"
+ipa = "a.ja.ne"
+respelling = "ah-YAH-neh"
 
 [proper_nouns.Chinami]
+language = "en"
+case_sensitive = false
+whole_word = true
+[proper_nouns.Chinami.forms]
 arpabet = "CH IY1 . N AA0 . M IY0"
+ipa = "ˈtʃiː.nɑː.mi"
+respelling = "CHEE-nah-mee"

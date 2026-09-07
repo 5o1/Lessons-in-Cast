@@ -82,6 +82,10 @@ class ArtifactLayout:
         return self.root / "synthesis_issues.jsonl"
 
     @property
+    def synthesis_adaptations(self) -> Path:
+        return self.root / "synthesis_adaptations.jsonl"
+
+    @property
     def audio_quality(self) -> Path:
         return self.root / "audio_quality.jsonl"
 
@@ -126,6 +130,7 @@ class ArtifactLayout:
             self.tts_jobs,
             self.render_tasks,
             self.synthesis_issues,
+            self.synthesis_adaptations,
             self.audio_quality,
             self.voice_manifest,
             self.run_manifest,
@@ -164,6 +169,7 @@ class ArtifactLayout:
             self.tts_jobs,
             self.render_tasks,
             self.synthesis_issues,
+            self.synthesis_adaptations,
             self.audio_quality,
             self.voice_manifest,
         )

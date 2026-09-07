@@ -128,6 +128,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         artifact_root = root / artifact_root
     layout = ArtifactLayout(artifact_root.resolve())
     config = load_pipeline_config(repository_root=root)
+    workspace = load_workspace_config(repository_root=root)
     galgame_backend = load_galgame_backend(config.galgame.backend)
     characters = load_characters(repository_root=root)
     sources = load_dialogue_sources(repository_root=root)
@@ -138,7 +139,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         raise ValueError(f"Unknown dialogue scope: {scope_name!r}")
 
     if args.command == "check-config":
-        workspace = load_workspace_config(repository_root=root)
         voice_profile_synthesizer = load_configured_voice_profiles(
             root, config, characters
         )
@@ -159,6 +159,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "galgame_backend": galgame_backend.backend_id,
                     "codex_batches_per_packet": config.codex.batches_per_packet,
                     "codex_source_files": list(config.codex.source_files),
+                    "codex_prompt_path": config.codex.prompt_path,
+                    "codex_prompt_version": config.codex.prompt_version,
                 },
                 indent=2,
             )
@@ -218,7 +220,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
 
     if args.command == "extract":
-        workspace = load_workspace_config(repository_root=root)
         executable = args.executable
         if executable is not None and not executable.is_absolute():
             executable = root / executable
@@ -252,7 +253,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             layout.root / "codex" / ("retry" if retry else "initial")
         )
         workflow = CodexAnnotationWorkflow(
-            root / "prompts" / "codex_dialogue_cleanup.md",
+            root / config.codex.prompt_path,
             {
                 character_id: character.name
                 for character_id, character in characters.items()
@@ -284,7 +285,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
 
     synthesizer = None
-    if args.command in {"synthesize", "run-production"}:
+    if args.command in {"plan-tts", "synthesize", "run-production"}:
         synthesizer = _voice_profile_synthesizer(root, config, characters)
     pipeline = DialoguePipeline(
         config=config,
@@ -300,6 +301,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 dialogue_tab_path=source,
                 allowed_sources=sources,
                 dialogue_scope=dialogue_scope,
+                source_root=workspace.release_path,
+                prompt_version=config.codex.prompt_version,
             )
         )
         print(json.dumps({"dialogue_count": counts[0], "batch_count": counts[1]}))
@@ -334,6 +337,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 allowed_sources=sources,
                 overrides_path=root / "configs" / "overrides.toml",
                 dialogue_scope=dialogue_scope,
+                source_root=workspace.release_path,
+                prompt_version=config.codex.prompt_version,
             ),
             responses_path,
             cache_intermediates=args.cache_intermediates,

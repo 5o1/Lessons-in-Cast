@@ -38,6 +38,63 @@ class DialogueTabTests(unittest.TestCase):
             JsonlDialogueWriter().write(records, destination)
             self.assertEqual(list(JsonlDialogueReader().read(destination)), records)
 
+    def test_enriches_rows_with_nearest_label_and_scene(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            release = root / "release"
+            game = release / "game"
+            game.mkdir(parents=True)
+            (game / "chapter.rpy").write_text(
+                "label opening:\n    scene classroom with dissolve\n    a \"Hello.\"\n",
+                encoding="utf-8",
+            )
+            source = root / "dialogue.tab"
+            source.write_text(
+                HEADER
+                + 'line_a\ta\tHello.\tgame/chapter.rpy\t3\ta "[what]"\n',
+                encoding="utf-8",
+            )
+
+            record = next(TabDialogueReader(source_root=release).read(source))
+
+            self.assertEqual(record.label, "opening")
+            self.assertEqual(record.scene, "classroom")
+
+    def test_missing_context_warns_and_truncates_at_first_gap(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            release = root / "release"
+            game = release / "game"
+            game.mkdir(parents=True)
+            (game / "no_label.rpy").write_text(
+                "scene room\n    a \"Hello.\"\n",
+                encoding="utf-8",
+            )
+            (game / "no_scene.rpy").write_text(
+                "label opening:\n    a \"Hello.\"\n",
+                encoding="utf-8",
+            )
+            source = root / "dialogue.tab"
+            source.write_text(
+                HEADER
+                + 'one\ta\tOne.\tgame/no_label.rpy\t2\ta "[what]"\n'
+                + 'two\ta\tTwo.\tgame/no_scene.rpy\t2\ta "[what]"\n'
+                + 'three\ta\tThree.\tgame/missing.rpy\t1\ta "[what]"\n',
+                encoding="utf-8",
+            )
+
+            with self.assertWarns(RuntimeWarning):
+                records = list(
+                    TabDialogueReader(source_root=release).read(source)
+                )
+
+            self.assertEqual((records[0].label, records[0].scene), ("", ""))
+            self.assertEqual(
+                (records[1].label, records[1].scene),
+                ("opening", ""),
+            )
+            self.assertEqual((records[2].label, records[2].scene), ("", ""))
+
     def test_source_filter_resequences_selected_rows(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             source = Path(directory) / "dialogue.tab"
@@ -106,6 +163,34 @@ class DialogueBatchTests(unittest.TestCase):
                 not batch.context_before and not batch.context_after
                 for batch in batches
             )
+        )
+
+    def test_filters_targets_without_dropping_interleaved_context(self) -> None:
+        records = [
+            record(0, character="s"),
+            record(1, character="a"),
+            record(2, character="narrator"),
+            record(3, character="m"),
+        ]
+        batches = list(
+            DialogueBatchBuilder(
+                BatchingConfig(
+                    target_size=4,
+                    context_before=0,
+                    context_after=0,
+                    max_characters=1_000,
+                )
+            ).build(records, target_characters={"a", "m"})
+        )
+
+        self.assertEqual(len(batches), 1)
+        self.assertEqual(
+            [item.character for item in batches[0].targets],
+            ["a", "m"],
+        )
+        self.assertEqual(
+            [item.character for item in batches[0].context_interleaved],
+            ["s", "narrator"],
         )
 
     def test_structural_audit_reports_unknown_characters(self) -> None:

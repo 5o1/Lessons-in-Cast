@@ -38,6 +38,9 @@ minimum_length_ratio = 0.15
 [codex]
 batches_per_packet = 2
 source_files = ["game/script.rpy"]
+# Keep v1 selected until the in-flight Chapter 1 run has finished importing.
+prompt_path = "prompts/codex_dialogue_cleanup.md"
+prompt_version = "codex-v1"
 
 [audio]
 format = "opus"

@@ -38,6 +38,8 @@ class AnnotationConfig:
 class CodexConfig:
     batches_per_packet: int = 2
     source_files: tuple[str, ...] = ()
+    prompt_path: str = "prompts/codex_dialogue_cleanup.md"
+    prompt_version: str = "codex-v1"
 
 
 @dataclass(frozen=True, slots=True)
@@ -166,6 +168,10 @@ def load_pipeline_config(
         codex=CodexConfig(
             batches_per_packet=codex.get("batches_per_packet", 2),
             source_files=tuple(codex_source_files),
+            prompt_path=codex.get(
+                "prompt_path", "prompts/codex_dialogue_cleanup.md"
+            ),
+            prompt_version=codex.get("prompt_version", "codex-v1"),
         ),
         galgame=GalgameConfig(backend=galgame.get("backend", "renpy")),
     )
@@ -181,6 +187,15 @@ def load_pipeline_config(
         raise ConfigurationError("annotation length ratio range is invalid")
     if result.codex.batches_per_packet < 1:
         raise ConfigurationError("codex.batches_per_packet must be positive")
+    for field, value in {
+        "codex.prompt_path": result.codex.prompt_path,
+        "codex.prompt_version": result.codex.prompt_version,
+    }.items():
+        if not isinstance(value, str) or not value.strip():
+            raise ConfigurationError(f"{field} must be a non-empty string")
+    prompt_path = Path(result.codex.prompt_path)
+    if prompt_path.is_absolute() or ".." in prompt_path.parts:
+        raise ConfigurationError("codex.prompt_path must be a safe relative path")
     if not result.galgame.backend.strip():
         raise ConfigurationError("galgame.backend cannot be empty")
     if not result.annotation.allowed_emotions:

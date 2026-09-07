@@ -9,6 +9,7 @@ from ..api import (
 )
 from .archive import RenPyArchiveError, RenPyArchiveWriter
 from .backend import RenPyBackend
+from .context import RenPyContextResolver, RenPySourceContext, RenPySourceContextIndex
 from .extraction import SubprocessDialogueExtractor
 from .installation import RenPyVoiceInstaller
 from .dialogue import DialogueTabError, TabDialogueReader
@@ -23,6 +24,9 @@ __all__ = [
     "RenPyArchiveError",
     "RenPyArchiveWriter",
     "RenPyBackend",
+    "RenPyContextResolver",
+    "RenPySourceContext",
+    "RenPySourceContextIndex",
     "RenPyVoiceInstaller",
     "RenPyVoiceScriptWriter",
     "SubprocessDialogueExtractor",

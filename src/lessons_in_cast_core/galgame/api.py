@@ -86,6 +86,7 @@ class GalgameBackend(ABC):
         source: Path,
         *,
         allowed_sources: Iterable[Path | str] | None = None,
+        source_root: Path | None = None,
     ) -> Iterator[DialogueRecord]:
         """Normalize one backend-specific export into dialogue records."""
 

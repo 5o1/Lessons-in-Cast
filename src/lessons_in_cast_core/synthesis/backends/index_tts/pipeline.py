@@ -53,10 +53,15 @@ class IndexTtsPipeline(ReferenceVoicePipeline, ABC):
         self._pronunciation_lexicon_path = resolve(
             "configs/pronunciations.toml"
         )
-        self._pronunciations = load_pronunciation_lexicon(
+        lexicon = load_pronunciation_lexicon(
             self._pronunciation_lexicon_path,
             repository_root=root,
-        ).for_system("arpabet")
+        )
+        self._pronunciations = lexicon.for_system("arpabet")
+        self._pronunciation_rules = lexicon.select(
+            ("arpabet", "respelling"),
+            language="en" if config.language.upper() == "EN" else None,
+        )
         reference_resolver = (
             context.resolve_resource
             if config.reference_scope == "profile"
@@ -108,6 +113,7 @@ class IndexTtsPipeline(ReferenceVoicePipeline, ABC):
             max_text_tokens_per_segment=config.max_text_tokens_per_segment,
             text_normalization=config.text_normalization,
             pronunciations=self._pronunciations,
+            pronunciation_rules=self._pronunciation_rules,
         )
 
     @property
@@ -228,6 +234,13 @@ class IndexTtsPipeline(ReferenceVoicePipeline, ABC):
             )
         self.prepare()
         return self._backend.synthesize(job, artifact_root)
+
+    def adapt(self, job: TtsJob):
+        if job.character_id != self.character_id:
+            raise ValueError(
+                f"{self.pipeline_id} cannot adapt {job.character_id!r}"
+            )
+        return self._backend.adapt(job)
 
     def close(self) -> None:
         self._backend.close()

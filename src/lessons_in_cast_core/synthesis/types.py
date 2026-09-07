@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from ..annotation import DialogueAction
+from ..performance import SpeechPerformance
 
 
 @dataclass(frozen=True, slots=True)
@@ -19,6 +20,8 @@ class TtsJob:
     delivery: dict[str, str]
     output_path: str
     cache_key: str
+    voice_profile: str = ""
+    performance: SpeechPerformance = SpeechPerformance()
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -31,11 +34,21 @@ class TtsJob:
             "delivery": self.delivery,
             "output_path": self.output_path,
             "cache_key": self.cache_key,
+            "voice_profile": self.voice_profile,
+            "performance": self.performance.to_dict(),
         }
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> TtsJob:
-        return cls(**value)
+        return cls(
+            **{
+                **value,
+                "voice_profile": value.get("voice_profile", ""),
+                "performance": SpeechPerformance.from_dict(
+                    value.get("performance")
+                ),
+            }
+        )
 
 
 @dataclass(frozen=True, slots=True)

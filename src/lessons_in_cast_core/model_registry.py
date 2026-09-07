@@ -1,4 +1,4 @@
-"""Runtime registry for locally available model artifacts."""
+"""Runtime registry for local model artifacts and hosted model services."""
 
 from __future__ import annotations
 
@@ -16,16 +16,16 @@ _MODEL_ID = re.compile(r"[A-Za-z0-9_.-]+")
 
 @dataclass(frozen=True, slots=True)
 class ModelDefinition:
-    """One stable model identity and its local artifact location."""
+    """One stable local or hosted model identity."""
 
     id: str
-    path: str
+    path: str | None
     provider: str
     repository: str
     revision: str
     license: str
 
-    def to_dict(self) -> dict[str, str]:
+    def to_dict(self) -> dict[str, str | None]:
         return {
             "id": self.id,
             "path": self.path,
@@ -37,7 +37,7 @@ class ModelDefinition:
 
 
 class ModelRegistry:
-    """Resolve stable model IDs to trusted machine-local paths."""
+    """Resolve stable model IDs to local artifacts or hosted identities."""
 
     def __init__(
         self,
@@ -48,7 +48,7 @@ class ModelRegistry:
         self._models = dict(models)
 
     @property
-    def configuration(self) -> dict[str, dict[str, str]]:
+    def configuration(self) -> dict[str, dict[str, str | None]]:
         return {
             model_id: definition.to_dict()
             for model_id, definition in sorted(self._models.items())
@@ -64,7 +64,12 @@ class ModelRegistry:
             ) from exc
 
     def resolve_path(self, model_id: str) -> Path:
-        configured = Path(self.require(model_id).path).expanduser()
+        definition = self.require(model_id)
+        if not definition.path:
+            raise ConfigurationError(
+                f"Model {model_id!r} is hosted and has no local artifact path"
+            )
+        configured = Path(definition.path).expanduser()
         if configured.is_absolute():
             return configured.resolve()
         return (self._repository_root / configured).resolve()
@@ -90,7 +95,7 @@ def load_model_registry(
         raise ConfigurationError(f"{resolved}: [models] table is required")
 
     models: dict[str, ModelDefinition] = {}
-    required = ("path", "provider", "repository", "revision", "license")
+    required = ("provider", "repository", "revision", "license")
     for model_id, raw in raw_models.items():
         if not isinstance(model_id, str) or not _MODEL_ID.fullmatch(model_id):
             raise ConfigurationError(f"{resolved}: invalid model ID {model_id!r}")
@@ -104,6 +109,18 @@ def load_model_registry(
                     f"{resolved}: models.{model_id}.{field} must be a non-empty string"
                 )
             values[field] = value
-        models[model_id] = ModelDefinition(id=model_id, **values)
+        path_value = raw.get("path")
+        if path_value is not None and (
+            not isinstance(path_value, str) or not path_value.strip()
+        ):
+            raise ConfigurationError(
+                f"{resolved}: models.{model_id}.path must be a non-empty "
+                "string or omitted"
+            )
+        models[model_id] = ModelDefinition(
+            id=model_id,
+            path=path_value,
+            **values,
+        )
 
     return ModelRegistry(root, models)

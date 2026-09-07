@@ -50,6 +50,69 @@ class AnnotationValidationTests(unittest.TestCase):
         annotation = schema["properties"]["annotations"]["items"]
         self.assertFalse(annotation["additionalProperties"])
         self.assertIn("neutral", annotation["properties"]["emotion"]["enum"])
+        self.assertIn("performance", annotation["required"])
+        self.assertIn(
+            "pause",
+            annotation["properties"]["performance"]["properties"]["cues"]
+            ["items"]["properties"]["kind"]["enum"],
+        )
+
+    def test_accepts_precise_portable_performance_cues(self) -> None:
+        response = self._response()
+        response["annotations"][0]["performance"] = {
+            "direction": "A startled realization, then guarded calm.",
+            "vocal_mode": "normal",
+            "speed": 0.9,
+            "pitch_semitones": 1.5,
+            "volume_gain_db": -2.0,
+            "energy": 0.4,
+            "brightness": 0.2,
+            "clarity": 0.1,
+            "breathiness": 0.15,
+            "cues": [
+                {
+                    "kind": "pause",
+                    "offset": 4,
+                    "duration_seconds": 0.35,
+                    "intensity": None,
+                }
+            ],
+        }
+        result = self.validator.validate_batch(
+            self.batch,
+            response,
+            prompt_version="2",
+            annotator_configuration={},
+        )
+        annotation = result.records[0].annotation
+        self.assertEqual(result.records[0].status, ValidationStatus.ACCEPTED)
+        self.assertIsNotNone(annotation)
+        assert annotation is not None
+        self.assertEqual(annotation.performance.cues[0].offset, 4)
+
+    def test_rejects_performance_cue_outside_cleaned_text(self) -> None:
+        response = self._response()
+        response["annotations"][0]["performance"] = {
+            "cues": [
+                {
+                    "kind": "pause",
+                    "offset": 99,
+                    "duration_seconds": 0.2,
+                    "intensity": None,
+                }
+            ]
+        }
+        result = self.validator.validate_batch(
+            self.batch,
+            response,
+            prompt_version="2",
+            annotator_configuration={},
+        )
+        self.assertEqual(result.records[0].status, ValidationStatus.RETRYABLE)
+        self.assertIn(
+            "performance_cue_offset",
+            {issue.code for issue in result.records[0].issues},
+        )
 
     def test_missing_target_is_retryable(self) -> None:
         result = self.validator.validate_batch(
@@ -100,6 +163,22 @@ class AnnotationValidationTests(unittest.TestCase):
             annotator_configuration={},
         )
         self.assertEqual(result.records[0].status, ValidationStatus.REVIEW_REQUIRED)
+
+    def test_punctuation_only_speech_requires_review(self) -> None:
+        response = self._response()
+        response["annotations"][0]["spoken_text"] = "........."
+        result = self.validator.validate_batch(
+            self.batch,
+            response,
+            prompt_version="1",
+            annotator_configuration={},
+        )
+
+        self.assertEqual(result.records[0].status, ValidationStatus.REVIEW_REQUIRED)
+        self.assertIn(
+            "non_lexical_spoken_text",
+            {issue.code for issue in result.records[0].issues},
+        )
 
     def test_approved_override_accepts_risk_and_does_not_mutate_input(self) -> None:
         response = self._response()

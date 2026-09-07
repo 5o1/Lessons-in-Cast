@@ -12,6 +12,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Mapping
 
+from ....performance import (
+    AdaptationFidelity,
+    FeatureAdaptation,
+    SpeechAdaptation,
+    approximate_cues_with_punctuation,
+    resolve_legacy_delivery,
+)
 from ...types import TtsJob
 
 
@@ -86,19 +93,20 @@ class GptSoVitsHttpSynthesizer:
         destination = artifact_root / job.output_path
         if destination.is_file():
             return destination
+        adaptation = self.adapt(job)
         reference = self._references_by_emotion.get(
             job.emotion,
             self._default_reference,
         )
         payload = {
-            "text": apply_pronunciations(job.text, self._pronunciations),
+            "text": adaptation.text,
             "text_lang": self._text_language,
             "ref_audio_path": str(reference.audio_path.resolve()),
             "prompt_text": reference.prompt_text,
             "prompt_lang": reference.prompt_language,
             "text_split_method": "cut5",
             "batch_size": 1,
-            "speed_factor": self._base_speed,
+            "speed_factor": adaptation.parameters["speed_factor"],
             "seed": self._seed,
             "media_type": "wav",
             "streaming_mode": False,
@@ -144,6 +152,52 @@ class GptSoVitsHttpSynthesizer:
             temporary.unlink(missing_ok=True)
             raise
         return destination
+
+    def adapt(self, job: TtsJob) -> SpeechAdaptation:
+        performance, legacy_notes = resolve_legacy_delivery(
+            job.performance,
+            job.delivery,
+        )
+        text, cue_notes = approximate_cues_with_punctuation(
+            job.text,
+            performance.cues,
+        )
+        text = apply_pronunciations(text, self._pronunciations)
+        notes = [*legacy_notes, *cue_notes]
+        for field, value in {
+            "direction": performance.direction,
+            "vocal_mode": performance.vocal_mode,
+            "pitch_semitones": performance.pitch_semitones,
+            "volume_gain_db": performance.volume_gain_db,
+            "energy": performance.energy,
+            "brightness": performance.brightness,
+            "clarity": performance.clarity,
+            "breathiness": performance.breathiness,
+        }.items():
+            if value is not None:
+                notes.append(
+                    FeatureAdaptation(
+                        f"performance.{field}",
+                        AdaptationFidelity.DROPPED,
+                        "GPT-SoVITS HTTP v2 exposes no matching stable control",
+                    )
+                )
+        return SpeechAdaptation(
+            job_id=job.id,
+            dialogue_id=job.dialogue_id,
+            backend=self.name,
+            text=text,
+            emotion=job.emotion,
+            parameters={
+                "speed_factor": self._base_speed * (performance.speed or 1.0),
+                "reference_emotion": (
+                    job.emotion
+                    if job.emotion in self._references_by_emotion
+                    else "default"
+                ),
+            },
+            features=tuple(notes),
+        )
 
 
 def apply_pronunciations(text: str, pronunciations: Mapping[str, str]) -> str:

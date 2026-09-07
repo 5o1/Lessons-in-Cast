@@ -1,6 +1,9 @@
 # Character mapping extracted from the current Ren'Py release.
 # Identity fields were extracted from the release; default profile selections are maintained here.
 # Regeneration must preserve default_voice_profile, type, and member fields.
+# Context-specific fields use this hierarchy and inherit from their parent:
+# [characters.<id>."relative/source/path.rpy".<nearest_label>.<nearest_scene>]
+# Missing label or scene context truncates matching at the preceding level.
 
 [metadata]
 workspace_config = "configs/workspace.toml"
@@ -172,7 +175,7 @@ name = "Ayane"
 definition_path = "game/definitions.rpy"
 definition_line = 2377
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/ay_index_tts/pipeline.py"
 
 [characters.aymay]
 name = "Ayane & Maya"
@@ -262,7 +265,7 @@ name = "Chika"
 definition_path = "game/definitions.rpy"
 definition_line = 2375
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/c_index_tts/pipeline.py"
 
 [characters.c1]
 name = "Regular Customer"
@@ -607,7 +610,7 @@ name = "Futaba"
 definition_path = "game/definitions.rpy"
 definition_line = 2369
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/f_index_tts/pipeline.py"
 
 [characters.fad]
 name = "First AD"
@@ -816,7 +819,7 @@ name = "Haruka"
 definition_path = "game/definitions.rpy"
 definition_line = 2619
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/h_index_tts/pipeline.py"
 
 [characters.hailey]
 name = "Hailey the Hare"
@@ -907,14 +910,14 @@ name = "Io"
 definition_path = "game/definitions.rpy"
 definition_line = 2590
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/i_index_tts/pipeline.py"
 
 [characters.ima]
 name = "Imani"
 definition_path = "game/definitions.rpy"
 definition_line = 2591
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/ima_index_tts/pipeline.py"
 
 [characters.imarika]
 name = "Imani & Rika"
@@ -990,14 +993,14 @@ name = "Kaori"
 definition_path = "game/definitions.rpy"
 definition_line = 2602
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/k_index_tts/pipeline.py"
 
 [characters.ka]
 name = "Karin"
 definition_path = "game/definitions.rpy"
 definition_line = 2661
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/ka_index_tts/pipeline.py"
 
 [characters.kaay]
 name = "Karin & Ayane"
@@ -1056,7 +1059,7 @@ name = "Kirin"
 definition_path = "game/definitions.rpy"
 definition_line = 2663
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/ki_index_tts/pipeline.py"
 
 [characters.kin]
 name = "Karate Instructor"
@@ -1175,14 +1178,14 @@ name = "Makoto"
 definition_path = "game/definitions.rpy"
 definition_line = 2387
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/mak_index_tts/pipeline.py"
 
 [characters.maki]
 name = "Maki"
 definition_path = "game/definitions.rpy"
 definition_line = 2390
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/maki_index_tts/pipeline.py"
 
 [characters.maktouk]
 name = "Makoto & Touka (?)"
@@ -1283,7 +1286,7 @@ name = "Miku"
 definition_path = "game/definitions.rpy"
 definition_line = 2319
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/mi_index_tts/pipeline.py"
 
 [characters.middlemaya]
 name = "Middle Maya"
@@ -1332,7 +1335,7 @@ name = "Molly"
 definition_path = "game/definitions.rpy"
 definition_line = 2588
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/mo_index_tts/pipeline.py"
 
 [characters.mod]
 name = "Matthew MacCormack"
@@ -1415,7 +1418,7 @@ name = "Noriko"
 definition_path = "game/definitions.rpy"
 definition_line = 2396
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/n_index_tts/pipeline.py"
 
 [characters.na]
 name = "Nao"
@@ -1492,7 +1495,7 @@ name = "Niki"
 definition_path = "game/definitions.rpy"
 definition_line = 2400
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/ni_index_tts/pipeline.py"
 
 [characters.nimom]
 name = "Niki’s Mom"
@@ -1526,7 +1529,7 @@ name = "Nodoka"
 definition_path = "game/definitions.rpy"
 definition_line = 2586
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/no_index_tts/pipeline.py"
 
 [characters.noodles]
 name = "Noodles"
@@ -1589,7 +1592,7 @@ name = "Otoha"
 definition_path = "game/definitions.rpy"
 definition_line = 2405
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/o_index_tts/pipeline.py"
 
 [characters.octavia]
 name = "Octavia the Octopus"
@@ -1631,7 +1634,7 @@ name = "Osako"
 definition_path = "game/definitions.rpy"
 definition_line = 2670
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/os_index_tts/pipeline.py"
 
 [characters.osc]
 name = "Off Screen Characters"
@@ -1834,7 +1837,7 @@ name = "Rin"
 definition_path = "game/definitions.rpy"
 definition_line = 2384
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/r_index_tts/pipeline.py"
 
 [characters.r2]
 name = "The Girl in the Corner"
@@ -1977,7 +1980,7 @@ name = "Sana"
 definition_path = "game/definitions.rpy"
 definition_line = 2367
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/sa_index_tts/pipeline.py"
 
 [characters.sad]
 name = "Second AD"
@@ -2022,7 +2025,7 @@ name = "Sara"
 definition_path = "game/definitions.rpy"
 definition_line = 2644
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/sar_index_tts/pipeline.py"
 
 [characters.saraharuka]
 name = "Sara & Haruka"
@@ -2257,7 +2260,7 @@ name = "Tsuneyo"
 definition_path = "game/definitions.rpy"
 definition_line = 2582
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/t_index_tts/pipeline.py"
 
 [characters.taco]
 name = "Taco Man"
@@ -2292,7 +2295,7 @@ name = "Tsubasa"
 definition_path = "game/definitions.rpy"
 definition_line = 2622
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/tb_index_tts/pipeline.py"
 
 [characters.tbiso]
 name = "Tebiso"
@@ -2334,14 +2337,14 @@ name = "Tsukasa"
 definition_path = "game/definitions.rpy"
 definition_line = 2623
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/tk_index_tts/pipeline.py"
 
 [characters.to]
 name = "Touka"
 definition_path = "game/definitions.rpy"
 definition_line = 2621
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/to_index_tts/pipeline.py"
 
 [characters.tod]
 name = "Todd the Chicken"
@@ -2404,7 +2407,7 @@ name = "Uta"
 definition_path = "game/definitions.rpy"
 definition_line = 2394
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/u_index_tts/pipeline.py"
 
 [characters.uam]
 name = "Uta & Makoto"
@@ -2456,7 +2459,7 @@ name = "Wakana"
 definition_path = "game/definitions.rpy"
 definition_line = 2403
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/w_index_tts/pipeline.py"
 
 [characters.wa]
 name = "Waitress"
@@ -2540,7 +2543,7 @@ name = "Yumi"
 definition_path = "game/definitions.rpy"
 definition_line = 2370
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/y_index_tts/pipeline.py"
 
 [characters.y1]
 name = "Yakuza 1"
@@ -2568,7 +2571,7 @@ name = "Yasu"
 definition_path = "game/definitions.rpy"
 definition_line = 2604
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/ya_index_tts/pipeline.py"
 
 [characters.yak1]
 name = "Yakuza Dude"
@@ -2631,7 +2634,7 @@ name = "Yuki"
 definition_path = "game/definitions.rpy"
 definition_line = 2597
 built_in = false
-default_voice_profile = ""
+default_voice_profile = "profiles/yu_index_tts/pipeline.py"
 
 [characters.yuu]
 name = "Yuu"

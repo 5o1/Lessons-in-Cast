@@ -10,6 +10,14 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 from ....config import AudioConfig
+from ....performance import (
+    AdaptationFidelity,
+    FeatureAdaptation,
+    SpeechAdaptation,
+    approximate_cues_with_punctuation,
+    resolve_legacy_delivery,
+)
+from ....pronunciations import SelectedPronunciation
 from ...types import TtsJob
 
 
@@ -119,6 +127,7 @@ class IndexTtsSubprocessSynthesizer:
         max_text_tokens_per_segment: int = 120,
         text_normalization: bool = True,
         pronunciations: Mapping[str, str] | None = None,
+        pronunciation_rules: Sequence[SelectedPronunciation] | None = None,
     ) -> None:
         if (
             audio_config.format.lstrip(".").lower() != "wav"
@@ -167,6 +176,7 @@ class IndexTtsSubprocessSynthesizer:
             "text_normalization": text_normalization,
         }
         self._pronunciations = dict(pronunciations or {})
+        self._pronunciation_rules = tuple(pronunciation_rules or ())
         self._process: subprocess.Popen[str] | None = None
 
     @property
@@ -189,6 +199,9 @@ class IndexTtsSubprocessSynthesizer:
                 for key, paths in sorted(self._references.items())
             },
             "pronunciations": dict(sorted(self._pronunciations.items())),
+            "pronunciation_rules": [
+                rule.to_dict() for rule in self._pronunciation_rules
+            ],
         }
 
     def set_references(
@@ -221,14 +234,15 @@ class IndexTtsSubprocessSynthesizer:
                     f"IndexTTS reference audio is missing: {reference}"
                 )
         destination.parent.mkdir(parents=True, exist_ok=True)
+        adaptation = self.adapt(job)
         response = self._exchange(
             {
                 "id": job.id,
                 "references": [str(reference) for reference in references],
-                "text": apply_index_pronunciations(job.text, self._pronunciations),
+                "text": adaptation.text,
                 "output": str(destination),
-                "emotion_vector": index_emotion_vector(job.emotion, job.intensity),
-                "duration_factor": 1.0 / self._base_speed,
+                "emotion_vector": adaptation.parameters["emotion_vector"],
+                "duration_factor": adaptation.parameters["duration_factor"],
                 "seed": self._seed,
                 "sample_rate": self._audio.sample_rate,
                 "channels": self._audio.channels,
@@ -244,6 +258,89 @@ class IndexTtsSubprocessSynthesizer:
         if not destination.is_file():
             raise RuntimeError(f"IndexTTS did not create {destination}")
         return destination
+
+    def adapt(self, job: TtsJob) -> SpeechAdaptation:
+        performance, legacy_notes = resolve_legacy_delivery(
+            job.performance,
+            job.delivery,
+        )
+        text, cue_notes = approximate_cues_with_punctuation(
+            job.text,
+            performance.cues,
+        )
+        text = apply_index_pronunciations(text, self._pronunciations)
+        notes = [*legacy_notes, *cue_notes]
+        speed = self._base_speed * (performance.speed or 1.0)
+        effective_intensity = job.intensity
+        if performance.energy is not None:
+            effective_intensity = min(
+                max(job.intensity * (1.0 + performance.energy * 0.5), 0.0),
+                1.0,
+            )
+            notes.append(
+                FeatureAdaptation(
+                    "performance.energy",
+                    AdaptationFidelity.APPROXIMATED,
+                    "scaled the IndexTTS emotion-vector strength",
+                )
+            )
+        for field, value in {
+            "direction": performance.direction,
+            "pitch_semitones": performance.pitch_semitones,
+            "volume_gain_db": performance.volume_gain_db,
+            "brightness": performance.brightness,
+            "clarity": performance.clarity,
+            "breathiness": performance.breathiness,
+            "vocal_mode": performance.vocal_mode,
+        }.items():
+            if value is not None:
+                notes.append(
+                    FeatureAdaptation(
+                        f"performance.{field}",
+                        AdaptationFidelity.DROPPED,
+                        "the current IndexTTS worker exposes no matching control",
+                    )
+                )
+        for rule in self._pronunciation_rules:
+            if rule.prosody.has_pitch_contour:
+                notes.append(
+                    FeatureAdaptation(
+                        f"pronunciation.{rule.term}.prosody.units",
+                        AdaptationFidelity.DROPPED,
+                        "retained ARPABET segment identity and lexical stress, but "
+                        "dropped the independent aligned F0 feature because "
+                        "IndexTTS exposes no word-local pitch control",
+                    )
+                )
+            if (
+                rule.prosody.duration_scale is not None
+                or any(
+                    unit.duration_scale is not None
+                    for unit in rule.prosody.units
+                )
+            ):
+                notes.append(
+                    FeatureAdaptation(
+                        f"pronunciation.{rule.term}.prosody.duration",
+                        AdaptationFidelity.DROPPED,
+                        "IndexTTS has no per-word or per-unit duration control",
+                    )
+                )
+        return SpeechAdaptation(
+            job_id=job.id,
+            dialogue_id=job.dialogue_id,
+            backend=self.name,
+            text=text,
+            emotion=job.emotion,
+            parameters={
+                "emotion_vector": index_emotion_vector(
+                    job.emotion,
+                    effective_intensity,
+                ),
+                "duration_factor": 1.0 / speed,
+            },
+            features=tuple(notes),
+        )
 
     def _exchange(self, request: dict[str, Any]) -> dict[str, Any]:
         process = self._ensure_process()

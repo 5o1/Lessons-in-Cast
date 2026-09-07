@@ -14,6 +14,7 @@ intermediates and build products are contained under build/current/ by default.
       -> build/current/annotation_responses.jsonl
       -> build/current/validated.jsonl
       -> build/current/tts_jobs.jsonl + build/current/render_tasks.jsonl
+      -> build/current/synthesis_adaptations.jsonl
       -> build/current/audio/raw/<character>/<cache-key>.wav
       -> build/current/voice/<dialogue-id>.opus
       -> build/current/release_bundle/game/lessons_in_cast_voice.rpa
@@ -22,9 +23,21 @@ intermediates and build products are contained under build/current/ by default.
 
 build/current/raw.jsonl is the backend-normalized, lossless dialogue
 representation. For Ren'Py, it preserves all six columns emitted by the native
-dialogue command.
-No semantic cleaning or source-level control-flow reconstruction occurs before
-annotation.
+dialogue command and adds the nearest lexical `label` and `scene` found above
+each source line. Missing source context emits a warning and remains empty; if
+the label is missing, the context path is truncated before the scene. No
+semantic cleaning or control-flow reconstruction occurs before annotation.
+
+Character configuration uses the same deterministic context path. The global
+`[characters.<id>]` table is followed by optional source-path, label, and scene
+tables, with each more specific table inheriting and overriding its parent:
+
+    [characters.crowd2."game/events/chapter/a.rpy".opening.classroom]
+    default_voice_profile = "profiles/crowd2_classroom/pipeline.py"
+
+Source paths retain their release-relative directories and use normalized `/`
+separators. A missing label stops matching at the source-path table; a missing
+scene stops matching at the label table.
 
 Annotation requests contain target records plus mechanically adjacent records
 from the same source file. They do not claim to represent a runtime scene. A
@@ -112,7 +125,29 @@ TTS jobs are cached by text, character, emotion, delivery, resolved
 voice-profile configuration, and audio configuration. Ensemble characters
 generate one job
 per configured member and a line-level unison render task. Effects remain on
-the render task rather than the character.
+the render task rather than the character. When a character has no available
+profile in its resolved source context, planning emits a
+`missing_voice_profile` issue and omits that voice. An ensemble keeps its
+available members; a line with no renderable member produces no audio task.
+
+The pronunciation lexicon is also backend-neutral. A spelling can provide
+several segment alphabets (for example ARPABET and IPA) plus optional lexical
+prosody aligned by syllable, mora, or phoneme. Each aligned unit has its own
+0..1 time axis, aligned representations in one or more phoneme alphabets,
+duration multiplier, and an arbitrary number of F0 targets in semitones
+relative to the phrase-local baseline. The entry
+also declares step, linear, or smooth interpolation. This is deliberately more
+precise than lexical stress: it can preserve the onset, internal turn, and
+release of each unit's pitch movement without fixing a character to one
+absolute vocal register.
+
+Backends lower that representation according to their capabilities and record
+the result in `synthesis_adaptations.jsonl`. MiniMax receives syllable-aligned
+IPA tone letters as a quantized approximation. IndexTTS keeps ARPABET phonemes
+and stress but reports the F0 curve and unit timing as lost because its current
+inference interface has no word-local pitch control. A backend with phoneme-F0
+controls can consume the core targets directly without changing the JSON or
+lexicon schema.
 
 The configured backend owns dialogue export parsing, virtual audio paths,
 integration artifacts, and release installation. The default Ren'Py backend
@@ -134,7 +169,10 @@ replaces the bundle.s game tree and patch ZIP, so removed audio cannot survive
 as a stale file.
 
 IndexTTS 2.5 runs in its own configured Python environment through one
-persistent JSON-lines worker. Each profile points to a curated reference below
+persistent JSON-lines worker per active profile. Large production runs group
+jobs by profile rather than story order. Switching to the next profile closes
+the previous worker before loading another model, so many character profiles
+do not accumulate duplicate model copies in GPU memory. Each profile points to a curated reference below
 its local `assets/` directory and records the ordered source filenames used to
 build it. Profile assets are ignored by Git and must be provisioned locally.
 When the prepared reference is missing, `prepare-voices` deterministically

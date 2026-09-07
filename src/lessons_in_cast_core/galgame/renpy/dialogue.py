@@ -9,6 +9,7 @@ from pathlib import Path, PurePosixPath
 
 from ...dialogue.types import DialogueRecord
 from ...hashing import content_hash
+from .context import RenPyContextResolver
 
 
 RENPY_DIALOGUE_HEADER = (
@@ -34,7 +35,12 @@ def normalize_source_path(value: str) -> str:
 class TabDialogueReader:
     """Read dialogue rows exactly as emitted by Ren'Py."""
 
-    def __init__(self, allowed_sources: Iterable[Path | str] | None = None) -> None:
+    def __init__(
+        self,
+        allowed_sources: Iterable[Path | str] | None = None,
+        *,
+        source_root: Path | None = None,
+    ) -> None:
         self._allowed_sources = (
             {
                 normalize_source_path(str(source))
@@ -43,9 +49,11 @@ class TabDialogueReader:
             if allowed_sources is not None
             else None
         )
+        self._source_root = source_root
 
     def read(self, source: Path) -> Iterator[DialogueRecord]:
         occurrences: defaultdict[tuple[str, str, int], int] = defaultdict(int)
+        context_resolver = RenPyContextResolver(self._source_root or source.parent)
         with source.open("r", encoding="utf-8-sig", newline="") as dialogue_file:
             rows = csv.reader(
                 dialogue_file,
@@ -94,6 +102,7 @@ class TabDialogueReader:
                     raise DialogueTabError(
                         f"{source}:{table_line}: source line number must be positive"
                     )
+                context = context_resolver.resolve(filename, line_number)
                 occurrence_key = (identifier, filename, line_number)
                 occurrence = occurrences[occurrence_key]
                 occurrences[occurrence_key] += 1
@@ -114,5 +123,7 @@ class TabDialogueReader:
                     filename=filename,
                     line_number=line_number,
                     source_statement=source_statement,
+                    label=context.label,
+                    scene=context.scene,
                 )
                 sequence += 1

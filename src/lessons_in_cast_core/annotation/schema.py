@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from ..config import AnnotationConfig
+from ..performance import PerformanceCueKind, VocalMode
 
 
 def annotation_response_schema(
@@ -34,6 +35,7 @@ def annotation_response_schema(
             "confidence",
             "review_required",
             "reason",
+            "performance",
         ],
         "properties": {
             "id": {"type": "string", "minLength": 1},
@@ -64,6 +66,98 @@ def annotation_response_schema(
             },
             "review_required": {"type": "boolean"},
             "reason": {"type": ["string", "null"]},
+            "performance": {
+                "type": "object",
+                "additionalProperties": False,
+                "required": [
+                    "direction",
+                    "vocal_mode",
+                    "speed",
+                    "pitch_semitones",
+                    "volume_gain_db",
+                    "energy",
+                    "brightness",
+                    "clarity",
+                    "breathiness",
+                    "cues",
+                ],
+                "properties": {
+                    "direction": {"type": ["string", "null"]},
+                    "vocal_mode": {
+                        "enum": [*[mode.value for mode in VocalMode], None],
+                    },
+                    "speed": {
+                        "type": ["number", "null"],
+                        "exclusiveMinimum": 0,
+                        "maximum": 4,
+                    },
+                    "pitch_semitones": {
+                        "type": ["number", "null"],
+                        "minimum": -48,
+                        "maximum": 48,
+                    },
+                    "volume_gain_db": {
+                        "type": ["number", "null"],
+                        "minimum": -60,
+                        "maximum": 24,
+                    },
+                    "energy": {
+                        "type": ["number", "null"],
+                        "minimum": -1,
+                        "maximum": 1,
+                    },
+                    "brightness": {
+                        "type": ["number", "null"],
+                        "minimum": -1,
+                        "maximum": 1,
+                    },
+                    "clarity": {
+                        "type": ["number", "null"],
+                        "minimum": -1,
+                        "maximum": 1,
+                    },
+                    "breathiness": {
+                        "type": ["number", "null"],
+                        "minimum": 0,
+                        "maximum": 1,
+                    },
+                    "cues": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": False,
+                            "required": [
+                                "kind",
+                                "offset",
+                                "duration_seconds",
+                                "intensity",
+                            ],
+                            "properties": {
+                                "kind": {
+                                    "type": "string",
+                                    "enum": [
+                                        kind.value for kind in PerformanceCueKind
+                                    ],
+                                },
+                                "offset": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                },
+                                "duration_seconds": {
+                                    "type": ["number", "null"],
+                                    "exclusiveMinimum": 0,
+                                    "maximum": 120,
+                                },
+                                "intensity": {
+                                    "type": ["number", "null"],
+                                    "minimum": 0,
+                                    "maximum": 1,
+                                },
+                            },
+                        },
+                    },
+                },
+            },
         },
     }
     return {

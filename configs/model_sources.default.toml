@@ -10,7 +10,7 @@
 # Example:
 #
 # [models.example]
-# path = "models/provider/repository"
+# path = "models/provider/repository" # omit for hosted API models
 # provider = "huggingface"
 # repository = "provider/repository"
 # revision = "pinned-revision"

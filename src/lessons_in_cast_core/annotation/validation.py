@@ -10,6 +10,7 @@ from typing import Any
 from ..config import AnnotationConfig
 from ..dialogue import DialogueBatch, DialogueRecord
 from ..hashing import content_hash
+from ..performance import PerformanceCueKind, SpeechPerformance, VocalMode
 from .types import (
     Annotation,
     BatchValidationResult,
@@ -22,6 +23,7 @@ from .types import (
 
 _PLACEHOLDER = re.compile(r"\[[^\[\]]+\]")
 _TEXT_TAG = re.compile(r"\{[^{}]+\}")
+_LEXICAL_SPEECH = re.compile(r"[^\W_]", re.UNICODE)
 _ALLOWED_FIELDS = {
     "id",
     "action",
@@ -33,6 +35,7 @@ _ALLOWED_FIELDS = {
     "confidence",
     "review_required",
     "reason",
+    "performance",
 }
 
 
@@ -56,7 +59,12 @@ class AnnotationValidator:
         config_hash = content_hash(annotator_configuration)
         target_by_id = {item.id: item for item in batch.targets}
         context_ids = {
-            item.id for item in (*batch.context_before, *batch.context_after)
+            item.id
+            for item in (
+                *batch.context_before,
+                *batch.context_interleaved,
+                *batch.context_after,
+            )
         }
         batch_issues: list[ValidationIssue] = []
 
@@ -232,6 +240,7 @@ class AnnotationValidator:
         confidence = raw["confidence"]
         review_required = raw["review_required"]
         reason = raw["reason"]
+        performance_raw = raw.get("performance")
 
         if not isinstance(spoken_text, str):
             error("spoken_text_type", "spoken_text must be a string.")
@@ -268,6 +277,11 @@ class AnnotationValidator:
             error("review_required_type", "review_required must be a boolean.")
         if reason is not None and not isinstance(reason, str):
             error("reason_type", "reason must be a string or null.")
+        performance = self._validate_performance(
+            performance_raw,
+            spoken_text if isinstance(spoken_text, str) else "",
+            error,
+        )
         if any(issue.severity == "error" for issue in issues):
             return None, issues
 
@@ -291,6 +305,11 @@ class AnnotationValidator:
             error("missing_effects", "sfx_only requires at least one effect.")
         if action is DialogueAction.OMIT and effects:
             error("unexpected_effects", "omit cannot contain effects.")
+        if not speaking and performance != SpeechPerformance():
+            error(
+                "unexpected_performance",
+                "A non-speaking action cannot contain speech performance intent.",
+            )
         if any(issue.severity == "error" for issue in issues):
             return None, issues
 
@@ -316,9 +335,153 @@ class AnnotationValidator:
                 confidence=float(confidence) if confidence is not None else None,
                 review_required=review_required,
                 reason=reason,
+                performance=performance,
             ),
             issues,
         )
+
+    @staticmethod
+    def _validate_performance(
+        raw: Any,
+        spoken_text: str,
+        error: Any,
+    ) -> SpeechPerformance:
+        """Validate schema-v2 performance while accepting omitted v1 data."""
+
+        if raw is None:
+            return SpeechPerformance()
+        if not isinstance(raw, dict):
+            error("performance_type", "performance must be an object.")
+            return SpeechPerformance()
+        allowed = {
+            "direction",
+            "vocal_mode",
+            "speed",
+            "pitch_semitones",
+            "volume_gain_db",
+            "energy",
+            "brightness",
+            "clarity",
+            "breathiness",
+            "cues",
+        }
+        unknown = set(raw) - allowed
+        if unknown:
+            error(
+                "unknown_performance_fields",
+                f"Unknown performance fields: {sorted(unknown)!r}",
+            )
+        direction = raw.get("direction")
+        if direction is not None and not isinstance(direction, str):
+            error("performance_direction_type", "direction must be a string or null.")
+        mode = raw.get("vocal_mode")
+        try:
+            vocal_mode = VocalMode(mode) if mode is not None else None
+        except (TypeError, ValueError):
+            error("invalid_vocal_mode", "vocal_mode is not allowed.")
+            vocal_mode = None
+
+        ranges = {
+            "speed": (0.0, 4.0, True),
+            "pitch_semitones": (-48.0, 48.0, False),
+            "volume_gain_db": (-60.0, 24.0, False),
+            "energy": (-1.0, 1.0, False),
+            "brightness": (-1.0, 1.0, False),
+            "clarity": (-1.0, 1.0, False),
+            "breathiness": (0.0, 1.0, False),
+        }
+        values: dict[str, float | None] = {}
+        for field, (minimum, maximum, exclusive_minimum) in ranges.items():
+            value = raw.get(field)
+            if value is None:
+                values[field] = None
+                continue
+            if isinstance(value, bool) or not isinstance(value, (int, float)):
+                error("performance_control_type", f"{field} must be a number or null.")
+                values[field] = None
+                continue
+            number = float(value)
+            valid_minimum = number > minimum if exclusive_minimum else number >= minimum
+            if not valid_minimum or number > maximum:
+                error("performance_control_range", f"{field} is outside its allowed range.")
+                values[field] = None
+            else:
+                values[field] = number
+
+        cues_raw = raw.get("cues", [])
+        cues = []
+        if not isinstance(cues_raw, list):
+            error("performance_cues_type", "performance.cues must be an array.")
+        else:
+            previous_offset = -1
+            for index, cue in enumerate(cues_raw):
+                if not isinstance(cue, dict):
+                    error("performance_cue_type", f"Cue {index} must be an object.")
+                    continue
+                if set(cue) - {"kind", "offset", "duration_seconds", "intensity"}:
+                    error("unknown_performance_cue_fields", f"Cue {index} has unknown fields.")
+                    continue
+                try:
+                    kind = PerformanceCueKind(cue.get("kind"))
+                except (TypeError, ValueError):
+                    error("invalid_performance_cue", f"Cue {index} kind is not allowed.")
+                    continue
+                offset = cue.get("offset")
+                if isinstance(offset, bool) or not isinstance(offset, int):
+                    error("performance_cue_offset", f"Cue {index} offset must be an integer.")
+                    continue
+                if offset < previous_offset or not 0 <= offset <= len(spoken_text):
+                    error(
+                        "performance_cue_offset",
+                        f"Cue {index} offset must be ordered and within spoken_text.",
+                    )
+                    continue
+                previous_offset = offset
+                duration = cue.get("duration_seconds")
+                if duration is not None and (
+                    isinstance(duration, bool)
+                    or not isinstance(duration, (int, float))
+                    or not 0 < duration <= 120
+                ):
+                    error("performance_cue_duration", f"Cue {index} duration is invalid.")
+                    continue
+                if kind is PerformanceCueKind.PAUSE and duration is None:
+                    error("performance_pause_duration", f"Cue {index} pause needs a duration.")
+                    continue
+                intensity_value = cue.get("intensity")
+                if intensity_value is not None and (
+                    isinstance(intensity_value, bool)
+                    or not isinstance(intensity_value, (int, float))
+                    or not 0 <= intensity_value <= 1
+                ):
+                    error("performance_cue_intensity", f"Cue {index} intensity is invalid.")
+                    continue
+                cues.append(
+                    {
+                        "kind": kind.value,
+                        "offset": offset,
+                        "duration_seconds": (
+                            float(duration) if duration is not None else None
+                        ),
+                        "intensity": (
+                            float(intensity_value)
+                            if intensity_value is not None
+                            else None
+                        ),
+                    }
+                )
+        try:
+            return SpeechPerformance.from_dict(
+                {
+                    "direction": direction if isinstance(direction, str) else None,
+                    "vocal_mode": vocal_mode.value if vocal_mode else None,
+                    **values,
+                    "cues": cues,
+                }
+            )
+        except (KeyError, TypeError, ValueError):
+            error("invalid_performance", "performance could not be decoded.")
+            return SpeechPerformance()
 
     def _add_text_risks(
         self,
@@ -343,6 +506,15 @@ class AnnotationValidator:
                 ValidationIssue(
                     "text_tag",
                     "spoken_text may still contain a Ren'Py text tag.",
+                    "warning",
+                    target.id,
+                )
+            )
+        if _LEXICAL_SPEECH.search(spoken_text) is None:
+            issues.append(
+                ValidationIssue(
+                    "non_lexical_spoken_text",
+                    "spoken_text contains no letters or numbers and may be a silent visual beat.",
                     "warning",
                     target.id,
                 )

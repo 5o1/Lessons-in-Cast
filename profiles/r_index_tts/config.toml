@@ -1,0 +1,40 @@
+# Initial candidate profile; reference audio remains local and untracked.
+
+[render]
+base_speed = 1.0
+
+[backend]
+model = "index_tts_2_5"
+python_executable = "external/index-tts/.venv/bin/python"
+source_root = "external/index-tts"
+language = "EN"
+seed = 233333
+use_bf16 = true
+emotion_alpha = 0.65
+use_random_emotion = false
+do_sample = false
+top_p = 0.8
+top_k = 30
+temperature = 0.8
+num_beams = 3
+repetition_penalty = 10.0
+length_penalty = 0.0
+max_mel_tokens = 1500
+interval_silence_ms = 200
+max_text_tokens_per_segment = 120
+text_normalization = true
+
+[reference]
+scope = "profile"
+source_directory = "assets/reference_sources"
+sources = [
+    "source-01.wav",
+    "source-02.wav",
+]
+path = "assets/references/default.wav"
+trim_silence = true
+top_db = 40.0
+padding_ms = 150
+gate_hold_ms = 500
+minimum_speech_seconds = 3.0
+minimum_duration_seconds = 15.0

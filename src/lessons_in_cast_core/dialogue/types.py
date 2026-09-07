@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Any
 
 
-DIALOGUE_SCHEMA_VERSION = 2
+DIALOGUE_SCHEMA_VERSION = 3
 
 
 @dataclass(frozen=True, slots=True)
@@ -21,6 +21,8 @@ class DialogueRecord:
     filename: str
     line_number: int
     source_statement: str
+    label: str = ""
+    scene: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -33,6 +35,8 @@ class DialogueRecord:
             "filename": self.filename,
             "line_number": self.line_number,
             "source_statement": self.source_statement,
+            "label": self.label,
+            "scene": self.scene,
         }
 
     @classmethod
@@ -46,6 +50,8 @@ class DialogueRecord:
             "filename": str,
             "line_number": int,
             "source_statement": str,
+            "label": str,
+            "scene": str,
         }
         allowed = {"schema_version", *required}
         unknown = set(value) - allowed
@@ -70,4 +76,6 @@ class DialogueRecord:
             "dialogue": self.dialogue,
             "filename": self.filename,
             "line_number": self.line_number,
+            "label": self.label,
+            "scene": self.scene,
         }
