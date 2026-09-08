@@ -121,7 +121,8 @@ def _infer(
     frontend = []
 
     def traced_split(text, max_tokens, lang_prefix=""):
-        segments = original_split(text, max_tokens, lang_prefix)
+        # Consume one-shot iterables once, then share the materialized data.
+        segments = list(original_split(text, max_tokens, lang_prefix))
         frontend.append({"normalized_text": text, "language_prefix": lang_prefix,
                          "segments": list(segments),
                          "token_counts": [tts._token_len(lang_prefix + part) for part in segments]})
