@@ -40,7 +40,7 @@ class PipelineTests(unittest.TestCase):
                 ),
                 annotation=AnnotationConfig(
                     allowed_emotions=frozenset({"neutral"}),
-                    allowed_effects=frozenset(),
+                    allowed_effects=frozenset({"fade_out"}),
                 ),
                 audio=AudioConfig(),
             )
@@ -73,6 +73,9 @@ class PipelineTests(unittest.TestCase):
                 layout.annotation_requests,
                 layout.annotation_responses,
             )
+            responses = list(read_jsonl(layout.annotation_responses))
+            responses[0]["response"]["annotations"][0].update(action="speak_with_effect", effects=["fade_out"])
+            write_jsonl(responses, layout.annotation_responses)
             validated = pipeline.validate(layout)
             with self.assertRaisesRegex(ValueError, "No polish"):
                 pipeline.plan_synthesis(layout)
@@ -108,6 +111,12 @@ class PipelineTests(unittest.TestCase):
                 ).is_file()
             )
             self.assertTrue(layout.release_patch.is_file())
+            audits = list(read_jsonl(layout.audio_effects))
+            self.assertEqual(len(audits), 1)
+            self.assertEqual(audits[0]["steps"][0]["type"], "fade_out")
+            layout.discard_intermediates()
+            self.assertTrue(layout.audio_effects.is_file())
+            self.assertFalse((layout.root / "voice").exists())
 
     def test_validation_exports_only_failed_targets_for_retry(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

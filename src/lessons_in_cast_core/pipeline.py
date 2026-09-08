@@ -74,7 +74,12 @@ class DialoguePipeline:
                 "Configured galgame backend ID does not match the injected backend: "
                 f"{config.galgame.backend!r} != {galgame_backend.backend_id!r}"
             )
-        self._renderer = renderer or WaveRenderer(audio_config=config.audio)
+        from .effects import CoreEffectProcessor
+        self._renderer = renderer or WaveRenderer(
+            CoreEffectProcessor(config.effects, sample_rate=config.audio.sample_rate,
+                                channels=config.audio.channels, ffmpeg_executable=config.audio.ffmpeg_executable),
+            audio_config=config.audio,
+        )
         self._validation = AnnotationValidationStage(config)
 
     def _require_galgame_backend(self) -> GalgameBackend:
@@ -331,6 +336,7 @@ class DialoguePipeline:
         # Rebind jobs to accepted polish and current backend/profile settings.
         # Calling synthesize directly must not reuse a stale pre-polish plan.
         self.plan_synthesis(layout)
+        update_run_manifest(layout, {"effects_configuration": self._config.effects.to_dict()})
         job_count = 0
         reused_job_count = 0
         jobs = (
@@ -352,6 +358,7 @@ class DialoguePipeline:
         with (
             JsonlIndex(layout.tts_jobs, "id") as job_index,
             AtomicJsonlWriter(layout.audio_quality) as quality_writer,
+            AtomicJsonlWriter(layout.audio_effects) as effects_writer,
         ):
             for value in read_jsonl(layout.render_tasks):
                 task = RenderTask.from_dict(value)
@@ -374,10 +381,21 @@ class DialoguePipeline:
                 else:
                     result = checker.check(task.dialogue_id, path)
                 quality_writer.write(result.to_dict())
+                if task.effects:
+                    report = (layout.root / task.output_path).with_suffix(".effects.json")
+                    if result.valid and report.is_file():
+                        effects_writer.write(json.loads(report.read_text(encoding="utf-8")))
+                    else:
+                        effects_writer.write({"dialogue_id": task.dialogue_id, "requested": list(task.effects),
+                                              "status": "failed" if not result.valid else "audit_unavailable",
+                                              "issues": list(result.issues)})
                 if result.valid:
                     rendered += 1
                 else:
                     quality_failures += 1
+
+        if not effects_writer.count:
+            layout.audio_effects.unlink(missing_ok=True)
 
         integration_writer = VoiceManifestWriter()
         with (

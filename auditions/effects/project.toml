@@ -1,0 +1,11 @@
+title = "Core effects: dry vs six presets and an abstract-world chain"
+brief = "Use a dry spoken take of at least two seconds with a voiced sound near 35% of its duration. Listen for retained words, controlled peaks, censor replacement, fragment repetition, held sound, dropouts, and intact normal recovery. This fixture contains no reference audio."
+
+[cases]
+fade_in = ["fade_in"]
+fade_out = ["fade_out"]
+telephone = ["telephone"]
+monster = ["monster"]
+censor_beep = ["censor_beep"]
+glitch = ["glitch"]
+fractured_entity = ["monster", "glitch", "fade_out"]

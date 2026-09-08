@@ -14,6 +14,7 @@ dependencies = []
 lessons-in-cast = "lessons_in_cast_core.cli:main"
 lessons-in-cast-voice-design = "lessons_in_cast_core.voice_design.cli:main"
 lessons-in-cast-audition = "lessons_in_cast_core.audition.cli:main"
+lessons-in-cast-effects = "lessons_in_cast_core.effects.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

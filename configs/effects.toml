@@ -1,0 +1,40 @@
+# Core supplies the six defaults. Override parameters here or add named presets.
+# Times are seconds relative to the audio entering each effect, not word offsets.
+
+[presets.fade_in]
+duration_seconds = 0.15
+
+[presets.fade_out]
+duration_seconds = 0.25
+
+[presets.telephone]
+low_hz = 300.0
+high_hz = 3400.0
+bits = 8
+
+[presets.monster]
+semitones = -6.0
+bass_db = 6.0
+gain_db = -6.0
+
+[presets.censor_beep]
+frequency_hz = 1000.0
+level_db = -18.0
+start_seconds = 0.0
+end_seconds = -1.0 # End of current clip; replace the entire line by default.
+duration_seconds = 1.0 # Only used without source speech (sfx_only).
+
+[presets.glitch]
+position = 0.35 # Fraction of current input duration at which the fragment begins.
+chunk_seconds = 0.16
+repeats = 4 # Extra repetitions after the original fragment.
+gap_seconds = 0.045
+hold_seconds = 0.8
+grain_seconds = 0.04
+dropout_seconds = 0.55
+gate_on_seconds = 0.065
+gate_off_seconds = 0.055
+edge_seconds = 0.004
+
+[chains]
+fractured_entity = ["monster", "glitch", "fade_out"]

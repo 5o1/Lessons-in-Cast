@@ -12,6 +12,8 @@ from ..hashing import content_hash, file_hash
 from ..model_registry import load_model_registry
 from ..synthesis.profiles import load_voice_profile
 from ..synthesis.planner import SynthesisPlanner
+from ..synthesis.audio import WaveRenderer
+from ..effects import CoreEffectProcessor
 from ..annotation import DialogueAction, ValidationStatus
 from .cleaning import validate_cleaning
 from .types import load_project, slug
@@ -60,8 +62,7 @@ def render_project(root: Path, project_path: Path, run: str, *, cleaning: Path |
         result = validated.get(metadata["case_targets"][case.id])
         if result is None or result.status is not ValidationStatus.ACCEPTED or result.annotation is None:
             raise ValueError(f"Polish not accepted for {case.id}; resolve missing/review/retry results first")
-        if result.annotation.action not in {DialogueAction.SPEAK, DialogueAction.OMIT}:
-            raise ValueError(f"Case {case.id} needs an effects render; this audition renderer cannot silently drop effects")
+        config.effects.resolve(result.annotation.effects)
     character = load_characters(repository_root=root)[project.character]
     chosen = profile or Path(character.default_voice_profile)
     if profile is None and not character.default_voice_profile:
@@ -83,6 +84,7 @@ def render_project(root: Path, project_path: Path, run: str, *, cleaning: Path |
             pipeline.override_reference_audio(reference_audio.resolve())
         dependencies = pipeline.prepare()
         inputs = {"project": project.document, "cases": [case.id for case in cases], "candidate": candidate,
+                  "effects": config.effects.to_dict(),
                   "cleaning": {"directory": str(cleaning.resolve()), "requests_sha256": metadata["requests_sha256"],
                                "responses_sha256": file_hash(cleaning / "annotation_responses.jsonl")},
                   "polish_responses_sha256": metadata.get("polish_responses_sha256"),
@@ -98,6 +100,10 @@ def render_project(root: Path, project_path: Path, run: str, *, cleaning: Path |
         planner = SynthesisPlanner({project.character: planned_character}, audio_config=replace(config.audio, format="wav"),
                                    synthesizer_configuration={"profile": pipeline.configuration, "audition_inputs": fingerprint})
         jobs = {}
+        tasks = {}
+        renderer = WaveRenderer(CoreEffectProcessor(config.effects, sample_rate=config.audio.sample_rate,
+                                                    channels=config.audio.channels, ffmpeg_executable=config.audio.ffmpeg_executable),
+                                audio_config=replace(config.audio, format="wav"))
         for case in cases:
             target_id = metadata["case_targets"][case.id]
             # Each side is an independent reading, even when two sides share
@@ -105,7 +111,9 @@ def render_project(root: Path, project_path: Path, run: str, *, cleaning: Path |
             planned = planner.plan(records, [validated[target_id]])
             if planned.issues:
                 raise ValueError(f"Synthesis planning rejected audition targets: {planned.issues}")
-            if validated[target_id].annotation.action is DialogueAction.SPEAK:
+            if planned.render_tasks:
+                tasks[target_id] = planned.render_tasks[0]
+            if validated[target_id].annotation.action in {DialogueAction.SPEAK, DialogueAction.SPEAK_WITH_EFFECT}:
                 if len(planned.jobs) != 1:
                     raise ValueError("An audition side requires a single-speaker profile")
                 jobs[target_id] = planned.jobs[0]
@@ -138,12 +146,24 @@ def render_project(root: Path, project_path: Path, run: str, *, cleaning: Path |
                 continue
             # The normal planner supplies text, labels and performance from validated cleaning.
             # Audition changes only the take's artifact identity and output location.
-            job = replace(jobs[target_id], id=case.id, output_path=str(output))
-            save(directory / "takes" / f"{case.id}.job.json", job.to_dict())
-            save(directory / "takes" / f"{case.id}.adaptation.json", pipeline.adapt(job).to_dict())
+            task = tasks[target_id]
+            job = None
+            if target_id in jobs:
+                raw_output = directory / "raw" / f"{case.id}.wav" if task.effects else output
+                raw_output.parent.mkdir(parents=True, exist_ok=True)
+                job = replace(jobs[target_id], id=case.id, output_path=str(raw_output))
+                save(directory / "takes" / f"{case.id}.job.json", job.to_dict())
+                save(directory / "takes" / f"{case.id}.adaptation.json", pipeline.adapt(job).to_dict())
             print(f"[{number}/{len(cases)}] {case.id}: rendering", flush=True)
             try:
-                result = pipeline.render(job, directory)
+                if job is not None:
+                    result = pipeline.render(job, directory)
+                    if result.resolve() != Path(job.output_path).resolve():
+                        raise ValueError("Profile returned a different path than the requested raw take")
+                if task.effects:
+                    effect_task = replace(task, output_path=str(output), component_job_ids=(job.id,) if job else ())
+                    save(directory / "takes" / f"{case.id}.render.json", effect_task.to_dict())
+                    result = renderer.render(effect_task, {job.id: job} if job else {}, directory)
                 if result.resolve() != output.resolve():
                     raise ValueError("Profile returned a different path than the requested take")
                 with wave.open(str(output)) as audio:
@@ -151,7 +171,8 @@ def render_project(root: Path, project_path: Path, run: str, *, cleaning: Path |
                     if seconds <= 0:
                         raise ValueError("Empty audition take")
                 manifest["results"][case.id] = {"status": "complete", "audio": str(output.relative_to(directory)),
-                                               "seconds": seconds, "sha256": file_hash(output), "spoken_text": job.text}
+                                               "seconds": seconds, "sha256": file_hash(output), "spoken_text": job.text if job else "",
+                                               "effects": list(task.effects)}
             except Exception as exc:
                 manifest["status"] = "failed"
                 manifest["results"][case.id] = {"status": "failed", "error": f"{type(exc).__name__}: {exc}"}

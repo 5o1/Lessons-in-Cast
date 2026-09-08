@@ -35,15 +35,19 @@ allowed_emotions = [
     "possessive_care",
 ]
 allowed_effects = [
-    "chorus",
-    "distortion",
-    "echo",
+    "fade_in",
+    "fade_out",
     "glitch",
-    "reverb",
     "telephone",
+    "monster",
+    "censor_beep",
+    "fractured_entity",
 ]
 maximum_length_ratio = 4.0
 minimum_length_ratio = 0.15
+
+[effects]
+config_path = "configs/effects.toml"
 
 [codex]
 batches_per_packet = 2

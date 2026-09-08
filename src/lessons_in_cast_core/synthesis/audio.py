@@ -11,6 +11,7 @@ from array import array
 from pathlib import Path
 
 from ..config import AudioConfig
+from ..effects import CoreEffectProcessor, EffectError
 from .api import AudioEffectProcessor
 from .types import AudioQualityResult, RenderTask, TtsJob
 
@@ -28,8 +29,11 @@ class WaveRenderer:
         *,
         audio_config: AudioConfig | None = None,
     ) -> None:
-        self._effect_processor = effect_processor
         self._config = audio_config or AudioConfig()
+        self._effect_processor = effect_processor if effect_processor is not None else CoreEffectProcessor(
+            sample_rate=self._config.sample_rate, channels=self._config.channels,
+            ffmpeg_executable=self._config.ffmpeg_executable,
+        )
 
     def render(
         self,
@@ -54,6 +58,7 @@ class WaveRenderer:
         delivery_format = destination.suffix.lstrip(".").lower()
         if delivery_format == "wav" and not task.effects:
             self._render_components(task, components, destination)
+            destination.with_suffix(".effects.json").unlink(missing_ok=True)
             return destination
         if delivery_format not in {"wav", "opus"}:
             raise AudioRenderError(
@@ -65,22 +70,32 @@ class WaveRenderer:
             temporary_root = Path(directory)
             source = temporary_root / "source.wav"
             rendered = self._render_components(task, components, source)
-            if rendered is None:
+            if rendered is None and not task.effects:
                 raise AudioRenderError(
                     f"{task.dialogue_id}: render task produced no audio"
                 )
             if task.effects:
                 assert self._effect_processor is not None
                 effected = temporary_root / "effected.wav"
-                rendered = self._effect_processor.process(
-                    rendered,
-                    effected,
-                    task.effects,
-                )
+                try:
+                    rendered = self._effect_processor.process(rendered, effected, task.effects)
+                except EffectError as exc:
+                    raise AudioRenderError(f"{task.dialogue_id}: {exc}") from exc
+            assert rendered is not None
             if delivery_format == "wav":
                 shutil.copy2(rendered, destination)
             else:
                 self._encode_opus(rendered, destination, task.dialogue_id)
+            report = rendered.with_suffix(".effects.json")
+            final_report = destination.with_suffix(".effects.json")
+            if task.effects and report.is_file():
+                from ..hashing import file_hash
+                audit = json.loads(report.read_text(encoding="utf-8"))
+                audit["dialogue_id"] = task.dialogue_id
+                audit["delivery"] = {"format": delivery_format, "sha256": file_hash(destination)}
+                final_report.write_text(json.dumps(audit, indent=2) + "\n", encoding="utf-8")
+            else:
+                final_report.unlink(missing_ok=True)
         return destination
 
     def _encode_opus(
