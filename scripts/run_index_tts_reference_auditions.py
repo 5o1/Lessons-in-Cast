@@ -203,6 +203,7 @@ def create_backend(
         interval_silence_ms=profile.interval_silence_ms,
         max_text_tokens_per_segment=profile.max_text_tokens_per_segment,
         text_normalization=profile.text_normalization,
+        expressive_pause=profile.expressive_pause,
         pronunciations=pronunciations,
     )
     return backend, {

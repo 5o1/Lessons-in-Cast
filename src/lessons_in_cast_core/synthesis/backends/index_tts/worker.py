@@ -88,7 +88,7 @@ def _infer(
     language: str,
     reference_directory: Path,
     reference_cache: dict[tuple[Any, ...], Path],
-) -> None:
+) -> dict[str, Any]:
     import numpy
     import torch
 
@@ -117,6 +117,15 @@ def _infer(
             "temperature": float(request["temperature"]),
         }
     original_inference_speech = tts.gpt.inference_speech
+    original_split = tts.split_text_by_tokens
+    frontend = []
+
+    def traced_split(text, max_tokens, lang_prefix=""):
+        segments = original_split(text, max_tokens, lang_prefix)
+        frontend.append({"normalized_text": text, "language_prefix": lang_prefix,
+                         "segments": list(segments),
+                         "token_counts": [tts._token_len(lang_prefix + part) for part in segments]})
+        return segments
 
     def configured_inference_speech(*args: Any, **kwargs: Any) -> Any:
         kwargs["do_sample"] = bool(request["do_sample"])
@@ -126,6 +135,7 @@ def _infer(
         return original_inference_speech(*args, **kwargs)
 
     tts.gpt.inference_speech = configured_inference_speech
+    tts.split_text_by_tokens = traced_split
     try:
         tts.infer(
             spk_audio_prompt=str(reference),
@@ -148,9 +158,12 @@ def _infer(
             temporary, int(request["sample_rate"]), int(request["channels"])
         )
         temporary.replace(output)
+        return {"input_text": request["text"], "frontend_calls": frontend,
+                "interval_silence_ms": int(request["interval_silence_ms"])}
     finally:
         temporary.unlink(missing_ok=True)
         tts.gpt.inference_speech = original_inference_speech
+        tts.split_text_by_tokens = original_split
 
 
 def main() -> int:
@@ -186,14 +199,14 @@ def main() -> int:
                     emotion_resolution = resolve_arbitrary_emotion(request["arbitrary_emotion"], emotion_engine,
                                                                   request.get("emotion_energy"))
                     request["emotion_vector"] = emotion_resolution["vector"]
-                _infer(
+                frontend = _infer(
                     tts,
                     request,
                     args.language,
                     reference_directory,
                     reference_cache,
                 )
-            response = {"id": request.get("id"), "ok": True}
+            response = {"id": request.get("id"), "ok": True, "text_frontend": frontend}
             if emotion_resolution is not None:
                 response["emotion_resolution"] = emotion_resolution
         except Exception as exc:

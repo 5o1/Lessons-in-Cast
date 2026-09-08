@@ -14,7 +14,6 @@ from ....performance import (
     AdaptationFidelity,
     FeatureAdaptation,
     SpeechAdaptation,
-    approximate_cues_with_punctuation,
     resolve_legacy_delivery,
 )
 from ....pronunciations import SelectedPronunciation
@@ -24,6 +23,7 @@ from ...references.voices import resolve_voice_reference, voice_reference_finger
 
 
 from .emotions import EMOTION_VECTORS
+from .text import VERSION as TEXT_FRONTEND_VERSION, lower_punctuation
 
 _AXIS_ORDER = ("joy", "anger", "sadness", "fear", "disgust", "depression", "surprise", "calm")
 _EMOTION_BIAS = (0.9375, 0.875, 1.0, 1.0, 0.9375, 0.9375, 0.6875, 0.5625)
@@ -111,6 +111,7 @@ class IndexTtsSubprocessSynthesizer:
         pronunciation_rules: Sequence[SelectedPronunciation] | None = None,
         emotion_vectors: Mapping[str, Sequence[float]] | None = None,
         emotion_mapping_id: str | None = None,
+        expressive_pause: str = "period",
     ) -> None:
         if (
             audio_config.format.lstrip(".").lower() != "wav"
@@ -119,6 +120,9 @@ class IndexTtsSubprocessSynthesizer:
             raise ValueError("IndexTTS adapter currently requires 16-bit WAV output")
         if base_speed <= 0:
             raise ValueError("IndexTTS base_speed must be positive")
+        if expressive_pause not in ("native", "comma", "period"):
+            raise ValueError("IndexTTS expressive_pause must be native, comma or period")
+        self._expressive_pause = expressive_pause
         self._root = repository_root.resolve()
         # Resolving this symlink would bypass the virtual environment and use
         # uv's base interpreter without the environment's installed packages.
@@ -190,6 +194,8 @@ class IndexTtsSubprocessSynthesizer:
             ],
             "inline_speech_version": 3,
             "arbitrary_emotion_version": 1,
+            "text_frontend_version": TEXT_FRONTEND_VERSION,
+            "expressive_pause": self._expressive_pause,
             "emotion_vectors": self._emotion_vectors,
             "emotion_mapping_id": self._emotion_mapping_id,
             "voice_references": {key: voice_reference_fingerprint(paths[0])
@@ -209,6 +215,12 @@ class IndexTtsSubprocessSynthesizer:
     def set_pronunciations(self, pronunciations: Mapping[str, str]) -> None:
         """Replace pronunciation annotations without restarting the worker."""
         self._pronunciations = dict(pronunciations)
+
+    def set_expressive_pause(self, mode: str) -> None:
+        """Select an IndexTTS-only punctuation fallback before planning a take."""
+        if mode not in ("native", "comma", "period"):
+            raise ValueError("IndexTTS expressive_pause must be native, comma or period")
+        self._expressive_pause = mode
 
     def synthesize(self, job: TtsJob, artifact_root: Path) -> Path:
         destination = (artifact_root / job.output_path).resolve()
@@ -256,6 +268,9 @@ class IndexTtsSubprocessSynthesizer:
             )
         if not destination.is_file():
             raise RuntimeError(f"IndexTTS did not create {destination}")
+        if response.get("text_frontend") is not None:
+            destination.with_suffix(".frontend.json").write_text(
+                json.dumps(response["text_frontend"], ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         if job.arbitrary_emotion is not None:
             destination.with_suffix(".emotion.json").write_text(
                 json.dumps({"description": job.arbitrary_emotion, "resolution": response.get("emotion_resolution")}, indent=2) + "\n",
@@ -270,9 +285,10 @@ class IndexTtsSubprocessSynthesizer:
             job.performance,
             job.delivery,
         )
-        text, cue_notes = approximate_cues_with_punctuation(
+        text, cue_notes = lower_punctuation(
             job.text,
             performance.cues,
+            self._expressive_pause,
         )
         text = apply_index_pronunciations(text, self._pronunciations)
         notes = [*legacy_notes, *cue_notes]
@@ -349,6 +365,7 @@ class IndexTtsSubprocessSynthesizer:
             text=text,
             emotion=job.emotion,
             parameters={
+                "expressive_pause": self._expressive_pause,
                 "voice": job.voice,
                 "reference_audio": str(voice_reference) if voice_reference else None,
                 "emotion_vector": emotion_vector,
