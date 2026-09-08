@@ -10,13 +10,10 @@ from ..performance import PerformanceCueKind, VocalMode
 
 def annotation_response_schema(
     config: AnnotationConfig | None = None,
+    *, stage: str = "polish",
 ) -> dict[str, Any]:
-    emotion_schema: dict[str, Any] = {"type": ["string", "null"]}
     effect_schema: dict[str, Any] = {"type": "string"}
     if config is not None:
-        emotion_schema = {
-            "enum": [*sorted(config.allowed_emotions), None],
-        }
         effect_schema = {
             "type": "string",
             "enum": sorted(config.allowed_effects),
@@ -28,8 +25,6 @@ def annotation_response_schema(
             "id",
             "action",
             "spoken_text",
-            "emotion",
-            "intensity",
             "delivery",
             "effects",
             "confidence",
@@ -43,12 +38,13 @@ def annotation_response_schema(
                 "type": "string",
                 "enum": ["speak", "omit", "sfx_only", "speak_with_effect"],
             },
-            "spoken_text": {"type": "string"},
-            "emotion": emotion_schema,
-            "intensity": {
-                "type": ["number", "null"],
-                "minimum": 0,
-                "maximum": 1,
+            "spoken_text": {
+                "type": "string",
+                "description": 'For speech, wrap every span in <emotion name="LABEL">text</emotion>. Each name is one preset semantic label; no combinations or numerical intensity. '
+                               'Alternatively use <arbitrary_emotion description="AUDIBLE ACTING">text</arbitrary_emotion> for runtime-described emotion; never nest or overlap preset and arbitrary emotions. '
+                               'Use adjacent spans for emotion changes. Optional <voice name="FILE_STEM"> wraps emotion spans to select a profile reference. '
+                               'No nested voices or emotions. Escape literal &, < and >. '
+                               'Use an empty string for non-speaking actions. Labels must come from allowed_emotions.',
             },
             "delivery": {
                 "type": "object",
@@ -160,6 +156,16 @@ def annotation_response_schema(
             },
         },
     }
+    if stage == "cleaning":
+        annotation["required"].remove("delivery")
+        del annotation["properties"]["delivery"]
+        annotation["properties"]["spoken_text"] = {"type": "string", "description": "Plain cleaned speech, without emotion or voice markup."}
+        performance = annotation["properties"]["performance"]
+        cues = performance["properties"]["cues"]
+        cues["items"]["properties"]["kind"] = {"const": "pause"}
+        cues["items"]["properties"]["intensity"] = {"type": "null"}
+        performance["required"] = ["cues"]
+        performance["properties"] = {"cues": cues}
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "title": "Lessons in Cast annotation response",

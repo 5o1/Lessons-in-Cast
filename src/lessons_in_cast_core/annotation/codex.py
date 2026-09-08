@@ -80,12 +80,14 @@ class CodexAnnotationWorkflow:
         prompt_path: Path,
         character_names: Mapping[str, str] | None = None,
         source_files: tuple[str, ...] = (),
+        task_commands: tuple[str, str] | None = None,
     ) -> None:
         self._prompt_path = prompt_path.resolve()
         if not self._prompt_path.is_file():
             raise FileNotFoundError(f"Codex prompt does not exist: {self._prompt_path}")
         self._character_names = dict(character_names or {})
         self._source_files = frozenset(source_files)
+        self._task_commands = task_commands
         self._configuration = {
             "adapter": "codex-file-workflow",
             "workflow_version": CODEX_WORKFLOW_VERSION,
@@ -360,10 +362,15 @@ class CodexAnnotationWorkflow:
             raise ValueError("Codex work packets require one prompt version")
         allowed_emotions = requests[0].get("allowed_emotions", [])
         allowed_effects = requests[0].get("allowed_effects", [])
+        stage = requests[0].get("stage", "polish")
         batches: list[dict[str, Any]] = []
         target_ids: set[str] = set()
         ordered_records: dict[str, dict[str, Any]] = {}
+        director_notes: dict[str, Any] = {}
+        cleaned_annotations: dict[str, Any] = {}
         for request in requests:
+            if request.get("stage", "polish") != stage:
+                raise ValueError("Codex packets cannot mix cleaning and polish")
             if self._source_file(request) != source_file:
                 raise ValueError("Codex work packets cannot cross source files")
             batch = request["batch"]
@@ -374,6 +381,11 @@ class CodexAnnotationWorkflow:
                     f"Targets occur in multiple batches: {sorted(overlap)!r}"
                 )
             target_ids.update(current_target_ids)
+            supplied_notes = request.get("director_notes", {})
+            if not isinstance(supplied_notes, dict) or set(supplied_notes) - set(current_target_ids):
+                raise ValueError("Director notes must be keyed by this request's target IDs")
+            director_notes.update(supplied_notes)
+            cleaned_annotations.update(request.get("cleaned_annotations", {}))
             batches.append(
                 {
                     "batch_id": batch["batch_id"],
@@ -416,6 +428,9 @@ class CodexAnnotationWorkflow:
         ].pop("batch_id")
         packet = {
             "schema_version": CODEX_WORKFLOW_VERSION,
+            "stage": stage,
+            "emotion_labels": requests[0].get("emotion_labels", {}),
+            "cleaned_annotations": cleaned_annotations,
             "source_file": source_file,
             "prompt_version": next(iter(prompt_versions)),
             "prompt_sha256": self._configuration["prompt_sha256"],
@@ -423,6 +438,7 @@ class CodexAnnotationWorkflow:
             "allowed_effects": allowed_effects,
             "batches": batches,
             "records": records,
+            "director_notes": director_notes if stage == "polish" else {},
             "response_schema": response_schema,
         }
         return {"packet_id": content_hash(packet)[:24], **packet}
@@ -477,11 +493,12 @@ class CodexAnnotationWorkflow:
     ) -> None:
         retry_option = " --retry" if workspace.root.name == "retry" else ""
         command = "PYTHONPATH=src python3 -m lessons_in_cast_core"
+        import_command, next_command = self._task_commands or (
+            f"{command} codex-import{retry_option}", f"{command} codex-next{retry_option}")
         if packet is None:
             content = (
                 "# Codex dialogue annotation\n\n"
-                f"No packet is currently active. Run `{command} "
-                f"codex-next{retry_option}` to export the next contiguous "
+                f"No packet is currently active. Run `{next_command}` to export the next contiguous "
                 "transcript segment.\n"
             )
         else:
@@ -494,9 +511,19 @@ class CodexAnnotationWorkflow:
                 "Process the records in their given order as one continuous "
                 "transcript. Write exactly one JSON object and no Markdown to "
                 "the output file. Then run "
-                f"`{command} codex-import{retry_option}`. Repeat "
-                f"`{command} codex-next{retry_option}` and the import command in "
+                f"`{import_command}`. Repeat "
+                f"`{next_command}` and the import command in "
                 "this same Codex thread to preserve conversational continuity.\n"
             )
         workspace.task.parent.mkdir(parents=True, exist_ok=True)
+        if packet is not None and packet.get("director_notes"):
+            content += (
+                "\n## Director context\n\n"
+                "Use director_notes keyed by target ID as non-spoken role/context/acting guidance. "
+                "Preserve cleaned words and pauses; add paired semantic emotion labels, delivery and performance through "
+                "the polish schema. Each emotion is a single preset label without numeric intensity. "
+                "Do not produce model-specific emotion vectors. Do not copy background into spoken_text.\n"
+                "Before choosing a voice wrapper, query the candidate profile's list_voice_tags() API "
+                "or the project's voice-tags CLI; no wrapper means the default reference.\n"
+            )
         workspace.task.write_text(content, encoding="utf-8", newline="\n")

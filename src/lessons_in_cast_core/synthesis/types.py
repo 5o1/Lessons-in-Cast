@@ -7,6 +7,7 @@ from typing import Any
 
 from ..annotation import DialogueAction
 from ..performance import SpeechPerformance
+from ..speech_markup import SpeechSegment
 
 
 @dataclass(frozen=True, slots=True)
@@ -15,28 +16,44 @@ class TtsJob:
     dialogue_id: str
     character_id: str
     text: str
-    emotion: str
-    intensity: float
+    emotion: str | None
     delivery: dict[str, str]
     output_path: str
     cache_key: str
     voice_profile: str = ""
     performance: SpeechPerformance = SpeechPerformance()
+    segments: tuple[SpeechSegment, ...] = ()
+    voice: str | None = None
+    arbitrary_emotion: str | None = None
+
+    def __post_init__(self):
+        if self.arbitrary_emotion is not None:
+            if self.emotion is not None or self.segments:
+                raise ValueError("arbitrary_emotion cannot overlap preset emotions or segment controls")
+            if not isinstance(self.arbitrary_emotion, str) or not self.arbitrary_emotion.strip():
+                raise ValueError("arbitrary_emotion requires a nonempty description")
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "id": self.id,
             "dialogue_id": self.dialogue_id,
             "character_id": self.character_id,
             "text": self.text,
             "emotion": self.emotion,
-            "intensity": self.intensity,
             "delivery": self.delivery,
             "output_path": self.output_path,
             "cache_key": self.cache_key,
             "voice_profile": self.voice_profile,
             "performance": self.performance.to_dict(),
+            "segments": [segment.to_dict() for segment in self.segments],
+            "voice": self.voice,
+            "arbitrary_emotion": self.arbitrary_emotion,
         }
+        if self.segments:
+            result.pop("emotion")
+            result.pop("voice")
+            result.pop("arbitrary_emotion")
+        return result
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> TtsJob:
@@ -44,9 +61,11 @@ class TtsJob:
             **{
                 **value,
                 "voice_profile": value.get("voice_profile", ""),
+                "emotion": value.get("emotion"),
                 "performance": SpeechPerformance.from_dict(
                     value.get("performance")
                 ),
+                "segments": tuple(SpeechSegment(**item) for item in value.get("segments", ())),
             }
         )
 

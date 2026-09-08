@@ -80,3 +80,11 @@ lessons-in-cast prepare-voices
 
 See `docs/pipeline.md` for the complete stage contract and Codex annotation
 workflow.
+
+See [voice design](voice-design.md) for the separate VoxCPM2 reference-audition
+module, local model setup, and its backend-environment CLI.
+
+## Experimental local H3 backend
+
+See [Local MiniMax H3 audio](minimax_h3.md) for the isolated ComfyUI environment,
+pinned reference-conditioned weights, loopback worker and normal audition commands.

@@ -42,8 +42,28 @@ class VoicePipeline(ABC):
 
         return ()
 
+    def override_reference_audio(self, path: Path) -> None:
+        """Override this instance's reference, or reject an unsupported capability.
+
+        Implementations must not modify persistent profile configuration/assets.
+        Call before prepare(); the effective configuration must reflect the override.
+        """
+
+        raise NotImplementedError(f"{self.pipeline_id} does not support reference overrides")
+
+    def list_voice_tags(self) -> tuple[str, ...]:
+        """Discover this profile's usable voice names without preparing/loading a model.
+
+        Unsupported profiles raise, distinguishing unavailable capability from
+        a supported profile whose reference directory is empty.
+        """
+        raise NotImplementedError(f"{self.pipeline_id} does not support local-reference voice tags")
+
     def adapt(self, job: TtsJob) -> SpeechAdaptation:
         """Compile a job for diagnostics before rendering."""
+
+        if job.segments or job.voice is not None or job.arbitrary_emotion is not None:
+            raise NotImplementedError(f"{self.pipeline_id} must implement inline speech lowering")
 
         return SpeechAdaptation(
             job_id=job.id,
@@ -56,7 +76,11 @@ class VoicePipeline(ABC):
 
     @abstractmethod
     def render(self, job: TtsJob, artifact_root: Path) -> Path:
-        """Render one immutable speech job."""
+        """Render one immutable speech job, honoring all segments or rejecting them.
+
+        Backend adapters may support inline controls natively or split/merge
+        takes. They must never ignore segment emotion or voice selection.
+        """
 
     def close(self) -> None:
         """Release any loaded models or subprocesses."""

@@ -69,6 +69,7 @@ def apply_override(
     record: DialogueRecord,
     configured_override: dict[str, Any],
     validator: AnnotationValidator,
+    *, stage: str = "polish",
 ) -> ValidatedAnnotation:
     """Apply and validate one human decision without mutating its source."""
 
@@ -99,6 +100,9 @@ def apply_override(
             f"Override {item.dialogue_id!r} status must be 'rejected'"
         )
     base = item.annotation.to_dict() if item.annotation is not None else {}
+    if stage == "cleaning":
+        base.pop("emotion", None)
+        base.pop("delivery", None)
     merged = {**base, **raw_override, "id": item.dialogue_id}
     batch = DialogueBatch(
         id=f"manual:{item.dialogue_id}",
@@ -112,6 +116,7 @@ def apply_override(
         prompt_version=item.prompt_version,
         annotator_configuration={"adapter": "manual-override"},
         processed_at=item.processed_at,
+        stage=stage,
     ).records[0]
     status = checked.status
     if (

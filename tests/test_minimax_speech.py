@@ -63,7 +63,6 @@ def _job() -> TtsJob:
         character_id="a",
         text="Hello Ami.",
         emotion="affectionate",
-        intensity=0.6,
         delivery={},
         output_path="audio/raw/a/job.wav",
         cache_key="cache",

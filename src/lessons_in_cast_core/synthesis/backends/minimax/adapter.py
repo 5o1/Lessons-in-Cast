@@ -13,6 +13,7 @@ import time
 import urllib.error
 import urllib.request
 import wave
+from dataclasses import replace
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -34,6 +35,7 @@ from ....pronunciations import (
     pronunciation_matches,
 )
 from ...types import TtsJob
+from .emotion_lowering import lower_arbitrary_job, validate_rules
 
 
 _MODELS = {
@@ -79,6 +81,16 @@ _EMOTIONS = {
     "neutral": "calm",
 }
 _COMPOSITE_EMOTIONS = {
+    "tearful_resolve": "sad",
+    "restrained_grief": "sad",
+    "emotional_breakdown": "fearful",
+    "tearful_remorse": "sad",
+    "playful_affection": "happy",
+    "guarded_composure": "calm",
+    "firm_boundary": "angry",
+    "cheerful_pressure": "happy",
+    "tentative_hope": "calm",
+    "possessive_care": "calm",
     "affectionate": "happy",
     "excited": "surprised",
     "embarrassed": "fearful",
@@ -234,6 +246,7 @@ class MiniMaxSpeechHttpSynthesizer:
         maximum_retries: int = 4,
         retry_backoff_seconds: float = 2.0,
         opener: Any | None = None,
+        arbitrary_emotions: dict[str, dict[str, Any]] | None = None,
     ) -> None:
         if model not in _MODELS:
             raise ValueError(f"Unsupported MiniMax speech model: {model!r}")
@@ -263,6 +276,7 @@ class MiniMaxSpeechHttpSynthesizer:
         self._maximum_retries = maximum_retries
         self._retry_backoff = retry_backoff_seconds
         self._opener = opener or urllib.request.build_opener()
+        self._arbitrary_emotions = validate_rules(arbitrary_emotions if arbitrary_emotions is not None else {})
 
     @property
     def name(self) -> str:
@@ -289,6 +303,8 @@ class MiniMaxSpeechHttpSynthesizer:
             "maximum_retries": self._maximum_retries,
             "retry_backoff_seconds": self._retry_backoff,
             "pronunciations": [rule.to_dict() for rule in self._pronunciations],
+            "arbitrary_emotions": validate_rules(self._arbitrary_emotions),
+            "arbitrary_emotion_lowering_version": 1,
         }
 
     def _compile_cues(
@@ -364,6 +380,15 @@ class MiniMaxSpeechHttpSynthesizer:
         return compiled, tuple(notes)
 
     def adapt(self, job: TtsJob) -> SpeechAdaptation:
+        if job.arbitrary_emotion is not None:
+            lowered, note = lower_arbitrary_job(job, self._arbitrary_emotions)
+            adaptation = self.adapt(lowered)
+            return replace(adaptation, features=(note, *adaptation.features))
+        if job.segments:
+            from ...segmentation import adapt_segments
+            return adapt_segments(job, self.adapt)
+        if job.voice is not None:
+            raise NotImplementedError("MiniMax Speech uses remote voice IDs; local reference voice tags require a reference-capable backend")
         performance, legacy_notes = resolve_legacy_delivery(
             job.performance,
             job.delivery,
@@ -396,7 +421,9 @@ class MiniMaxSpeechHttpSynthesizer:
 
         emotion = _EMOTIONS.get(job.emotion)
         if emotion is None:
-            emotion = _COMPOSITE_EMOTIONS.get(job.emotion, "calm")
+            if job.emotion not in _COMPOSITE_EMOTIONS:
+                raise ValueError(f"No MiniMax emotion mapping for {job.emotion!r}")
+            emotion = _COMPOSITE_EMOTIONS[job.emotion]
             notes.append(
                 FeatureAdaptation(
                     "emotion",
@@ -541,6 +568,8 @@ class MiniMaxSpeechHttpSynthesizer:
         )
 
     def build_payload(self, job: TtsJob) -> dict[str, Any]:
+        if job.segments:
+            raise ValueError("Split inline speech before building a MiniMax payload")
         adaptation = self.adapt(job)
         return {
             "model": self._model,
@@ -554,13 +583,36 @@ class MiniMaxSpeechHttpSynthesizer:
         destination = (artifact_root / job.output_path).resolve()
         if destination.is_file():
             return destination
+        if job.segments:
+            from ...segmentation import synthesize_segments
+            self.adapt(job)
+            return synthesize_segments(job, artifact_root, self.synthesize)
         api_key = self._api_key or os.environ.get(self._api_key_environment)
         if not api_key:
             raise RuntimeError(
                 f"MiniMax API key is missing; set {self._api_key_environment}"
             )
         payload = self.build_payload(job)
-        response = self._request(payload, api_key, job.dialogue_id)
+        # Persist the provider response before any local conversion. Retrying a
+        # failed conversion must not buy another generation of the same take.
+        cache = destination.with_suffix(".minimax")
+        cache.mkdir(parents=True, exist_ok=True)
+        response_path = cache / "response.json"
+        identity = {"endpoint": self._endpoint, "payload": payload}
+        if response_path.exists():
+            cached = json.loads(response_path.read_text(encoding="utf-8"))
+            if cached.get("request") != identity:
+                raise ValueError("MiniMax response cache inputs changed; use a new output path")
+            response = cached["response"]
+        else:
+            response = self._request(payload, api_key, job.dialogue_id)
+            # Store only successful responses as reusable audio. Provider errors
+            # remain inspectable but do not permanently poison a funding retry.
+            target = response_path if (response.get("base_resp") or {}).get("status_code") == 0 else cache / "error.json"
+            with tempfile.TemporaryDirectory(dir=cache) as temporary:
+                staged = Path(temporary) / "response.json"
+                staged.write_text(json.dumps({"request": identity, "response": response}, ensure_ascii=False) + "\n", encoding="utf-8")
+                staged.replace(target)
         base = response.get("base_resp") or {}
         status_code = base.get("status_code")
         if status_code != 0:
@@ -580,11 +632,13 @@ class MiniMaxSpeechHttpSynthesizer:
             raise RuntimeError(
                 f"MiniMax returned invalid hex audio for {job.dialogue_id}"
             ) from exc
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        with tempfile.TemporaryDirectory(dir=destination.parent) as directory:
-            raw = Path(directory) / "minimax.wav"
-            raw.write_bytes(audio)
-            self._normalize_wav(raw, destination, job.dialogue_id)
+        raw = cache / "source.wav"
+        raw.write_bytes(audio)
+        # Publish only a complete converted WAV, retaining the original on error.
+        with tempfile.TemporaryDirectory(dir=cache) as directory:
+            normalized = Path(directory) / "normalized.wav"
+            self._normalize_wav(raw, normalized, job.dialogue_id)
+            normalized.replace(destination)
         return destination
 
     def _request(

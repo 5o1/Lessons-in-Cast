@@ -83,6 +83,29 @@ class VoiceProfileTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             context.resolve_resource("../outside.toml")
 
+    def test_index_reference_override_does_not_edit_profile(self) -> None:
+        config = load_pipeline_config(repository_root=self.root)
+        character = load_characters(repository_root=self.root)["a"]
+        entrypoint = self.root / character.default_voice_profile
+        configuration_path = entrypoint.parent / "config.toml"
+        before = configuration_path.read_bytes()
+        pipeline = load_voice_profile(self.root, entrypoint, character, config, model_registry=self.model_registry)
+        with tempfile.TemporaryDirectory() as directory:
+            reference = Path(directory) / "reference.wav"
+            reference.write_bytes(b"reference fixture; no inference is requested")
+            pipeline.override_reference_audio(reference)
+            self.assertEqual(pipeline.prepare(), (reference,))
+            self.assertEqual(pipeline.configuration["reference_path"], str(reference))
+            self.assertEqual(pipeline.list_voice_tags(), ("reference",))
+            alternate = reference.parent / "soft.wav"
+            alternate.write_bytes(b"reference fixture")
+            self.assertEqual(pipeline.list_voice_tags(), ("reference", "soft"))
+            alternate.unlink()
+            self.assertEqual(configuration_path.read_bytes(), before)
+            with self.assertRaises(FileNotFoundError):
+                pipeline.override_reference_audio(Path(directory) / "missing.wav")
+        pipeline.close()
+
     def test_single_file_profile_loads_without_being_a_python_package(self) -> None:
         config = load_pipeline_config(repository_root=self.root)
         character = load_characters(repository_root=self.root)["ch"]
@@ -187,7 +210,6 @@ class VoiceProfileTests(unittest.TestCase):
             character_id="a",
             text="Hello.",
             emotion="neutral",
-            intensity=0.0,
             delivery={},
             output_path="audio.wav",
             cache_key="cache",
@@ -217,7 +239,6 @@ class VoiceProfileTests(unittest.TestCase):
                 character_id=character_id,
                 text="Hello.",
                 emotion="neutral",
-                intensity=0.0,
                 delivery={},
                 output_path=f"{character_id}.wav",
                 cache_key=f"cache-{character_id}",

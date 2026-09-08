@@ -14,6 +14,10 @@ class ArtifactLayout:
     root: Path
 
     @property
+    def polish(self) -> ArtifactLayout:
+        return ArtifactLayout(self.root / "polish")
+
+    @property
     def dialogue_tab(self) -> Path:
         return self.root / "dialogue.tab"
 
@@ -142,6 +146,7 @@ class ArtifactLayout:
             self.root / "audio",
             self.root / "voice",
             self.root / "codex",
+            self.polish.root,
             self.galgame_artifacts,
             self.release_bundle,
         ):
@@ -179,6 +184,7 @@ class ArtifactLayout:
             self.root / "audio",
             self.root / "voice",
             self.root / "codex",
+            self.polish.root,
             self.galgame_artifacts,
         ):
             if directory.exists():

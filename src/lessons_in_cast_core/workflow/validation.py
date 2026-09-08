@@ -149,6 +149,9 @@ class AnnotationValidationStage:
                         response,
                         prompt_version=request["prompt_version"],
                         annotator_configuration=configuration,
+                        schema_version=request.get("schema_version", 1),
+                        stage=request.get("stage", "polish"),
+                        cleaned_annotations=request.get("cleaned_annotations"),
                         processed_at=(
                             envelope.get("generated_at")
                             if envelope
@@ -168,6 +171,7 @@ class AnnotationValidationStage:
                                 override_records[item.dialogue_id],
                                 configured_override,
                                 self._validator,
+                                stage=request.get("stage", "polish"),
                             )
                         current_writer.write(item.to_dict())
                         if item.status is ValidationStatus.RETRYABLE:
@@ -305,7 +309,11 @@ class AnnotationValidationStage:
             retry_batch,
             prompt_version=request["prompt_version"],
             annotation_config=self._config.annotation,
+            stage=request.get("stage", "polish"),
         )
+        for key in ("director_notes", "cleaned_annotations"):
+            if key in request:
+                retry_request[key] = {target.id: request[key][target.id]} if target.id in request[key] else {}
         retry_request["retry_of"] = request.get("retry_of", batch.id)
         retry_request["attempt"] = attempt
         return retry_request

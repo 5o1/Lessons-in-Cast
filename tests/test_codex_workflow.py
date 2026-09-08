@@ -23,7 +23,6 @@ def annotation(target_id: str, text: str) -> dict[str, object]:
         "action": "speak",
         "spoken_text": text,
         "emotion": "neutral",
-        "intensity": 0.5,
         "delivery": {},
         "effects": [],
         "confidence": 1.0,

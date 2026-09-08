@@ -40,6 +40,7 @@ class IndexTtsPipelineConfig:
     reference_sources: tuple[str, ...]
     reference_path: str
     reference_settings: ReferenceBuildSettings
+    emotion_vectors_path: str = ""
 
 
 def _load_table(path: Path, name: str) -> dict[str, Any]:
@@ -84,6 +85,11 @@ def load_index_tts_pipeline_config(
     backend = _load_table(resolved, "backend")
     render = _load_table(resolved, "render")
     reference = _load_table(resolved, "reference")
+    emotion_vectors_path = backend.get("emotion_vectors_path", "")
+    if not isinstance(emotion_vectors_path, str):
+        raise ConfigurationError("backend.emotion_vectors_path must be a repository-relative path")
+    if Path(emotion_vectors_path).is_absolute() or ".." in Path(emotion_vectors_path).parts:
+        raise ConfigurationError("backend.emotion_vectors_path must be a safe repository-relative path")
 
     text = lambda table_name, table, name: _typed(
         resolved, table_name, table, name, str
@@ -108,6 +114,7 @@ def load_index_tts_pipeline_config(
         )
 
     result = IndexTtsPipelineConfig(
+        emotion_vectors_path=emotion_vectors_path,
         model_id=text("backend", backend, "model"),
         base_speed=number("render", render, "base_speed"),
         python_executable=text("backend", backend, "python_executable"),

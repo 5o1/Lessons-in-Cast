@@ -143,7 +143,6 @@ def main() -> int:
         "reference_sha256": reference_sha256,
         "text": args.text,
         "emotion": "neutral",
-        "intensity": 0.0,
         **metadata,
         "auditions": auditions,
     }
@@ -167,7 +166,6 @@ def main() -> int:
                 character_id=args.character_id,
                 text=args.text,
                 emotion="neutral",
-                intensity=0.0,
                 delivery={},
                 output_path=str(preview.relative_to(root)),
                 cache_key=hashlib.sha256(

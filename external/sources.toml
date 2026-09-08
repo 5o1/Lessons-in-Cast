@@ -22,3 +22,15 @@ setup = ["uv sync --all-extras"]
 [projects.renpy]
 path = "external/renpy"
 role = "Dialogue extraction runtime and source reference"
+
+[projects.voxcpm]
+path = "external/VoxCPM"
+role = "VoxCPM2 voice design and reference-conditioned style control"
+python = "3.11"
+setup = ["python -m pip install -e ."]
+
+[projects.comfyui]
+path = "external/ComfyUI"
+role = "Isolated local MiniMax H3 Ref2VA audio worker using native nodes"
+python = "3.12"
+setup = ["uv venv --python /path/to/conda/env/bin/python .venv", "uv pip install --python .venv/bin/python -r requirements.txt"]

@@ -74,6 +74,10 @@ class PipelineTests(unittest.TestCase):
                 layout.annotation_responses,
             )
             validated = pipeline.validate(layout)
+            with self.assertRaisesRegex(ValueError, "No polish"):
+                pipeline.plan_synthesis(layout)
+            pipeline.prepare_polish(layout)
+            write_mock_responses(layout.polish.annotation_requests, layout.polish.annotation_responses)
             pipeline.plan_synthesis(layout)
             _, rendered_count = pipeline.synthesize(layout)
             pipeline.build_release_bundle(layout)

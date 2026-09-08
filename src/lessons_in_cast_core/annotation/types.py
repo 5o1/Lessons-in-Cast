@@ -29,7 +29,6 @@ class Annotation:
     action: DialogueAction
     spoken_text: str
     emotion: str | None
-    intensity: float | None
     delivery: dict[str, str]
     effects: tuple[str, ...]
     confidence: float | None
@@ -38,12 +37,11 @@ class Annotation:
     performance: SpeechPerformance = SpeechPerformance()
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "id": self.id,
             "action": self.action.value,
             "spoken_text": self.spoken_text,
             "emotion": self.emotion,
-            "intensity": self.intensity,
             "delivery": self.delivery,
             "effects": list(self.effects),
             "confidence": self.confidence,
@@ -51,6 +49,9 @@ class Annotation:
             "reason": self.reason,
             "performance": self.performance.to_dict(),
         }
+        if self.emotion is None:
+            result.pop("emotion")
+        return result
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> Annotation:
@@ -59,7 +60,6 @@ class Annotation:
             action=DialogueAction(value["action"]),
             spoken_text=value["spoken_text"],
             emotion=value.get("emotion"),
-            intensity=value.get("intensity"),
             delivery=dict(value.get("delivery", {})),
             effects=tuple(value.get("effects", ())),
             confidence=value.get("confidence"),

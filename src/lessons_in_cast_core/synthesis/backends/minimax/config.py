@@ -4,11 +4,12 @@ from __future__ import annotations
 
 import re
 import tomllib
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 from ....config import ConfigurationError
+from .emotion_lowering import validate_rules
 
 
 _ENVIRONMENT_NAME = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
@@ -38,6 +39,7 @@ class MiniMaxPipelineConfig:
     voice_energy: float = 0.0
     voice_clarity: float = 0.0
     sound_effect: str | None = None
+    arbitrary_emotions: dict[str, dict[str, Any]] = field(default_factory=dict)
 
 
 def _table(data: dict[str, Any], name: str, path: Path) -> dict[str, Any]:
@@ -98,8 +100,9 @@ def load_minimax_pipeline_config(
             voice_energy=_number(render, "voice_energy", 0.0),
             voice_clarity=_number(render, "voice_clarity", 0.0),
             sound_effect=sound_effect,
+            arbitrary_emotions=validate_rules(data.get("arbitrary_emotions", {})),
         )
-    except (KeyError, TypeError) as exc:
+    except (KeyError, TypeError, ValueError) as exc:
         raise ConfigurationError(
             f"{resolved}: MiniMax profile contains a missing or invalid field"
         ) from exc

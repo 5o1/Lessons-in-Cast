@@ -199,13 +199,25 @@ class SynthesisTests(unittest.TestCase):
 
     def test_index_tts_emotion_vector_uses_documented_axis_order(self) -> None:
         self.assertEqual(
-            index_emotion_vector("excited", 1.0),
+            index_emotion_vector("excited"),
             [0.608696, 0.0, 0.0, 0.0, 0.0, 0.0, 0.191304, 0.0],
         )
         self.assertEqual(
-            index_emotion_vector("neutral", 1.0),
+            index_emotion_vector("neutral"),
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         )
+
+    def test_unknown_emotion_does_not_silently_become_calm(self) -> None:
+        with self.assertRaisesRegex(ValueError, "No IndexTTS emotion mapping"):
+            index_emotion_vector("not-a-supported-label")
+
+    def test_all_configured_core_emotions_have_index_mappings(self) -> None:
+        from lessons_in_cast_core.config import load_pipeline_config
+        root = Path(__file__).resolve().parents[1]
+        for emotion in load_pipeline_config(repository_root=root).annotation.allowed_emotions:
+            vector = index_emotion_vector(emotion)
+            self.assertEqual(len(vector), 8)
+            self.assertTrue(all(value >= 0 for value in vector))
 
 if __name__ == "__main__":
     unittest.main()

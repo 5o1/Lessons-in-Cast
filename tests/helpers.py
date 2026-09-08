@@ -39,7 +39,6 @@ def accepted_annotation(
         action=action,
         spoken_text=item.dialogue if "speak" in action.value else "",
         emotion="neutral" if "speak" in action.value else None,
-        intensity=0.5 if "speak" in action.value else None,
         delivery={},
         effects=effects,
         confidence=1.0,

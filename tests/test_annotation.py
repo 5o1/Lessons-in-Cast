@@ -49,7 +49,9 @@ class AnnotationValidationTests(unittest.TestCase):
         self.assertFalse(schema["additionalProperties"])
         annotation = schema["properties"]["annotations"]["items"]
         self.assertFalse(annotation["additionalProperties"])
-        self.assertIn("neutral", annotation["properties"]["emotion"]["enum"])
+        self.assertNotIn("emotion", annotation["properties"])
+        self.assertIn("neutral", request["allowed_emotions"])
+        self.assertIn("<emotion", annotation["properties"]["spoken_text"]["description"])
         self.assertIn("performance", annotation["required"])
         self.assertIn(
             "pause",
@@ -231,7 +233,6 @@ class AnnotationValidationTests(unittest.TestCase):
                 "action": "omit",
                 "spoken_text": "",
                 "emotion": None,
-                "intensity": None,
             }
         )
         result = self.validator.validate_batch(

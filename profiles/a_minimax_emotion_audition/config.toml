@@ -1,0 +1,48 @@
+[backend]
+model = "minimax_speech_2_8_hd"
+voice_id = "lic-ami-ref-ebf3a241c482-v1"
+endpoint = "https://api.minimaxi.com/v1/t2a_v2"
+api_key_environment = "MINIMAX_API_KEY"
+language_boost = "English"
+text_normalization = true
+# Do not retry potentially billable POSTs after an uncertain network result.
+maximum_retries = 0
+
+[render]
+base_speed = 1.0
+base_volume = 1.0
+base_pitch_semitones = 0
+
+# Explicit experiment-specific approximations of the unchanged polish output.
+# These rules are not new core presets and do not use QwenEmotion/IndexTTS axes.
+# Energy and gain approximate delivery; they cannot guarantee screams or sobbing.
+[arbitrary_emotions."Quiet, tightly restrained distress, holding back fear and anger."]
+emotion = "calm"
+energy = -0.45
+breathiness = 0.15
+volume_gain_db = -3.0
+
+[arbitrary_emotions."Sudden desperate high-pitched screaming, terrified and furious, losing all emotional control."]
+emotion = "afraid"
+vocal_mode = "shout"
+energy = 0.8
+
+[arbitrary_emotions."Overwhelming rage and indignation, furious and disgusted, erupting into an explosive shout."]
+emotion = "angry"
+vocal_mode = "shout"
+energy = 0.9
+
+[arbitrary_emotions."Uncontrollable sobbing, overwhelming grief and guilt, a trembling broken voice struggling to form words."]
+emotion = "sad"
+breathiness = 0.25
+energy = -0.1
+
+[arbitrary_emotions."Panicked crying and desperate pleading, terrified and heartbroken."]
+emotion = "afraid"
+breathiness = 0.25
+energy = 0.3
+
+[arbitrary_emotions."A raw grief-stricken scream collapsing into sobs, terrified and emotionally shattered."]
+emotion = "sad"
+vocal_mode = "shout"
+energy = 0.7

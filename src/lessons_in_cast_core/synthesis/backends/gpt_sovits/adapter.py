@@ -93,6 +93,10 @@ class GptSoVitsHttpSynthesizer:
         destination = artifact_root / job.output_path
         if destination.is_file():
             return destination
+        if job.segments:
+            from ...segmentation import synthesize_segments
+            self.adapt(job)
+            return synthesize_segments(job, artifact_root, self.synthesize)
         adaptation = self.adapt(job)
         reference = self._references_by_emotion.get(
             job.emotion,
@@ -154,6 +158,13 @@ class GptSoVitsHttpSynthesizer:
         return destination
 
     def adapt(self, job: TtsJob) -> SpeechAdaptation:
+        if job.arbitrary_emotion is not None:
+            raise ValueError("GPT-SoVITS does not yet implement arbitrary_emotion")
+        if job.segments:
+            from ...segmentation import adapt_segments
+            return adapt_segments(job, self.adapt)
+        if job.voice is not None:
+            raise NotImplementedError("GPT-SoVITS voice switching also requires a matching reference transcript; file-only voice tags are not supported")
         performance, legacy_notes = resolve_legacy_delivery(
             job.performance,
             job.delivery,
@@ -164,6 +175,9 @@ class GptSoVitsHttpSynthesizer:
         )
         text = apply_pronunciations(text, self._pronunciations)
         notes = [*legacy_notes, *cue_notes]
+        if job.emotion != "neutral" and job.emotion not in self._references_by_emotion:
+            notes.append(FeatureAdaptation("emotion", AdaptationFidelity.DROPPED,
+                f"no reference configured for semantic label {job.emotion!r}; using the default reference"))
         for field, value in {
             "direction": performance.direction,
             "vocal_mode": performance.vocal_mode,

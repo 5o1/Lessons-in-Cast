@@ -13,3 +13,9 @@
 [submodule "external/renpy"]
 	path = external/renpy
 	url = https://github.com/renpy/renpy.git
+[submodule "external/VoxCPM"]
+	path = external/VoxCPM
+	url = https://github.com/OpenBMB/VoxCPM.git
+[submodule "external/ComfyUI"]
+	path = external/ComfyUI
+	url = https://github.com/Comfy-Org/ComfyUI.git

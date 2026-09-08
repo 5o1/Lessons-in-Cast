@@ -67,6 +67,9 @@ class ProductionPipelineTests(unittest.TestCase):
             )
 
             production_root = root / "production"
+            annotation_pipeline.validate(annotation_layout)
+            annotation_pipeline.prepare_polish(annotation_layout)
+            write_mock_responses(annotation_layout.polish.annotation_requests, annotation_layout.polish.annotation_responses)
             production_root.mkdir()
             (production_root / "unrelated.txt").write_text("keep", encoding="utf-8")
             production_pipeline = DialoguePipeline(
@@ -82,6 +85,7 @@ class ProductionPipelineTests(unittest.TestCase):
                     allowed_sources=(Path("game/chapter/main.rpy"),),
                 ),
                 annotation_layout.annotation_responses,
+                polish_responses_path=annotation_layout.polish.annotation_responses,
             )
 
             self.assertEqual(

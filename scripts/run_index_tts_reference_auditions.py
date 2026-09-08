@@ -219,7 +219,7 @@ def write_index(output_directory: Path, manifest: dict[str, Any]) -> None:
         f"Text: {manifest['text']}",
         "",
         (
-            "All previews use neutral emotion, intensity 0, a fixed seed, "
+            "All previews use the neutral emotion label, a fixed seed, "
             "deterministic decoding, and the profile base speed."
         ),
         "",
@@ -274,7 +274,6 @@ def main() -> int:
         ),
         "text": args.text,
         "emotion": "neutral",
-        "intensity": 0.0,
         **metadata,
         "auditions": variants,
     }
@@ -298,7 +297,6 @@ def main() -> int:
                 character_id=args.character_id,
                 text=args.text,
                 emotion="neutral",
-                intensity=0.0,
                 delivery={},
                 output_path=str(preview.relative_to(root)),
                 cache_key=hashlib.sha256(

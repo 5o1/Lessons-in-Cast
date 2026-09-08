@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shlex
 from pathlib import Path
 from typing import Sequence
 
@@ -43,7 +44,13 @@ def _parser() -> argparse.ArgumentParser:
         help="Active run directory relative to the repository root.",
     )
     commands = parser.add_subparsers(dest="command", required=True)
+    from .emotion_presets import register_cli
+    register_cli(commands)
     commands.add_parser("check-config", help="Validate all project configuration.")
+    voices = commands.add_parser("voice-tags", help="List dynamic voice tags without preparing or loading a model.")
+    voices.add_argument("--character", required=True)
+    voices.add_argument("--profile", type=Path, help="Profile entrypoint; defaults to the character's global profile")
+    voices.add_argument("--reference-audio", type=Path, help="Temporarily query an overridden default reference directory")
     extract = commands.add_parser(
         "extract",
         help="Generate the dialogue export with the configured galgame backend.",
@@ -62,17 +69,23 @@ def _parser() -> argparse.ArgumentParser:
     )
     codex_next.add_argument("--retry", action="store_true")
     codex_next.add_argument("--batches-per-packet", type=int)
+    codex_next.add_argument("--stage", choices=["cleaning", "polish"], default="cleaning")
     codex_import = commands.add_parser(
         "codex-import",
         help="Import and split the active Codex packet response.",
     )
     codex_import.add_argument("--retry", action="store_true")
     codex_import.add_argument("--replace", action="store_true")
+    codex_import.add_argument("--stage", choices=["cleaning", "polish"], default="cleaning")
     codex_status = commands.add_parser(
         "codex-status",
         help="Report progress for the Codex annotation pass.",
     )
     codex_status.add_argument("--retry", action="store_true")
+    codex_status.add_argument("--stage", choices=["cleaning", "polish"], default="cleaning")
+    commands.add_parser("polish-prepare", help="Prepare a separate acting pass from accepted cleaning results")
+    polish_validate = commands.add_parser("polish-validate")
+    polish_validate.add_argument("--retry", action="store_true")
     validate = commands.add_parser(
         "validate",
         help="Validate annotation responses and apply overrides.",
@@ -103,6 +116,7 @@ def _parser() -> argparse.ArgumentParser:
     )
     production.add_argument("--input", type=Path, required=True)
     production.add_argument("--responses", type=Path, required=True)
+    production.add_argument("--polish-responses", type=Path, required=True)
     production.add_argument("--scope", help="Named dialogue scope from configs/demo_scopes.toml.")
     production.add_argument(
         "--cache-intermediates",
@@ -123,6 +137,9 @@ def _voice_profile_synthesizer(
 def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     root = (args.root or find_repository_root()).resolve()
+    if args.command == "emotion-presets":
+        from .emotion_presets import cli_main
+        return cli_main(args, root)
     artifact_root = args.build_dir
     if not artifact_root.is_absolute():
         artifact_root = root / artifact_root
@@ -179,6 +196,26 @@ def main(argv: Sequence[str] | None = None) -> int:
                 indent=2,
             )
         )
+        return 0
+
+    if args.command == "voice-tags":
+        character = characters[args.character]
+        entrypoint = args.profile or Path(character.default_voice_profile)
+        if args.profile is None and not character.default_voice_profile:
+            raise ValueError("No default profile; pass --profile")
+        profile = load_voice_profile(root, entrypoint, character, config,
+                                     model_registry=load_model_registry(repository_root=root))
+        try:
+            if args.reference_audio is not None:
+                reference = args.reference_audio
+                profile.override_reference_audio(reference if reference.is_absolute() else root / reference)
+            try:
+                result = {"supported": True, "tags": list(profile.list_voice_tags())}
+            except NotImplementedError as exc:
+                result = {"supported": False, "tags": [], "reason": str(exc)}
+            print(json.dumps({"profile": str(entrypoint), **result}, indent=2))
+        finally:
+            profile.close()
         return 0
 
     if args.command == "build-reference":
@@ -242,6 +279,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.command in {"codex-next", "codex-import", "codex-status"}:
         from .annotation import CodexAnnotationWorkflow, CodexWorkspace
 
+        base_layout = layout
+        if args.stage == "polish":
+            from .polish import PolishStage
+            PolishStage(config).check_inputs(base_layout)
+            layout = layout.polish
         retry = args.retry
         requests_path = (
             layout.retry_requests if retry else layout.annotation_requests
@@ -252,13 +294,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         workspace = CodexWorkspace(
             layout.root / "codex" / ("retry" if retry else "initial")
         )
+        prefix = f"PYTHONPATH=src python -m lessons_in_cast_core --root {shlex.quote(str(root))} --build-dir {shlex.quote(str(base_layout.root))}"
+        options = f" --stage {args.stage}" + (" --retry" if retry else "")
         workflow = CodexAnnotationWorkflow(
-            root / config.codex.prompt_path,
+            root / (config.codex.polish_prompt_path if args.stage == "polish" else config.codex.prompt_path),
             {
                 character_id: character.name
                 for character_id, character in characters.items()
             },
             config.codex.source_files,
+            task_commands=(f"{prefix} codex-import{options}", f"{prefix} codex-next{options}"),
         )
         if args.command == "codex-next":
             packet = workflow.export_next(
@@ -316,6 +361,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     elif args.command == "plan-tts":
         jobs, renders = pipeline.plan_synthesis(layout)
         print(json.dumps({"tts_job_count": jobs, "render_task_count": renders}))
+    elif args.command == "polish-prepare":
+        print(json.dumps({"batches": pipeline.prepare_polish(layout, prompt_path=root / config.codex.polish_prompt_path)}))
+    elif args.command == "polish-validate":
+        print(json.dumps(pipeline.validate_polish(layout, retry=args.retry).to_dict()))
     elif args.command == "synthesize":
         jobs, rendered = pipeline.synthesize(layout)
         print(json.dumps({"tts_job_count": jobs, "rendered_count": rendered}))
@@ -341,6 +390,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 prompt_version=config.codex.prompt_version,
             ),
             responses_path,
+            polish_responses_path=(args.polish_responses if args.polish_responses.is_absolute() else root / args.polish_responses),
             cache_intermediates=args.cache_intermediates,
         )
         print(

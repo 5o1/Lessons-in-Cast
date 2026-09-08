@@ -1,0 +1,11 @@
+{
+  "character": "a",
+  "project": "auditions/ami/emotion-range/project.json",
+  "cleaning": "build/auditions/ami-emotion-range-v1-cleaning",
+  "comparison_run": "build/auditions/ami-emotion-range-v1",
+  "case_count": 7,
+  "profile": "profiles/a_minimax_emotion_audition/pipeline.py",
+  "reference": "profiles/a_index_tts/assets/references/default.wav",
+  "reference_sha256": "ebf3a241c482179d20477695186bcc13aa6e074e69db5f3e88a7a81e2deb3a4e",
+  "run": "ami-emotion-range-minimax-token-plan-v1"
+}

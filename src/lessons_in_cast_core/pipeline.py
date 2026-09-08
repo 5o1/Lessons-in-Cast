@@ -147,6 +147,7 @@ class DialoguePipeline:
                     batch,
                     prompt_version=request.prompt_version,
                     annotation_config=self._config.annotation,
+                    stage="cleaning",
                 )
                 for batch in batches
             ),
@@ -223,13 +224,27 @@ class DialoguePipeline:
     ) -> ValidationSummary:
         """Validate untrusted annotations and apply trusted overrides."""
 
-        return self._validation.run(
+        result = self._validation.run(
             layout,
             overrides_path=overrides_path,
             retry=retry,
         )
+        if not retry and result.retryable_count and layout.retry_responses.is_file():
+            result = self._validation.run(layout, overrides_path=overrides_path, retry=True)
+        return result
+
+    def prepare_polish(self, layout: ArtifactLayout, *, prompt_path: Path | None = None) -> int:
+        from .polish import PolishStage
+        return PolishStage(self._config).prepare(layout, prompt_path=prompt_path)
+
+    def validate_polish(self, layout: ArtifactLayout, *, retry: bool = False) -> ValidationSummary:
+        from .polish import PolishStage
+        return PolishStage(self._config).validate(layout, retry=retry)
 
     def plan_synthesis(self, layout: ArtifactLayout) -> tuple[int, int]:
+        summary = self.validate_polish(layout)
+        if summary.retryable_count or summary.review_required_count or summary.rejected_count or summary.batch_issue_count:
+            raise ValueError("Polish is not fully accepted; synthesis cannot bypass polish validation")
         route_checker = getattr(self._synthesizer, "supports", None)
         planner = SynthesisPlanner(
             self._characters,
@@ -248,7 +263,7 @@ class DialoguePipeline:
         )
         with JsonlIndex(layout.raw_dialogue, "id") as record_index:
             def records_and_results() -> Any:
-                for value in read_jsonl(layout.validated):
+                for value in read_jsonl(layout.polish.validated):
                     result = ValidatedAnnotation.from_dict(value)
                     raw_record = record_index.get(result.dialogue_id)
                     if raw_record is None:
@@ -313,6 +328,9 @@ class DialoguePipeline:
     def synthesize(self, layout: ArtifactLayout) -> tuple[int, int]:
         if self._synthesizer is None:
             raise RuntimeError("No speech synthesizer is configured")
+        # Rebind jobs to accepted polish and current backend/profile settings.
+        # Calling synthesize directly must not reuse a stale pre-polish plan.
+        self.plan_synthesis(layout)
         job_count = 0
         reused_job_count = 0
         jobs = (
@@ -456,6 +474,7 @@ class DialoguePipeline:
         request: PipelineRequest,
         responses_path: Path,
         *,
+        polish_responses_path: Path,
         cache_intermediates: bool = False,
     ) -> PipelineResult:
         """Run model-neutral stages from externally produced model responses."""
@@ -463,9 +482,13 @@ class DialoguePipeline:
         layout = ArtifactLayout(request.artifact_root.resolve())
         source_dialogue = request.dialogue_tab_path.resolve()
         source_responses = responses_path.resolve()
+        source_polish = polish_responses_path.resolve()
+        if not source_polish.is_file():
+            raise FileNotFoundError(source_polish)
         if not cache_intermediates and (
             source_dialogue.is_relative_to(layout.root)
             or source_responses.is_relative_to(layout.root)
+            or source_polish.is_relative_to(layout.root)
         ):
             raise ValueError(
                 "Production inputs must be outside the artifact directory when "
@@ -480,6 +503,9 @@ class DialoguePipeline:
                 layout,
                 overrides_path=request.overrides_path,
             )
+            self.prepare_polish(layout)
+            shutil.copy2(source_polish, layout.polish.annotation_responses)
+            validated = self.validate_polish(layout)
             tts_job_count, _ = self.plan_synthesis(layout)
             _, rendered_count = self.synthesize(layout)
             self.build_release_bundle(layout)

@@ -170,11 +170,22 @@ def main() -> int:
     )
     reference_directory = Path(reference_temporary_directory.name)
     reference_cache: dict[tuple[Any, ...], Path] = {}
+    emotion_engine = None
     for line in sys.stdin:
         request: Any = None
         try:
             request = json.loads(line)
+            emotion_resolution = None
             with contextlib.redirect_stdout(sys.stderr):
+                if request.get("arbitrary_emotion") is not None:
+                    if request.get("emotion_vector") is not None:
+                        raise ValueError("arbitrary_emotion cannot overlap a preset vector")
+                    from .qwen_emotion import load_qwen_emotion, resolve_arbitrary_emotion
+                    if emotion_engine is None:
+                        emotion_engine = load_qwen_emotion(args.model_path / tts.cfg.qwen_emo_path)
+                    emotion_resolution = resolve_arbitrary_emotion(request["arbitrary_emotion"], emotion_engine,
+                                                                  request.get("emotion_energy"))
+                    request["emotion_vector"] = emotion_resolution["vector"]
                 _infer(
                     tts,
                     request,
@@ -183,6 +194,8 @@ def main() -> int:
                     reference_cache,
                 )
             response = {"id": request.get("id"), "ok": True}
+            if emotion_resolution is not None:
+                response["emotion_resolution"] = emotion_resolution
         except Exception as exc:
             traceback.print_exc(file=sys.stderr)
             response = {

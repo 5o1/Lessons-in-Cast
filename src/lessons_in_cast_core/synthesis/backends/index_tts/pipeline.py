@@ -18,6 +18,7 @@ from ....pronunciations import load_pronunciation_lexicon
 from ...profiles.context import VoiceProfileContext
 from ...references.builder import ReferenceBuildResult
 from ...types import TtsJob
+from ...references.voices import reference_audio_files, list_voice_references
 from ...profiles.api import (
     ReferenceBuildRequest,
     ReferenceVoicePipeline,
@@ -78,7 +79,18 @@ class IndexTtsPipeline(ReferenceVoicePipeline, ABC):
         )
         self._reference_path = reference_resolver(config.reference_path)
         settings = config.reference_settings
+        emotion_vectors = emotion_mapping_id = None
+        if config.emotion_vectors_path:
+            from ....emotion_presets import load_emotion_catalog
+            from .emotion_preparation import load_vector_cache
+            emotion_vectors, emotion_mapping_id = load_vector_cache(
+                resolve(config.emotion_vectors_path), load_emotion_catalog(root / "configs/emotions.toml"),
+                model_id=config.model_id,
+                model_definition=self._model_definition.to_dict(), source_root=resolve(config.source_root),
+            )
         self._backend = IndexTtsSubprocessSynthesizer(
+            emotion_vectors=emotion_vectors,
+            emotion_mapping_id=emotion_mapping_id,
             repository_root=root,
             python_executable=resolve(config.python_executable),
             source_root=resolve(config.source_root),
@@ -155,7 +167,17 @@ class IndexTtsPipeline(ReferenceVoicePipeline, ABC):
                 source_arguments,
                 self._reference_path,
             )
-        return (self._reference_path,)
+        return tuple(dict.fromkeys((self._reference_path, *reference_audio_files(self._reference_path))))
+
+    def list_voice_tags(self) -> tuple[str, ...]:
+        return tuple(list_voice_references(self._reference_path))
+
+    def override_reference_audio(self, path: Path) -> None:
+        reference = path.expanduser().resolve()
+        if not reference.is_file():
+            raise FileNotFoundError(f"Reference override is missing: {reference}")
+        self._reference_path = reference
+        self._backend.set_references(self.character_id, (reference,))
 
     def build_reference(
         self,

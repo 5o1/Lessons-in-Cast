@@ -1,0 +1,490 @@
+{
+  "version": 2,
+  "id": "ami",
+  "character": "a",
+  "brief": "A high, light, youthful English voice with relaxed conversational diction. Ami has genuine pleasures and practical care as well as cultivated sweetness, fear of abandonment and later strategic control. Cast one recognizable identity with enough range for ordinary banter, quiet hurt, crisis and composure. Do not turn later darkness into a different low voice or make every early smile false. The role study is provisional, not an exhaustive or clinical portrait.",
+  "coverage": {
+    "status": "partial",
+    "notes": "First 17 manually selected sides, including direct main-story excerpts from chapters 1, 2, 3, 4 and chap4part2, plus personal events. Full-game candidate collection contains 296671 rows from 55 exported scripts and 948 candidate contexts with a/q/mentions; that is not completed semantic review. Dreams, conflicting accounts, anonymous speakers, deleted content and routes need continued review. These are acting states, not one immutable preset per chapter.",
+    "source_release": "LessonsInLove0.60.0-0.60.0-pc-subscribestar",
+    "research": "docs/ami-character-and-voice-study.md"
+  },
+  "cases": [
+    {
+      "id": "daily-impatience",
+      "title": "Familiar everyday impatience",
+      "state": "ordinary domestic familiarity",
+      "background": "At the opening she wakes her uncle after class, before she understands his confusion. The export still calls her q; the scene identifies her as Ami.",
+      "addressee": "Sensei",
+      "intention": "Get him up and moving, as on an ordinary day.",
+      "direction": "Brisk and familiar, with a small matter-of-fact correction. No alarm yet.",
+      "listen_for": [
+        "Easy high-register identity without effort"
+      ],
+      "avoid": [
+        "A school announcement or a shrill reprimand"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "15b1a770d74271e5270d8286",
+        "sequence": 223540,
+        "identifier": "start2_6b916855",
+        "character": "q",
+        "dialogue": "Class ended ten minutes ago. It's time to get up.",
+        "filename": "game/script.rpy",
+        "line_number": 477,
+        "source_statement": "q \"[what]\"",
+        "label": "start2",
+        "scene": "timetogrow1"
+      }
+    },
+    {
+      "id": "cute-appeal",
+      "title": "Putting on cuteness for her uncle",
+      "state": "bright affection used to secure attention",
+      "background": "She reframes his apparent amnesia as an elaborate attempt to spend time with her, restoring a familiar affectionate dynamic.",
+      "addressee": "Sensei",
+      "intention": "Invite his attention while pretending she already knows he wants hers.",
+      "direction": "A knowingly sweet smile with a teasing lift, not a declaration or sustained baby talk.",
+      "listen_for": [
+        "A deliberate change from everyday speech without changing speaker"
+      ],
+      "avoid": [
+        "Sugary emphasis on every word"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "9e4934a4bd2ee62799224275",
+        "sequence": 223606,
+        "identifier": "nextstartt_7631f160",
+        "character": "a",
+        "dialogue": "You know, Sensei, if you want to spend more time with me, all you have to do is ask. You don't have to fake amnesia just for my attention.",
+        "filename": "game/script.rpy",
+        "line_number": 613,
+        "source_statement": "a \"[what]\"",
+        "label": "nextstartt",
+        "scene": "timetogrow11"
+      }
+    },
+    {
+      "id": "social-play",
+      "title": "Jealous but genuinely impressed",
+      "state": "unguarded social playfulness",
+      "background": "While talking with Kaori, Ami can admit admiration and jealousy together. This is a counterexample to portraying every friendly response as manipulation.",
+      "addressee": "Kaori",
+      "intention": "Admit that she looks cool despite feeling a little outshone.",
+      "direction": "A spontaneous, slightly sheepish compliment. Let the thought develop naturally.",
+      "listen_for": [
+        "Authentic amusement and responsive timing"
+      ],
+      "avoid": [
+        "A threatening undertone added because of later plot knowledge"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "6234bc7f50df19dfdb35b109",
+        "sequence": 103816,
+        "identifier": "amisroom5_905cc89d",
+        "character": "a",
+        "dialogue": "You look kinda like a...rock idol or something. And you're super cool and now I'm jealous.",
+        "filename": "game/AmiEvents.rpy",
+        "line_number": 1007,
+        "source_statement": "a \"[what]\"",
+        "label": "amisroom5",
+        "scene": "amidiner27"
+      }
+    },
+    {
+      "id": "practical-care",
+      "title": "Steadying someone who is unwell",
+      "state": "quiet capable care",
+      "background": "In aminew2, Sensei is struggling and Ami checks his immediate condition while helping him get back to bed.",
+      "addressee": "Sensei",
+      "intention": "Find out whether he can move safely and offer concrete help.",
+      "direction": "Short, attentive questions with room for an answer. Soft spoken, still fully voiced.",
+      "listen_for": [
+        "Quiet clarity in the same youthful voice"
+      ],
+      "avoid": [
+        "A mature therapeutic narrator or a seductive whisper"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "29587ae63df681830a1f0a0b",
+        "sequence": 106406,
+        "identifier": "aminew2_268776f1",
+        "character": "a",
+        "dialogue": "Can you stand up?...Or do you need me to help you?",
+        "filename": "game/AmiEvents.rpy",
+        "line_number": 5866,
+        "source_statement": "a \"[what]\"",
+        "label": "aminew2",
+        "scene": "warble19"
+      }
+    },
+    {
+      "id": "grief",
+      "title": "Admitting she misses her mother",
+      "state": "pain that interrupts ordinary conversation",
+      "background": "After visiting her parents' graves she tells Molly why she wanted to see her mother, trying to contain the admission rather than make a speech.",
+      "addressee": "Molly",
+      "intention": "Explain just enough, then put a boundary around the pain.",
+      "direction": "A held-back admission, with a small attempt to close the subject on the last words.",
+      "listen_for": [
+        "Pain beneath an ordinary sentence"
+      ],
+      "avoid": [
+        "Continuous sobbing that obscures the words"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "7f138673074b01f767dcf96a",
+        "sequence": 105602,
+        "identifier": "amidate50p2_061dc90a",
+        "character": "a",
+        "dialogue": "I’ve just missed her a lot lately. That’s all.",
+        "filename": "game/AmiEvents.rpy",
+        "line_number": 4381,
+        "source_statement": "a \"[what]\"",
+        "label": "amidate50p2",
+        "scene": "amianime18"
+      }
+    },
+    {
+      "id": "abandonment",
+      "title": "Asking whether she will be left behind",
+      "state": "fear of replacement",
+      "background": "In the Old District incident she says her friends are leaving her behind and urgently asks whether Sensei will do the same. Accounts of the incident conflict; this case concerns her expressed fear.",
+      "addressee": "Sensei",
+      "intention": "Obtain a reassuring answer, not merely describe sadness.",
+      "direction": "A question that waits and then presses again, with vulnerability below the insistence.",
+      "listen_for": [
+        "Need for a reply and rising uncertainty"
+      ],
+      "avoid": [
+        "Generic horror-movie terror"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "34d787c15e05605dfd719397",
+        "sequence": 107236,
+        "identifier": "amispecial50_ba506a46",
+        "character": "a",
+        "dialogue": "You’re not going to do that too...are you? You’re not going to leave me?",
+        "filename": "game/AmiEvents.rpy",
+        "line_number": 7436,
+        "source_statement": "a \"[what]\"",
+        "label": "amispecial50",
+        "scene": "lostinaplace17"
+      }
+    },
+    {
+      "id": "hard-boundary",
+      "title": "A sudden refusal",
+      "state": "brief withdrawal of friendliness",
+      "background": "In the opening's optional question about her parents, she abruptly refuses the topic and repeats the refusal when pressed. Use the first refusal here.",
+      "addressee": "Sensei",
+      "intention": "Stop the question before it opens a painful subject.",
+      "direction": "Short and firm; the smile disappears. Do not shout or change to a lower voice.",
+      "listen_for": [
+        "A clear interpersonal boundary in very few words"
+      ],
+      "avoid": [
+        "A cute pout or a villain voice"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "a629300a85f9a46b2804051d",
+        "sequence": 223677,
+        "identifier": "amiwhattodo_c8753d36",
+        "character": "a",
+        "dialogue": "Ask something else.",
+        "filename": "game/script.rpy",
+        "line_number": 739,
+        "source_statement": "a \"[what]\"",
+        "label": "amiwhattodo",
+        "scene": "bathscenebutnomorebath1"
+      }
+    },
+    {
+      "id": "breakdown",
+      "title": "Losing control during Della",
+      "state": "acute emotional breakdown",
+      "background": "During Della, Sensei tries to take the scissors from her. Her fear and fixation have overtaken the ordinary conversation. This is a crisis, not playful anger.",
+      "addressee": "Sensei",
+      "intention": "Prevent him from stopping what she believes she must finish.",
+      "direction": "A sudden uncontrolled high-register outburst with urgency. Preserve intelligibility and do not manufacture a second speaker.",
+      "listen_for": [
+        "Expressive headroom above the ordinary voice"
+      ],
+      "avoid": [
+        "Comedic squealing or a smooth composed threat"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "2c1ab75c233caa830eb151d3",
+        "sequence": 107775,
+        "identifier": "amispring1_975e6c5d",
+        "character": "a",
+        "dialogue": "{b}{size=+15}I’M NOT DONE YET! YOU CAN’T HAVE THEM!{/b}{/size}",
+        "filename": "game/AmiEvents.rpy",
+        "line_number": 8501,
+        "source_statement": "a \"[what]\"",
+        "label": "amispring1",
+        "scene": "amihair15"
+      }
+    },
+    {
+      "id": "remorse",
+      "title": "Crying after hurting someone",
+      "state": "panic collapsing into guilt",
+      "background": "After realizing Sensei has been hurt, she collapses into frightened apologies. The source includes a written wail; the cleaning step must decide how to represent the apology and written wail without reading sound spellings as words.",
+      "addressee": "Sensei",
+      "intention": "Make him understand it was not intentional while struggling to regain breath.",
+      "direction": "Crying voice with broken starts and repeated apology, not angry shouting. Keep the words audible.",
+      "listen_for": [
+        "A distinct shift from resistance to remorse"
+      ],
+      "avoid": [
+        "Reading the source's long wail spelling as a word"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "249e48f68a7b009806546c55",
+        "sequence": 107837,
+        "identifier": "amispring1_64766a2a",
+        "character": "a",
+        "dialogue": "{b}I’M SO SORRY!!!!!!! I’M SO SORRY!!!!!!!!!! IT WAS AN ACCIDENT!!!!!!!!! AAAAAAAAaaaaaahhhhaaaaaa!!!!!!!!!!!{/b}",
+        "filename": "game/AmiEvents.rpy",
+        "line_number": 8608,
+        "source_statement": "a \"[what]\"",
+        "label": "amispring1",
+        "scene": "amihair23"
+      }
+    },
+    {
+      "id": "tearful-recovery",
+      "title": "Beginning to function again after crying",
+      "state": "crying voice with tentative renewed agency",
+      "background": "At the graves, narration says she has sobbed, risen and tried to smile. She then invites Sensei to speak to her parents. This is a local recovery beat, not a permanent cure.",
+      "addressee": "Sensei",
+      "intention": "Take one manageable next step and bring him into the moment.",
+      "direction": "Residual tears in the voice, a settling breath, then a small purposeful lift. Neither a new sob nor instant cheerful reset.",
+      "listen_for": [
+        "Tears and renewed initiative at the same time"
+      ],
+      "avoid": [
+        "A flat sad reading with no forward movement"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "13911cd1124421e6afa2478b",
+        "sequence": 105438,
+        "identifier": "amidate50_5740a19b",
+        "character": "a",
+        "dialogue": "Okay...now it’s your turn.",
+        "filename": "game/AmiEvents.rpy",
+        "line_number": 4080,
+        "source_statement": "a \"[what]\"",
+        "label": "amidate50",
+        "scene": "her10"
+      }
+    },
+    {
+      "id": "tentative-trust",
+      "title": "Asking permission to call him Dad",
+      "state": "fragile acceptance of reassurance",
+      "background": "On the camping trip, reassurance makes her tentatively ask whether she can call Sensei Dad. Fear and uncertainty have not vanished.",
+      "addressee": "Sensei",
+      "intention": "Check whether this offered closeness is really allowed.",
+      "direction": "Small hesitant starts and genuine hope, without pushing the answer.",
+      "listen_for": [
+        "Tentativeness distinct from strategic sweetness"
+      ],
+      "avoid": [
+        "A confident cute demand"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "ec37516d68f26317786e1c45",
+        "sequence": 108231,
+        "identifier": "amicamp2_475bf527",
+        "character": "a",
+        "dialogue": "Is it...okay if I call you that now?...",
+        "filename": "game/AmiEvents.rpy",
+        "line_number": 9328,
+        "source_statement": "a \"[what]\"",
+        "label": "amicamp2",
+        "scene": "camphair32"
+      }
+    },
+    {
+      "id": "unmasked-control",
+      "title": "Openly acknowledging her strategy",
+      "state": "light composure with an exposed self-interested edge",
+      "background": "In amispring2 she explains that she has stopped interfering because it no longer gets her what she wants. The 'little devil' casting direction is an interpretation of this frank admission, not a claim that she stops hiding every feeling.",
+      "addressee": "Noriko",
+      "intention": "Correct the comforting interpretation and state the practical reason on her own terms.",
+      "direction": "Calm, lightly pointed directness. Keep her familiar high voice; let the matter-of-fact admission create the unsettling edge.",
+      "listen_for": [
+        "Control without a new low villain timbre"
+      ],
+      "avoid": [
+        "Loud theatrical malice or an evil laugh"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "0c48a866aa4957df619958f8",
+        "sequence": 108527,
+        "identifier": "amispring2_e45e0f3e",
+        "character": "a",
+        "dialogue": "Of course not. There’s just no way for me to get what I want by interfering anymore. ",
+        "filename": "game/AmiEvents.rpy",
+        "line_number": 9950,
+        "source_statement": "a \"[what]\"",
+        "label": "amispring2",
+        "scene": "nakayamaslimotrip24"
+      }
+    },
+    {
+      "id": "guarded-feelings",
+      "title": "Keeping her real feelings private",
+      "state": "deliberate emotional concealment",
+      "background": "Later in the conversation with Noriko, she explicitly describes withholding her real feelings. This counter-case prevents flattening later Ami into simply unmasked evil.",
+      "addressee": "Noriko",
+      "intention": "Define what she will not let the other person see.",
+      "direction": "Controlled and readable, but offering little emotional access. A measured answer, not robotic monotony.",
+      "listen_for": [
+        "Distinction between restraint, indifference and recovery"
+      ],
+      "avoid": [
+        "Narrating her hidden emotions too openly"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "2e39328eafa901183095d09f",
+        "sequence": 108571,
+        "identifier": "amispring2_00aa4bdb",
+        "character": "a",
+        "dialogue": "I’ve just made too many mistakes to ever give away what I’m really feeling anymore. ",
+        "filename": "game/AmiEvents.rpy",
+        "line_number": 10033,
+        "source_statement": "a \"[what]\"",
+        "label": "amispring2",
+        "scene": "nakayamaslimotrip33"
+      }
+    },
+    {
+      "id": "mega-ami",
+      "title": "Presenting the indispensable Mega Ami",
+      "state": "cultivated confidence in her domestic role",
+      "background": "In chapter 2's reunion sequence she explains that her polished caregiver persona grew out of Sensei being absorbed in his thoughts when she was little. She names the current persona before returning to dinner plans.",
+      "addressee": "Sensei",
+      "intention": "Get him to recognize the special role she has built for herself.",
+      "direction": "A practiced little flourish of self-introduction, intimate rather than stage-projecting. Pride with a need to be recognized.",
+      "listen_for": [
+        "Performed confidence without a different voice"
+      ],
+      "avoid": [
+        "Treating her self-description as purely carefree comedy"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "3115031d429ef06fb3946ece",
+        "sequence": 14319,
+        "identifier": "day271_b38aa8df",
+        "character": "a",
+        "dialogue": "Mega Ami. The current version of Ami that you know and love.",
+        "filename": "game/ch2script.rpy",
+        "line_number": 4744,
+        "source_statement": "a \"[what]\"",
+        "label": "day271",
+        "scene": "reunion9"
+      }
+    },
+    {
+      "id": "friendly-cross-examination",
+      "title": "Turning an argument into a little game",
+      "state": "cheerful pressure aimed at a friend",
+      "background": "In chapter 3, Ami and Maya dispute who arranged the Old District meeting. Ami reframes the confrontation as mutual confession and presses Maya for information. Conflicting accounts are not resolved by this case.",
+      "addressee": "Maya",
+      "intention": "Keep control of the exchange and make refusal look unfriendly.",
+      "direction": "A sudden bright idea with too much purpose behind the smile. Push the invitation forward without a cartoon evil voice.",
+      "listen_for": [
+        "A different social intention from her cute appeal to Sensei"
+      ],
+      "avoid": [
+        "Unmotivated cackling or sincere party-host enthusiasm"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "94fc9ecb495741eb5545e266",
+        "sequence": 190527,
+        "identifier": "amispecial50mainp2_a73221f9",
+        "character": "a",
+        "dialogue": "Oh! I know! How about we make it into a little game! I’ll confess one thing, and then you can confess another! It’ll be a good way for us to show each other we still value our friendship!",
+        "filename": "game/chap3.rpy",
+        "line_number": 25548,
+        "source_statement": "a \"[what]\"",
+        "label": "amispecial50mainp2",
+        "scene": "onlyamimattersandeveryoneelseisdumb8"
+      }
+    },
+    {
+      "id": "exclusive-sanctuary",
+      "title": "Arguing that his love is running out",
+      "state": "possessive care framed as reasonable advice",
+      "background": "After Sensei wakes from a long withdrawn period in chapter 4, she resists his reconnecting with others. She explains his affection as a limited supply that leaves less for her.",
+      "addressee": "Sensei",
+      "intention": "Persuade him that remaining dependent and isolated is the sensible choice.",
+      "direction": "Close, persuasive and apparently reasonable. Let anxiety motivate the argument without turning the entire sentence into a panic attack.",
+      "listen_for": [
+        "Fear concealed inside a practical-sounding explanation"
+      ],
+      "avoid": [
+        "An openly threatening command or generic romantic warmth"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "6df88f18e28ed1041901cd1e",
+        "sequence": 206104,
+        "identifier": "springend2_fb7df30d",
+        "character": "a",
+        "dialogue": "I mean you only have so much love to give. And if you spread it out among everyone, that leaves almost nothing for me. ",
+        "filename": "game/chap4.rpy",
+        "line_number": 6506,
+        "source_statement": "a \"[what]\"",
+        "label": "springend2",
+        "scene": "senseiupagain35"
+      }
+    },
+    {
+      "id": "late-grief-with-child",
+      "title": "Admitting vulnerability to Chinami",
+      "state": "late grief outside the uncle-centered relationship",
+      "background": "In the later chapter 4 dorm competition, Chinami talks openly about her mother. Ami discovers she still cannot do the same, despite her increasingly controlled behavior elsewhere.",
+      "addressee": "Chinami",
+      "intention": "Acknowledge the child's strength and her own difficulty honestly.",
+      "direction": "An unguarded, quiet admission to a child. Keep the sentence personal rather than delivering a lesson about grief.",
+      "listen_for": [
+        "Late Ami retaining vulnerability and ordinary human connection"
+      ],
+      "avoid": [
+        "Dragging a scheming undertone into every later scene"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "b0b766b640d928e92e8333ee",
+        "sequence": 125704,
+        "identifier": "dormwarssix4_0de38e39",
+        "character": "a",
+        "dialogue": "You’re stronger than me then, Chinami. It’s been almost a decade since my mom died and I still can’t really talk about it.",
+        "filename": "game/chap4part2.rpy",
+        "line_number": 1498,
+        "source_statement": "a \"[what]\"",
+        "label": "dormwarssix4",
+        "scene": "familywar27"
+      }
+    }
+  ]
+}

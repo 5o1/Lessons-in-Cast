@@ -11,6 +11,20 @@ encoding and Ren'Py packaging. API credentials are read at runtime from
 `MINIMAX_API_KEY` (or the profile's configured environment-variable name) and
 are never stored in effective configuration or build provenance.
 
+TTS accepts either a Token Plan subscription key (`sk-cp-`) or a standard PAYG
+key; they use different billing routes. Do not reject subscription keys based on
+the old Coding Plan name. New voice cloning/design is separate from TTS and is
+not included in Token Plan. The reference-audition runner uses a separate PAYG
+credential for new clones and the profile-configured TTS credential for speech,
+with no automatic PAYG fallback. A verified local clone cache needs no cloning
+credential. See [Token Plan coverage](https://platform.minimaxi.com/docs/guides/pricing-token-plan).
+
+For each synthesized span, `.minimax/response.json` retains the provider response
+and the exact credential-free endpoint/payload; `.minimax/source.wav` retains its
+decoded audio. These are written before conversion, and final WAVs are published
+only after conversion succeeds. Retrying a local conversion reuses the response
+without another API call; a changed request cannot reuse that cached response.
+
 MiniMax T2A does not expose a free-form, per-utterance acting-prompt field.
 Speech 2.8 performance is controlled through its emotion enumeration, voice
 settings and modifiers, text sound tags, explicit pause markers, and
@@ -38,6 +52,33 @@ Every conversion decision is emitted to
 `build/.../synthesis_adaptations.jsonl` with `exact`, `approximated`, or
 `dropped` fidelity. That file makes backend changes reviewable and prevents a
 backend's limited controls from silently narrowing the common JSON model.
+
+## Arbitrary-emotion fallback rules
+
+MiniMax cannot natively consume `<arbitrary_emotion description="...">` direction.
+A profile may define exact-description fallbacks in its `config.toml`:
+
+```toml
+[arbitrary_emotions."A furious, explosive outburst."]
+emotion = "angry"
+vocal_mode = "shout"
+energy = 0.9
+```
+
+These are **profile-authored backend approximations**, not automatic description
+understanding, QwenEmotion vectors, or new core presets. Unknown descriptions
+raise before synthesis. The original polish data is unchanged; the adapter
+records the original description, rule and lost expressivity in its adaptation
+report. It never sends the acting description as spoken text. All rules enter
+the configuration fingerprint. Different inline spans are synthesized separately
+and concatenated through the common segment renderer.
+
+Supported rule fields are `emotion` (a primitive core emotion), `vocal_mode`
+(`normal`, `whisper`, `shout`), `energy` (-1..1), `breathiness` (0..1), `speed`
+(0.5..2), and `volume_gain_db` (-12..12). Explicit core performance controls take
+precedence over the rule's defaults; normal backend range/feature lowering still
+applies. Louder or stronger speech is not evidence of authentic screaming or
+crying. A general automatic MiniMax direction compiler remains future work.
 
 ## Profile example
 

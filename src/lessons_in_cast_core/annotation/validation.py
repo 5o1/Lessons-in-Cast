@@ -11,6 +11,7 @@ from ..config import AnnotationConfig
 from ..dialogue import DialogueBatch, DialogueRecord
 from ..hashing import content_hash
 from ..performance import PerformanceCueKind, SpeechPerformance, VocalMode
+from ..speech_markup import parse_emotion_markup
 from .types import (
     Annotation,
     BatchValidationResult,
@@ -29,7 +30,6 @@ _ALLOWED_FIELDS = {
     "action",
     "spoken_text",
     "emotion",
-    "intensity",
     "delivery",
     "effects",
     "confidence",
@@ -53,6 +53,9 @@ class AnnotationValidator:
         prompt_version: str,
         annotator_configuration: dict[str, Any],
         processed_at: str | None = None,
+        schema_version: int = 2,
+        stage: str = "polish",
+        cleaned_annotations: dict | None = None,
     ) -> BatchValidationResult:
         timestamp = processed_at or datetime.now(timezone.utc).isoformat()
         input_hash = content_hash(batch.to_dict())
@@ -170,8 +173,22 @@ class AnnotationValidator:
                 annotation, annotation_issues = self._validate_annotation(
                     target,
                     raw_by_id[target.id],
+                    schema_version=schema_version,
+                    stage=stage,
                 )
-                issues.extend(annotation_issues)
+                issues.extend(issue for issue in annotation_issues
+                              if cleaned_annotations is None or issue.code != "high_impact_action")
+                if annotation is not None and cleaned_annotations is not None:
+                    original = cleaned_annotations.get(target.id)
+                    if original is None:
+                        issues.append(ValidationIssue("missing_cleaning_binding", "Polish has no accepted cleaning input.", "error", target.id))
+                    else:
+                        plain = "".join(s.text for s in parse_emotion_markup(annotation.spoken_text)) if annotation.spoken_text else ""
+                        if plain != original["spoken_text"] or annotation.action.value != original["action"] or list(annotation.effects) != original["effects"]:
+                            issues.append(ValidationIssue("polish_changed_cleaning", "Polish must preserve cleaned speech, action and effects exactly.", "error", target.id))
+                        pauses = [cue.to_dict() for cue in annotation.performance.cues if cue.kind is PerformanceCueKind.PAUSE]
+                        if pauses != original.get("performance", {}).get("cues", []):
+                            issues.append(ValidationIssue("polish_changed_pauses", "Polish must preserve cleaning pause cues exactly.", "error", target.id))
 
             if annotation is None or any(issue.severity == "error" for issue in issues):
                 status = ValidationStatus.RETRYABLE
@@ -199,6 +216,7 @@ class AnnotationValidator:
         self,
         target: DialogueRecord,
         raw: dict[str, Any],
+        *, schema_version: int = 2, stage: str = "polish",
     ) -> tuple[Annotation | None, list[ValidationIssue]]:
         issues: list[ValidationIssue] = []
 
@@ -212,14 +230,13 @@ class AnnotationValidator:
             "id",
             "action",
             "spoken_text",
-            "emotion",
-            "intensity",
-            "delivery",
             "effects",
             "confidence",
             "review_required",
             "reason",
         }
+        if stage != "cleaning":
+            required.add("delivery")
         missing = required - set(raw)
         if missing:
             error("missing_fields", f"Missing fields: {sorted(missing)!r}")
@@ -233,14 +250,25 @@ class AnnotationValidator:
             return None, issues
 
         spoken_text = raw["spoken_text"]
-        emotion = raw["emotion"]
-        intensity = raw["intensity"]
-        delivery = raw["delivery"]
+        emotion = raw.get("emotion")
+        delivery = raw.get("delivery", {})
         effects = raw["effects"]
         confidence = raw["confidence"]
         review_required = raw["review_required"]
         reason = raw["reason"]
         performance_raw = raw.get("performance")
+
+        speaking = action in {DialogueAction.SPEAK, DialogueAction.SPEAK_WITH_EFFECT}
+        markup = stage != "cleaning" and isinstance(spoken_text, str) and (schema_version >= 3 or "<emotion" in spoken_text)
+        if schema_version >= 3 and ({"emotion", "intensity"} & set(raw)):
+            error("line_level_emotion", "Use a single semantic label inside each emotion tag, without numerical intensity.")
+        segments = ()
+        if markup and speaking:
+            try:
+                segments = parse_emotion_markup(spoken_text, self._config.allowed_emotions)
+                spoken_text = "".join(segment.text for segment in segments)
+            except ValueError as exc:
+                error("emotion_markup", str(exc))
 
         if not isinstance(spoken_text, str):
             error("spoken_text_type", "spoken_text must be a string.")
@@ -248,12 +276,6 @@ class AnnotationValidator:
             error("emotion_type", "emotion must be a string or null.")
         elif emotion is not None and emotion not in self._config.allowed_emotions:
             error("invalid_emotion", f"Emotion {emotion!r} is not allowed.")
-        if intensity is not None and (
-            isinstance(intensity, bool)
-            or not isinstance(intensity, (int, float))
-            or not 0 <= intensity <= 1
-        ):
-            error("invalid_intensity", "intensity must be null or between 0 and 1.")
         if not isinstance(delivery, dict) or not all(
             isinstance(key, str) and isinstance(value, str)
             for key, value in delivery.items()
@@ -282,6 +304,11 @@ class AnnotationValidator:
             spoken_text if isinstance(spoken_text, str) else "",
             error,
         )
+        if stage == "cleaning":
+            if any(key in raw for key in ("emotion", "intensity", "delivery")) or (isinstance(spoken_text, str) and re.search(r"<\s*/?\s*(emotion|voice)\b", spoken_text)):
+                error("cleaning_acting_fields", "Cleaning cannot assign emotion, voice or delivery; use polish.")
+            if any(value is not None for key, value in performance.to_dict().items() if key != "cues") or any(cue.kind is not PerformanceCueKind.PAUSE or cue.intensity is not None for cue in performance.cues):
+                error("cleaning_performance", "Cleaning may add only pause cues, not acting controls.")
         if any(issue.severity == "error" for issue in issues):
             return None, issues
 
@@ -295,8 +322,8 @@ class AnnotationValidator:
             error("missing_spoken_text", "A speaking action requires spoken_text.")
         if not speaking and spoken_text:
             error("unexpected_spoken_text", "A non-speaking action requires empty spoken_text.")
-        if speaking and (emotion is None or intensity is None):
-            error("missing_emotion", "A speaking action requires emotion and intensity.")
+        if speaking and stage != "cleaning" and not segments and emotion is None:
+            error("missing_emotion", "A speaking action requires an emotion label.")
         if action is DialogueAction.SPEAK and effects:
             error("unexpected_effects", "Use speak_with_effect when effects are present.")
         if action is DialogueAction.SPEAK_WITH_EFFECT and not effects:
@@ -327,9 +354,8 @@ class AnnotationValidator:
             Annotation(
                 id=target.id,
                 action=action,
-                spoken_text=spoken_text,
+                spoken_text=raw["spoken_text"],
                 emotion=emotion,
-                intensity=float(intensity) if intensity is not None else None,
                 delivery=delivery,
                 effects=tuple(effects),
                 confidence=float(confidence) if confidence is not None else None,

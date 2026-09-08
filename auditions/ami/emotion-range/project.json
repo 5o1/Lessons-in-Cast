@@ -1,0 +1,209 @@
+{
+  "version": 2,
+  "id": "ami-emotion-range",
+  "character": "a",
+  "brief": "Test the existing Ami voice and default reference with automatically prepared IndexTTS emotion presets and runtime arbitrary_emotion descriptions. Keep one recognizable high, light, youthful English voice. This is an acting-range experiment, not a new casting choice.",
+  "coverage": {
+    "status": "partial",
+    "notes": "Seven source-verified game-dialogue sides for the requested emotion-range test. Some real lines intentionally receive contrasting audition directions. All cleaning and polish responses must be retained.",
+    "source_release": "LessonsInLove0.60.0-0.60.0-pc-subscribestar"
+  },
+  "cases": [
+    {
+      "id": "01-default",
+      "title": "Default everyday voice",
+      "state": "ordinary domestic familiarity",
+      "background": "At the opening Ami wakes her uncle after class; the source still calls her q.",
+      "addressee": "Sensei",
+      "intention": "Wake him and explain the practical situation.",
+      "direction": "Natural, unmarked conversational delivery. Use the neutral preset for the baseline.",
+      "listen_for": [
+        "Audible distinction from the ordinary take, preserved Ami identity, complete intelligible words"
+      ],
+      "avoid": [
+        "Clipped endings, unrelated humming, a second speaker, distortion mistaken for emotional acting"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "15b1a770d74271e5270d8286",
+        "sequence": 5935,
+        "identifier": "start2_6b916855",
+        "character": "q",
+        "dialogue": "Class ended ten minutes ago. It's time to get up.",
+        "filename": "game/script.rpy",
+        "line_number": 477,
+        "source_statement": "q \"[what]\"",
+        "label": "start2",
+        "scene": "timetogrow1"
+      }
+    },
+    {
+      "id": "02-happy",
+      "title": "Happy anticipation",
+      "state": "genuine uncomplicated happiness",
+      "background": "During an afternoon phone call Sensei agrees to come home to spend time with her.",
+      "addressee": "Sensei",
+      "intention": "Show that she is happy he is coming.",
+      "direction": "A spontaneous happy response with a smile; use the happy preset.",
+      "listen_for": [
+        "Audible distinction from the ordinary take, preserved Ami identity, complete intelligible words"
+      ],
+      "avoid": [
+        "Clipped endings, unrelated humming, a second speaker, distortion mistaken for emotional acting"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "9f2a2389fefb0f7b7efbc73d",
+        "sequence": 61,
+        "identifier": "callamiafternoon_0cb8728a",
+        "character": "a",
+        "dialogue": "Yay! I'll see you soon then~",
+        "filename": "game/AmiEvents.rpy",
+        "line_number": 231,
+        "source_statement": "a \"[what]\"",
+        "label": "callamiafternoon",
+        "scene": "black"
+      }
+    },
+    {
+      "id": "03-angry",
+      "title": "Angry refusal",
+      "state": "direct anger at unwelcome teasing",
+      "background": "Her friends keep making unwelcome comments about Sensei while Ami is already having a difficult day.",
+      "addressee": "Rin and Molly",
+      "intention": "Make the teasing stop immediately.",
+      "direction": "Direct anger and firm projection, using the angry preset; maintain intelligibility.",
+      "listen_for": [
+        "Audible distinction from the ordinary take, preserved Ami identity, complete intelligible words"
+      ],
+      "avoid": [
+        "Clipped endings, unrelated humming, a second speaker, distortion mistaken for emotional acting"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "32248e724ddc716882b8fc77",
+        "sequence": 2890,
+        "identifier": "aminew2_fcc6fe7c",
+        "character": "a",
+        "dialogue": "Shut up! Shut up! Shut up! This really isn’t the day to be talking about that!",
+        "filename": "game/AmiEvents.rpy",
+        "line_number": 5682,
+        "source_statement": "a \"[what]\"",
+        "label": "aminew2",
+        "scene": "warble13"
+      }
+    },
+    {
+      "id": "04-sad",
+      "title": "Sad admission",
+      "state": "open sadness and missing her mother",
+      "background": "After visiting her parents' graves Ami tells Molly she has been missing her mother.",
+      "addressee": "Molly",
+      "intention": "Admit the hurt without turning it into a speech.",
+      "direction": "Audible sadness, using the sad preset; let the short final sentence settle.",
+      "listen_for": [
+        "Audible distinction from the ordinary take, preserved Ami identity, complete intelligible words"
+      ],
+      "avoid": [
+        "Clipped endings, unrelated humming, a second speaker, distortion mistaken for emotional acting"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "7f138673074b01f767dcf96a",
+        "sequence": 2200,
+        "identifier": "amidate50p2_061dc90a",
+        "character": "a",
+        "dialogue": "I’ve just missed her a lot lately. That’s all.",
+        "filename": "game/AmiEvents.rpy",
+        "line_number": 4381,
+        "source_statement": "a \"[what]\"",
+        "label": "amidate50p2",
+        "scene": "amianime18"
+      }
+    },
+    {
+      "id": "05-suppressed-to-scream",
+      "title": "Suppression breaking into a scream",
+      "state": "tightly held emotion suddenly escaping",
+      "background": "During Della Sensei tries to take the scissors. This audition deliberately asks for a held-in first sentence followed by an explosive second sentence, rather than claiming that the source mandates that exact transition.",
+      "addressee": "Sensei",
+      "intention": "Resist his intervention, then lose control.",
+      "direction": "Use two adjacent arbitrary_emotion spans: tightly suppressed fear and anger on the first sentence, then an uncontrolled high-register scream on the second. Do not rewrite the dialogue.",
+      "listen_for": [
+        "Audible distinction from the ordinary take, preserved Ami identity, complete intelligible words"
+      ],
+      "avoid": [
+        "Clipped endings, unrelated humming, a second speaker, distortion mistaken for emotional acting"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "2c1ab75c233caa830eb151d3",
+        "sequence": 4373,
+        "identifier": "amispring1_975e6c5d",
+        "character": "a",
+        "dialogue": "{b}{size=+15}I’M NOT DONE YET! YOU CAN’T HAVE THEM!{/b}{/size}",
+        "filename": "game/AmiEvents.rpy",
+        "line_number": 8501,
+        "source_statement": "a \"[what]\"",
+        "label": "amispring1",
+        "scene": "amihair15"
+      }
+    },
+    {
+      "id": "06-burning-rage",
+      "title": "Burning rage",
+      "state": "anger at the edge of losing control",
+      "background": "Reuse the same real refusal as the ordinary-angry take for a direct comparison. The maximum-rage direction is an audition stress test, not a new claim about the canonical scene.",
+      "addressee": "Rin and Molly",
+      "intention": "Force the other speakers to stop, with fury she can barely contain.",
+      "direction": "Use arbitrary_emotion for overwhelming fury, indignation and disgust; the repeated refusal should sound dangerously close to an explosive shout.",
+      "listen_for": [
+        "Audible distinction from the ordinary take, preserved Ami identity, complete intelligible words"
+      ],
+      "avoid": [
+        "Clipped endings, unrelated humming, a second speaker, distortion mistaken for emotional acting"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "32248e724ddc716882b8fc77",
+        "sequence": 2890,
+        "identifier": "aminew2_fcc6fe7c",
+        "character": "a",
+        "dialogue": "Shut up! Shut up! Shut up! This really isn’t the day to be talking about that!",
+        "filename": "game/AmiEvents.rpy",
+        "line_number": 5682,
+        "source_statement": "a \"[what]\"",
+        "label": "aminew2",
+        "scene": "warble13"
+      }
+    },
+    {
+      "id": "07-shattered-breakdown",
+      "title": "Shattered emotional collapse",
+      "state": "panic and guilt breaking into sobs",
+      "background": "After realizing Sensei has been hurt, Ami repeatedly apologizes and cries out. The source includes an elongated written wail, which cleaning should render as a pronounceable vocalization rather than spelling it out.",
+      "addressee": "Sensei",
+      "intention": "Make him understand it was accidental while losing the ability to speak steadily.",
+      "direction": "Use arbitrary_emotion spans for broken sobbing apologies, panicked pleading, and a grief-stricken cry collapsing into sobs. Test extreme emotional fragility without inventing dialogue.",
+      "listen_for": [
+        "Audible distinction from the ordinary take, preserved Ami identity, complete intelligible words"
+      ],
+      "avoid": [
+        "Clipped endings, unrelated humming, a second speaker, distortion mistaken for emotional acting"
+      ],
+      "source": {
+        "schema_version": 3,
+        "id": "249e48f68a7b009806546c55",
+        "sequence": 4435,
+        "identifier": "amispring1_64766a2a",
+        "character": "a",
+        "dialogue": "{b}I’M SO SORRY!!!!!!! I’M SO SORRY!!!!!!!!!! IT WAS AN ACCIDENT!!!!!!!!! AAAAAAAAaaaaaahhhhaaaaaa!!!!!!!!!!!{/b}",
+        "filename": "game/AmiEvents.rpy",
+        "line_number": 8608,
+        "source_statement": "a \"[what]\"",
+        "label": "amispring1",
+        "scene": "amihair23"
+      }
+    }
+  ]
+}

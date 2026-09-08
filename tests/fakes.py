@@ -11,6 +11,7 @@ from lessons_in_cast_core.config import AudioConfig
 from lessons_in_cast_core.hashing import content_hash
 from lessons_in_cast_core.jsonl import read_jsonl, write_jsonl
 from lessons_in_cast_core.synthesis.types import TtsJob
+from lessons_in_cast_core.speech_markup import SpeechSegment, emotion_markup
 
 
 class MockDialogueAnnotator:
@@ -28,7 +29,6 @@ class MockDialogueAnnotator:
                     "action": "speak",
                     "spoken_text": item["dialogue"],
                     "emotion": "neutral",
-                    "intensity": 0.5,
                     "delivery": {},
                     "effects": [],
                     "confidence": 1.0,
@@ -43,6 +43,23 @@ def write_mock_responses(requests_path: Path, responses_path: Path) -> int:
     annotator = MockDialogueAnnotator()
     envelopes = []
     for request in read_jsonl(requests_path):
+        response = annotator.annotate(request)
+        if request.get("stage") == "cleaning":
+            for annotation in response["annotations"]:
+                annotation.pop("emotion")
+                annotation.pop("delivery")
+                annotation["performance"] = {"cues": []}
+        elif request.get("schema_version", 1) >= 3:
+            for annotation in response["annotations"]:
+                annotation["spoken_text"] = emotion_markup((SpeechSegment(annotation["spoken_text"],
+                    annotation.pop("emotion")),))
+                original = request.get("cleaned_annotations", {}).get(annotation["id"])
+                if original is not None:
+                    annotation["performance"] = original["performance"]
+                    annotation["effects"] = original["effects"]
+                    annotation["action"] = original["action"]
+                    if original["action"] in {"omit", "sfx_only"}:
+                        annotation["spoken_text"] = ""
         envelopes.append(
             {
                 "request_hash": content_hash(request),
@@ -50,7 +67,7 @@ def write_mock_responses(requests_path: Path, responses_path: Path) -> int:
                 "prompt_version": request["prompt_version"],
                 "annotator_configuration": annotator.configuration,
                 "generated_at": "2026-09-05T00:00:00+00:00",
-                "response": annotator.annotate(request),
+                "response": response,
             }
         )
     return write_jsonl(envelopes, responses_path)

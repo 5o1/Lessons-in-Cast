@@ -288,7 +288,6 @@ def main() -> int:
         "input": str(input_path),
         "line_selection": "One clean, approximately 72-character line from each fifth of the character timeline.",
         "emotion": "neutral",
-        "intensity": 0.0,
         "line_count_per_character": TARGET_LINE_COUNT,
         "characters": [],
     }
@@ -359,7 +358,6 @@ def main() -> int:
                         character_id=character_id,
                         text=line["text"],
                         emotion="neutral",
-                        intensity=0.0,
                         delivery={},
                         output_path=str(destination.relative_to(root)),
                         cache_key=hashlib.sha256(

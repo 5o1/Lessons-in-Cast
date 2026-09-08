@@ -23,6 +23,16 @@ allowed_emotions = [
     "confused",
     "sarcastic",
     "distressed",
+    "tearful_resolve",
+    "restrained_grief",
+    "emotional_breakdown",
+    "tearful_remorse",
+    "playful_affection",
+    "guarded_composure",
+    "firm_boundary",
+    "cheerful_pressure",
+    "tentative_hope",
+    "possessive_care",
 ]
 allowed_effects = [
     "chorus",
@@ -38,9 +48,10 @@ minimum_length_ratio = 0.15
 [codex]
 batches_per_packet = 2
 source_files = ["game/script.rpy"]
-# Keep v1 selected until the in-flight Chapter 1 run has finished importing.
-prompt_path = "prompts/codex_dialogue_cleanup.md"
-prompt_version = "codex-v1"
+prompt_path = "prompts/codex_dialogue_cleanup_v4.md"
+prompt_version = "cleaning-v4"
+polish_prompt_path = "prompts/codex_dialogue_polish.md"
+polish_prompt_version = "polish-v2"
 
 [audio]
 format = "opus"

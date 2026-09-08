@@ -72,6 +72,7 @@ class MiniMaxSpeechPipeline(VoicePipeline, ABC):
             sound_effect=config.sound_effect,
             timeout_seconds=config.timeout_seconds,
             maximum_retries=config.maximum_retries,
+            arbitrary_emotions=config.arbitrary_emotions,
             retry_backoff_seconds=config.retry_backoff_seconds,
         )
 

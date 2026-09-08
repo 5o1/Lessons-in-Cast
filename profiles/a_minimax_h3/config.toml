@@ -1,0 +1,12 @@
+[minimax_h3]
+model_id = "minimax_h3_ref2va_fp8"
+reference_audio = "assets/references/default.wav"
+source_directory = "external/ComfyUI"
+endpoint = "http://127.0.0.1:8196"
+duration_seconds = 10.0
+steps = 20
+seed = 233333
+base_speed = 1.0
+language = "English"
+direction = "Preserve the reference speaker's voice identity and youthful bright timbre. Natural English articulation, not over-enunciated. Follow the acting direction of each dialogue span."
+timeout_seconds = 1800.0

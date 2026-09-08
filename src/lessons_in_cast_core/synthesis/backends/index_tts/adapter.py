@@ -19,27 +19,13 @@ from ....performance import (
 )
 from ....pronunciations import SelectedPronunciation
 from ...types import TtsJob
+from ...segmentation import adapt_segments, synthesize_segments
+from ...references.voices import resolve_voice_reference, voice_reference_fingerprint
 
 
-_EMOTION_AXES = {
-    "happy": {"joy": 1.0},
-    "excited": {"joy": 0.7, "surprise": 0.3},
-    "affectionate": {"joy": 0.55, "calm": 0.45},
-    "angry": {"anger": 1.0},
-    "sad": {"sadness": 0.7, "depression": 0.3},
-    "distressed": {"sadness": 0.4, "fear": 0.35, "depression": 0.25},
-    "afraid": {"fear": 1.0},
-    "disgusted": {"disgust": 1.0},
-    "embarrassed": {"fear": 0.45, "sadness": 0.25, "calm": 0.3},
-    "surprised": {"surprise": 1.0},
-    "confused": {"surprise": 0.55, "calm": 0.45},
-    "sarcastic": {"disgust": 0.5, "joy": 0.2, "calm": 0.3},
-    "calm": {"calm": 1.0},
-    "neutral": {"calm": 1.0},
-}
-_AXIS_ORDER = (
-    "joy", "anger", "sadness", "fear", "disgust", "depression", "surprise", "calm"
-)
+from .emotions import EMOTION_VECTORS
+
+_AXIS_ORDER = ("joy", "anger", "sadness", "fear", "disgust", "depression", "surprise", "calm")
 _EMOTION_BIAS = (0.9375, 0.875, 1.0, 1.0, 0.9375, 0.9375, 0.6875, 0.5625)
 _MAX_EMOTION_SUM = 0.8
 
@@ -59,17 +45,12 @@ def normalize_index_emotion_vector(vector: list[float]) -> list[float]:
     return [round(value, 6) for value in biased]
 
 
-def index_emotion_vector(emotion: str, intensity: float) -> list[float]:
-    """Map labels to a WebUI-normalized IndexTTS eight-axis emotion vector."""
+def index_emotion_vector(emotion: str) -> list[float]:
+    """Compile one semantic label to its complete normalized model vector."""
 
-    if emotion == "neutral":
-        return [0.0] * len(_AXIS_ORDER)
-    strength = min(max(float(intensity), 0.0), 1.0)
-    if emotion == "calm":
-        strength = max(strength, 0.2)
-    weights = _EMOTION_AXES.get(emotion, {"calm": 1.0})
-    raw = [weights.get(axis, 0.0) * strength for axis in _AXIS_ORDER]
-    return normalize_index_emotion_vector(raw)
+    if emotion not in EMOTION_VECTORS:
+        raise ValueError(f"No IndexTTS emotion mapping is defined for {emotion!r}")
+    return normalize_index_emotion_vector(list(EMOTION_VECTORS[emotion]))
 
 
 def apply_index_pronunciations(text: str, pronunciations: Mapping[str, str]) -> str:
@@ -128,6 +109,8 @@ class IndexTtsSubprocessSynthesizer:
         text_normalization: bool = True,
         pronunciations: Mapping[str, str] | None = None,
         pronunciation_rules: Sequence[SelectedPronunciation] | None = None,
+        emotion_vectors: Mapping[str, Sequence[float]] | None = None,
+        emotion_mapping_id: str | None = None,
     ) -> None:
         if (
             audio_config.format.lstrip(".").lower() != "wav"
@@ -177,6 +160,9 @@ class IndexTtsSubprocessSynthesizer:
         }
         self._pronunciations = dict(pronunciations or {})
         self._pronunciation_rules = tuple(pronunciation_rules or ())
+        self._emotion_vectors = {name: normalize_index_emotion_vector(list(values))
+                                 for name, values in (EMOTION_VECTORS if emotion_vectors is None else emotion_vectors).items()}
+        self._emotion_mapping_id = emotion_mapping_id or "legacy-manual-presets"
         self._process: subprocess.Popen[str] | None = None
 
     @property
@@ -202,6 +188,12 @@ class IndexTtsSubprocessSynthesizer:
             "pronunciation_rules": [
                 rule.to_dict() for rule in self._pronunciation_rules
             ],
+            "inline_speech_version": 3,
+            "arbitrary_emotion_version": 1,
+            "emotion_vectors": self._emotion_vectors,
+            "emotion_mapping_id": self._emotion_mapping_id,
+            "voice_references": {key: voice_reference_fingerprint(paths[0])
+                                 for key, paths in self._references.items() if paths},
         }
 
     def set_references(
@@ -222,12 +214,17 @@ class IndexTtsSubprocessSynthesizer:
         destination = (artifact_root / job.output_path).resolve()
         if destination.is_file():
             return destination
+        if job.segments:
+            self.adapt(job)
+            return synthesize_segments(job, artifact_root, self.synthesize)
         references = self._references.get(job.character_id)
         if references is None:
             raise RuntimeError(
                 f"No IndexTTS reference is configured for character "
                 f"{job.character_id!r}"
             )
+        if job.voice is not None:
+            references = (self._voice_reference(job),)
         for reference in references:
             if not reference.is_file():
                 raise FileNotFoundError(
@@ -242,6 +239,8 @@ class IndexTtsSubprocessSynthesizer:
                 "text": adaptation.text,
                 "output": str(destination),
                 "emotion_vector": adaptation.parameters["emotion_vector"],
+                "arbitrary_emotion": job.arbitrary_emotion,
+                "emotion_energy": job.performance.energy,
                 "duration_factor": adaptation.parameters["duration_factor"],
                 "seed": self._seed,
                 "sample_rate": self._audio.sample_rate,
@@ -257,9 +256,16 @@ class IndexTtsSubprocessSynthesizer:
             )
         if not destination.is_file():
             raise RuntimeError(f"IndexTTS did not create {destination}")
+        if job.arbitrary_emotion is not None:
+            destination.with_suffix(".emotion.json").write_text(
+                json.dumps({"description": job.arbitrary_emotion, "resolution": response.get("emotion_resolution")}, indent=2) + "\n",
+                encoding="utf-8",
+            )
         return destination
 
     def adapt(self, job: TtsJob) -> SpeechAdaptation:
+        if job.segments:
+            return adapt_segments(job, self.adapt)
         performance, legacy_notes = resolve_legacy_delivery(
             job.performance,
             job.delivery,
@@ -270,13 +276,23 @@ class IndexTtsSubprocessSynthesizer:
         )
         text = apply_index_pronunciations(text, self._pronunciations)
         notes = [*legacy_notes, *cue_notes]
+        voice_reference = self._voice_reference(job) if job.voice is not None else None
         speed = self._base_speed * (performance.speed or 1.0)
-        effective_intensity = job.intensity
-        if performance.energy is not None:
-            effective_intensity = min(
-                max(job.intensity * (1.0 + performance.energy * 0.5), 0.0),
-                1.0,
-            )
+        if job.arbitrary_emotion is not None:
+            emotion_vector = None
+            notes.append(FeatureAdaptation("arbitrary_emotion", AdaptationFidelity.APPROXIMATED,
+                                          "resolve the acting description through local QwenEmotion at synthesis time"))
+        elif job.emotion not in self._emotion_vectors:
+            raise ValueError(f"No prepared IndexTTS emotion mapping for {job.emotion!r}")
+        else:
+            emotion_vector = list(self._emotion_vectors[job.emotion])
+        if performance.energy is not None and emotion_vector is not None:
+            scale = 1.0 + performance.energy * 0.5
+            emotion_vector = [value * scale for value in emotion_vector]
+            total = sum(emotion_vector)
+            if total > _MAX_EMOTION_SUM:
+                emotion_vector = [value * _MAX_EMOTION_SUM / total for value in emotion_vector]
+            emotion_vector = [round(value, 6) for value in emotion_vector]
             notes.append(
                 FeatureAdaptation(
                     "performance.energy",
@@ -333,14 +349,20 @@ class IndexTtsSubprocessSynthesizer:
             text=text,
             emotion=job.emotion,
             parameters={
-                "emotion_vector": index_emotion_vector(
-                    job.emotion,
-                    effective_intensity,
-                ),
+                "voice": job.voice,
+                "reference_audio": str(voice_reference) if voice_reference else None,
+                "emotion_vector": emotion_vector,
+                "arbitrary_emotion": job.arbitrary_emotion,
                 "duration_factor": 1.0 / speed,
             },
             features=tuple(notes),
         )
+
+    def _voice_reference(self, job: TtsJob) -> Path:
+        references = self._references.get(job.character_id, ())
+        if len(references) != 1:
+            raise ValueError("Voice tags require exactly one default reference audio")
+        return resolve_voice_reference(references[0], job.voice)
 
     def _exchange(self, request: dict[str, Any]) -> dict[str, Any]:
         process = self._ensure_process()

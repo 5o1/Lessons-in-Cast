@@ -145,8 +145,6 @@ class SynthesisPlanner:
                 DialogueAction.SPEAK,
                 DialogueAction.SPEAK_WITH_EFFECT,
             }:
-                assert annotation.emotion is not None
-                assert annotation.intensity is not None
                 for member_id in character.synthesis_members:
                     member = self._characters[member_id].resolve(
                         record.filename,
@@ -204,11 +202,15 @@ class SynthesisPlanner:
         from ..annotation import Annotation
 
         assert isinstance(annotation, Annotation)
+        from ..speech_markup import parse_emotion_markup
+
+        segments = (parse_emotion_markup(annotation.spoken_text)
+                    if "<emotion" in annotation.spoken_text or "<arbitrary_emotion" in annotation.spoken_text else ())
+        text = "".join(segment.text for segment in segments) if segments else annotation.spoken_text
         identity = {
             "character": member.id,
             "text": annotation.spoken_text,
             "emotion": annotation.emotion,
-            "intensity": annotation.intensity,
             "delivery": annotation.delivery,
             "performance": annotation.performance.to_dict(),
             "audio": asdict(self._audio_config),
@@ -226,12 +228,12 @@ class SynthesisPlanner:
             id=content_hash({"dialogue_id": record.id, **identity})[:24],
             dialogue_id=record.id,
             character_id=member.id,
-            text=annotation.spoken_text,
-            emotion=annotation.emotion or "neutral",
-            intensity=annotation.intensity or 0.0,
+            text=text,
+            emotion=None if segments else annotation.emotion,
             delivery=annotation.delivery,
             output_path=output_path,
             cache_key=cache_key,
             voice_profile=member.default_voice_profile,
             performance=annotation.performance,
+            segments=segments,
         )

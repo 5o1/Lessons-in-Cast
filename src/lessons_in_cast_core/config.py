@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import tomllib
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -32,14 +32,17 @@ class AnnotationConfig:
     allowed_effects: frozenset[str]
     maximum_length_ratio: float = 4.0
     minimum_length_ratio: float = 0.15
+    emotion_presets: dict[str, tuple[str, str]] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
 class CodexConfig:
     batches_per_packet: int = 2
     source_files: tuple[str, ...] = ()
-    prompt_path: str = "prompts/codex_dialogue_cleanup.md"
-    prompt_version: str = "codex-v1"
+    prompt_path: str = "prompts/codex_dialogue_cleanup_v4.md"
+    prompt_version: str = "cleaning-v4"
+    polish_prompt_path: str = "prompts/codex_dialogue_polish.md"
+    polish_prompt_version: str = "polish-v2"
 
 
 @dataclass(frozen=True, slots=True)
@@ -145,6 +148,8 @@ def load_pipeline_config(
     resolved_path = path if path.is_absolute() else root / path
     data = _load_toml(resolved_path)
     batching = data.get("batching", {})
+    from .emotion_presets import load_emotion_catalog
+    emotion_catalog = load_emotion_catalog(root / "configs/emotions.toml")
     annotation = data.get("annotation", {})
     audio = data.get("audio", {})
     codex = data.get("codex", {})
@@ -159,6 +164,7 @@ def load_pipeline_config(
     result = PipelineConfig(
         batching=BatchingConfig(**batching),
         annotation=AnnotationConfig(
+            emotion_presets=emotion_catalog,
             allowed_emotions=frozenset(annotation.get("allowed_emotions", ())),
             allowed_effects=frozenset(annotation.get("allowed_effects", ())),
             maximum_length_ratio=annotation.get("maximum_length_ratio", 4.0),
@@ -169,9 +175,11 @@ def load_pipeline_config(
             batches_per_packet=codex.get("batches_per_packet", 2),
             source_files=tuple(codex_source_files),
             prompt_path=codex.get(
-                "prompt_path", "prompts/codex_dialogue_cleanup.md"
+                "prompt_path", "prompts/codex_dialogue_cleanup_v4.md"
             ),
-            prompt_version=codex.get("prompt_version", "codex-v1"),
+            prompt_version=codex.get("prompt_version", "cleaning-v4"),
+            polish_prompt_path=codex.get("polish_prompt_path", "prompts/codex_dialogue_polish.md"),
+            polish_prompt_version=codex.get("polish_prompt_version", "polish-v2"),
         ),
         galgame=GalgameConfig(backend=galgame.get("backend", "renpy")),
     )
@@ -190,16 +198,22 @@ def load_pipeline_config(
     for field, value in {
         "codex.prompt_path": result.codex.prompt_path,
         "codex.prompt_version": result.codex.prompt_version,
+        "codex.polish_prompt_path": result.codex.polish_prompt_path,
+        "codex.polish_prompt_version": result.codex.polish_prompt_version,
     }.items():
         if not isinstance(value, str) or not value.strip():
             raise ConfigurationError(f"{field} must be a non-empty string")
     prompt_path = Path(result.codex.prompt_path)
     if prompt_path.is_absolute() or ".." in prompt_path.parts:
         raise ConfigurationError("codex.prompt_path must be a safe relative path")
+    if Path(result.codex.polish_prompt_path).is_absolute() or ".." in Path(result.codex.polish_prompt_path).parts:
+        raise ConfigurationError("codex.polish_prompt_path must be a safe relative path")
     if not result.galgame.backend.strip():
         raise ConfigurationError("galgame.backend cannot be empty")
     if not result.annotation.allowed_emotions:
         raise ConfigurationError("annotation.allowed_emotions cannot be empty")
+    from .emotions import emotion_definitions
+    emotion_definitions(result.annotation.allowed_emotions, result.annotation.emotion_presets)
     if result.audio.format.strip(".") == "":
         raise ConfigurationError("audio.format cannot be empty")
     if result.audio.format.lstrip(".").lower() not in {"wav", "opus"}:
