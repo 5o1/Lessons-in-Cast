@@ -41,6 +41,7 @@ class IndexTtsPipelineConfig:
     reference_path: str
     reference_settings: ReferenceBuildSettings
     emotion_vectors_path: str = ""
+    expressive_pause: str = "period"
 
 
 def _load_table(path: Path, name: str) -> dict[str, Any]:
@@ -83,6 +84,9 @@ def load_index_tts_pipeline_config(
     resolved = path if path.is_absolute() else repository_root / path
     resolved = resolved.resolve()
     backend = _load_table(resolved, "backend")
+    expressive_pause = backend.get("expressive_pause", "period")
+    if expressive_pause not in ("native", "comma", "period"):
+        raise ConfigurationError("backend.expressive_pause must be native, comma or period")
     render = _load_table(resolved, "render")
     reference = _load_table(resolved, "reference")
     emotion_vectors_path = backend.get("emotion_vectors_path", "")
@@ -114,6 +118,7 @@ def load_index_tts_pipeline_config(
         )
 
     result = IndexTtsPipelineConfig(
+        expressive_pause=expressive_pause,
         emotion_vectors_path=emotion_vectors_path,
         model_id=text("backend", backend, "model"),
         base_speed=number("render", render, "base_speed"),

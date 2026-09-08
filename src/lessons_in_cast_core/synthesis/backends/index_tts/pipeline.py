@@ -124,6 +124,7 @@ class IndexTtsPipeline(ReferenceVoicePipeline, ABC):
             interval_silence_ms=config.interval_silence_ms,
             max_text_tokens_per_segment=config.max_text_tokens_per_segment,
             text_normalization=config.text_normalization,
+            expressive_pause=config.expressive_pause,
             pronunciations=self._pronunciations,
             pronunciation_rules=self._pronunciation_rules,
         )
