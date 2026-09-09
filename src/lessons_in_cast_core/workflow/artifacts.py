@@ -94,6 +94,11 @@ class ArtifactLayout:
         return self.root / "audio_quality.jsonl"
 
     @property
+    def audio_effects(self) -> Path:
+        """Effect provenance retained even when disposable WAVs are removed."""
+        return self.root / "audio_effects.jsonl"
+
+    @property
     def voice_manifest(self) -> Path:
         return self.root / "voice_manifest.json"
 
@@ -138,6 +143,7 @@ class ArtifactLayout:
             self.audio_quality,
             self.voice_manifest,
             self.run_manifest,
+            self.audio_effects,
             self.release_patch,
         )
         for path in files:

@@ -66,7 +66,7 @@ class AnnotationAgentTests(unittest.TestCase):
         (self.root / 'configs').mkdir()
         for path in ROOT.joinpath('prompts').glob('*.md'):
             shutil.copy2(path, self.root / 'prompts' / path.name)
-        for name in ('characters.toml', 'pipeline.toml', 'emotions.toml'):
+        for name in ('characters.toml', 'pipeline.toml', 'emotions.toml', 'effects.toml'):
             shutil.copy2(ROOT / 'configs' / name, self.root / 'configs' / name)
         self.config = replace(load_pipeline_config(repository_root=ROOT), repository_root=self.root)
         self.characters = {'a': character('a')}
@@ -201,12 +201,12 @@ class AnnotationAgentTests(unittest.TestCase):
         self.prepare((1,))
         self.agent().run(self.layout)
         overrides = self.root / 'omit.toml'
-        overrides.write_text('[dialogue."id-0"]\naction = "sfx_only"\nspoken_text = ""\neffects = ["echo"]\napproved = true\nreview_required = false\nreason = "Audible non-speech beat."\n')
+        overrides.write_text('[dialogue."id-0"]\naction = "sfx_only"\nspoken_text = ""\neffects = ["censor_beep"]\napproved = true\nreview_required = false\nreason = "Audible non-speech beat."\n')
         AnnotationValidationStage(self.config).run(self.layout, overrides_path=overrides)
         PolishStage(self.config).prepare(self.layout, prompt_path=self.root / self.config.codex.polish_prompt_path)
         def complete(messages, schema):
             return modify_response(valid_reply(messages, schema), lambda d:
-                d['annotations'][0].update(action='sfx_only', effects=['echo'],
+                d['annotations'][0].update(action='sfx_only', effects=['censor_beep'],
                                            spoken_text='<emotion name="neutral">...</emotion>'))
         self.calls.clear()
         self.agent('polish', complete=complete).run(self.layout.polish)
@@ -279,7 +279,7 @@ class AnnotationAgentTests(unittest.TestCase):
         def complete(messages, schema):
             return modify_response(valid_reply(messages, schema), lambda d:
                 d['annotations'][0].update(
-                    action='speak_with_effect', spoken_text='Sensei?', effects=['echo'],
+                    action='speak_with_effect', spoken_text='Sensei?', effects=['fade_out'],
                     performance={'cues': [
                         {'kind': 'pause', 'offset': 3, 'duration_seconds': 0.2, 'intensity': None},
                     ]},

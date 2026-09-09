@@ -9,6 +9,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from .effects import EffectError, EffectLibrary, load_effect_library
+
 
 class ConfigurationError(ValueError):
     """Raised when a project configuration is incomplete or inconsistent."""
@@ -153,6 +155,7 @@ class PipelineConfig:
     polish: AnnotationStageConfig = AnnotationStageConfig()
     kantoku: KantokuConfig = KantokuConfig()
     repository_root: Path | None = None
+    effects: EffectLibrary = field(default_factory=EffectLibrary)
 
 
 def _load_toml(path: Path) -> dict[str, Any]:
@@ -236,6 +239,16 @@ def load_pipeline_config(
     audio = data.get("audio", {})
     codex = data.get("codex", {})
     galgame = data.get("galgame", {})
+    effects_config = data.get("effects", {})
+    if not isinstance(effects_config, dict) or effects_config.keys() - {"config_path"}:
+        raise ConfigurationError("effects must contain only config_path")
+    effects_path = effects_config.get("config_path")
+    if effects_path is not None and (not isinstance(effects_path, str) or not effects_path):
+        raise ConfigurationError("effects.config_path must be a non-empty path")
+    try:
+        effects = load_effect_library(root / effects_path if effects_path else None)
+    except EffectError as exc:
+        raise ConfigurationError(str(exc)) from exc
     codex_source_files = codex.get("source_files", [])
     if not isinstance(codex_source_files, list) or not all(
         isinstance(value, str) and value for value in codex_source_files
@@ -268,6 +281,7 @@ def load_pipeline_config(
         polish=_annotation_stage(data.get("polish", {}), "polish"),
         kantoku=KantokuConfig(**data.get("kantoku", {})),
         repository_root=root,
+        effects=effects,
     )
     directory = result.kantoku.directory
     if not isinstance(directory, str) or not directory.strip() or Path(directory).is_absolute() or ".." in Path(directory).parts:

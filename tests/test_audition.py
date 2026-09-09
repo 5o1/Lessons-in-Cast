@@ -173,6 +173,43 @@ class AuditionTests(unittest.TestCase):
         self.assertEqual((self.root / "reference.wav").read_bytes(), original)
         self.assertEqual(json.loads((output / "inputs.json").read_text())["reference_override"], str(override))
 
+    def test_effects_are_applied_after_profile_and_preserve_raw_take(self):
+        self.setup_renderer()
+        original = self.validation.side_effect
+
+        def effected(*args):
+            metadata, records, validated = original(*args)
+            for key, result in validated.items():
+                annotation = replace(result.annotation, action=DialogueAction.SPEAK_WITH_EFFECT, effects=("fade_out",))
+                validated[key] = replace(result, annotation=annotation)
+            return metadata, records, validated
+
+        self.validation.side_effect = effected
+        output = self.render()
+        self.assertTrue((output / "raw/hello.wav").is_file())
+        self.assertNotEqual((output / "raw/hello.wav").read_bytes(), (output / "takes/hello.wav").read_bytes())
+        audit = json.loads((output / "takes/hello.effects.json").read_text())
+        self.assertEqual(audit["steps"][0]["type"], "fade_out")
+        self.assertEqual(self.profile.jobs[0].text, "Hello.")
+        self.render()
+        self.assertEqual(len(self.profile.jobs), 1)
+
+    def test_effect_only_case_does_not_call_profile_render(self):
+        self.setup_renderer()
+        original = self.validation.side_effect
+
+        def effected(*args):
+            metadata, records, validated = original(*args)
+            for key, result in validated.items():
+                annotation = replace(result.annotation, action=DialogueAction.SFX_ONLY, spoken_text="", emotion=None, effects=("censor_beep",))
+                validated[key] = replace(result, annotation=annotation)
+            return metadata, records, validated
+
+        self.validation.side_effect = effected
+        output = self.render()
+        self.assertEqual(len(self.profile.jobs), 0)
+        self.assertTrue((output / "takes/hello.effects.json").is_file())
+
     def test_changed_inputs_preserve_previous_takes(self):
         self.setup_renderer()
         output = self.render()

@@ -49,6 +49,7 @@ class EmotionPreparationTests(unittest.TestCase):
         add_emotion_preset(path, "new_emotion", "Nervous reassurance", "It is fine.")
         original = (Path(__file__).resolve().parents[1] / "configs/pipeline.toml").read_text()
         (path.parent / "pipeline.toml").write_text(original.replace('"neutral",', '"neutral", "new_emotion",'))
+        (path.parent / "effects.toml").write_text((Path(__file__).resolve().parents[1] / "configs/effects.toml").read_text())
         config = load_pipeline_config(repository_root=self.root)
         request = build_annotation_request(DialogueBatch("batch", (), (record(1),), ()),
                                            annotation_config=config.annotation, stage="polish")
