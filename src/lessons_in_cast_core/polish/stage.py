@@ -13,6 +13,14 @@ from ..workflow.artifacts import ArtifactLayout
 from ..workflow.validation import AnnotationValidationStage
 
 
+def _needs_gain_envelope(original: str, cleaned: str) -> bool:
+    heard = original.lstrip(". …")
+    return (len(heard) < len(original) and bool(heard)
+            and cleaned == cleaned.lstrip(". …")
+            and len(cleaned) > len(heard)
+            and cleaned.casefold().endswith(heard.casefold()))
+
+
 class PolishStage:
     def __init__(self, config):
         self.config = config
@@ -40,6 +48,7 @@ class PolishStage:
         clean = {key: item.annotation.to_dict() for key, item in accepted.items()}
         records = [DialogueRecord.from_dict(row) for row in read_jsonl(layout.raw_dialogue)]
         cleaned_records = {record.id: replace(record, dialogue=clean[record.id]["spoken_text"]) if record.id in clean else record for record in records}
+        original_texts = {record.id: record.dialogue for record in records}
         requests = []
         for original in original_requests:
             batch = DialogueBatch.from_dict(original["batch"])
@@ -47,7 +56,13 @@ class PolishStage:
             request = build_annotation_request(batch, prompt_version=self.config.codex.polish_prompt_version,
                                                annotation_config=self.config.annotation, stage="polish")
             request["cleaned_annotations"] = {row.id: clean[row.id] for row in batch.targets}
+            request["original_texts"] = {row.id: original_texts[row.id] for row in batch.targets}
+            request["keyframe_required"] = [row.id for row in batch.targets
+                if _needs_gain_envelope(original_texts[row.id], clean[row.id]["spoken_text"])]
             request["director_notes"] = original.get("director_notes", {})
+            for key in ("direction_context", "kantoku_hash", "independent_context"):
+                if key in original:
+                    request[key] = original[key]
             requests.append(request)
         prompt = (prompt_path or find_repository_root() / self.config.codex.polish_prompt_path).resolve()
         prompt_hash = file_hash(prompt)
@@ -65,6 +80,13 @@ class PolishStage:
         if not (child.root / "polish.json").is_file():
             raise ValueError("No polish stage prepared; accepted cleaning alone cannot be synthesized")
         metadata = json.loads((child.root / "polish.json").read_text())
+        from ..kantoku import Kantoku
+        from ..characters import load_characters
+        root = self.config.repository_root or find_repository_root()
+        director = Kantoku(root, self.config, load_characters(repository_root=root))
+        if any(row.get("kantoku_hash", director.fingerprint) != director.fingerprint
+               for row in read_jsonl(layout.annotation_requests)):
+            raise ValueError("Kantoku changed; prepare a fresh run")
         if (content_hash(metadata["cleaning_inputs"]) != content_hash(self._inputs(layout))
                 or metadata["prompt_sha256"] != file_hash(Path(metadata["prompt"]))
                 or metadata["raw_sha256"] != file_hash(child.raw_dialogue)
@@ -76,7 +98,10 @@ class PolishStage:
         if not layout.polish.annotation_responses.is_file():
             raise ValueError("No polish responses; complete the independent polish workflow before synthesis")
         validator = AnnotationValidationStage(self.config)
-        result = validator.run(layout.polish, retry=retry)
+        overrides = layout.root / "polish_overrides.toml"
+        result = validator.run(layout.polish, retry=retry,
+                               overrides_path=overrides if overrides.is_file() else None)
         if not retry and result.retryable_count and layout.polish.retry_responses.is_file():
-            result = validator.run(layout.polish, retry=True)
+            result = validator.run(layout.polish, retry=True,
+                                   overrides_path=overrides if overrides.is_file() else None)
         return result

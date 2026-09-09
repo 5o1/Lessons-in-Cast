@@ -152,6 +152,7 @@ class AnnotationValidationStage:
                         schema_version=request.get("schema_version", 1),
                         stage=request.get("stage", "polish"),
                         cleaned_annotations=request.get("cleaned_annotations"),
+                        keyframe_required=request.get("keyframe_required", ()),
                         processed_at=(
                             envelope.get("generated_at")
                             if envelope
@@ -278,7 +279,8 @@ class AnnotationValidationStage:
         target = next(
             target for target in batch.targets if target.id == item.dialogue_id
         )
-        ordered = [*batch.context_before, *batch.targets, *batch.context_after]
+        ordered = sorted([*batch.context_before, *batch.targets, *batch.context_interleaved, *batch.context_after],
+                         key=lambda row: (row.line_number, row.id))
         position = ordered.index(target)
         before = tuple(
             ordered[
@@ -311,9 +313,14 @@ class AnnotationValidationStage:
             annotation_config=self._config.annotation,
             stage=request.get("stage", "polish"),
         )
-        for key in ("director_notes", "cleaned_annotations"):
+        for key in ("director_notes", "cleaned_annotations", "original_texts"):
             if key in request:
                 retry_request[key] = {target.id: request[key][target.id]} if target.id in request[key] else {}
+        if target.id in request.get("keyframe_required", ()):
+            retry_request["keyframe_required"] = [target.id]
+        for key in ("direction_context", "kantoku_hash", "independent_context"):
+            if key in request:
+                retry_request[key] = request[key]
         retry_request["retry_of"] = request.get("retry_of", batch.id)
         retry_request["attempt"] = attempt
         return retry_request

@@ -12,13 +12,14 @@ from pathlib import Path, PurePosixPath
 _LABEL = re.compile(
     r"^\s*label\s+([A-Za-z_][A-Za-z0-9_.]*)\s*(?:\([^)]*\))?\s*:"
 )
-_SCENE = re.compile(r"^\s*scene\s+(?:expression\s+)?([^\s:]+)")
+_SCENE = re.compile(r"^\s*scene(?:\s+(.*?))?\s*$")
 
 
 @dataclass(frozen=True, slots=True)
 class RenPySourceContext:
     label: str = ""
     scene: str = ""
+    scene_line: int = 0
 
     @property
     def path(self) -> tuple[str, ...]:
@@ -44,7 +45,9 @@ class RenPySourceContextIndex:
                     labels.append((line_number, label.group(1)))
                 scene = _SCENE.match(line)
                 if scene is not None:
-                    scenes.append((line_number, scene.group(1)))
+                    expression = (scene.group(1) or "").split("#", 1)[0].strip()
+                    name = re.split(r"\s+(?:with|onlayer|at|as|zorder|behind)\b|:", expression)[0].strip()
+                    scenes.append((line_number, "" if name.startswith("expression ") else name))
         self._labels = tuple(labels)
         self._label_lines = tuple(line for line, _ in labels)
         self._scenes = tuple(scenes)
@@ -54,8 +57,12 @@ class RenPySourceContextIndex:
         label = self._nearest(self._labels, self._label_lines, line_number)
         if not label:
             return RenPySourceContext()
-        scene = self._nearest(self._scenes, self._scene_lines, line_number)
-        return RenPySourceContext(label, scene)
+        label_index = bisect_right(self._label_lines, line_number) - 1
+        scene_index = bisect_right(self._scene_lines, line_number) - 1
+        if scene_index < 0 or self._scene_lines[scene_index] < self._label_lines[label_index]:
+            return RenPySourceContext(label)
+        scene_line, scene = self._scenes[scene_index]
+        return RenPySourceContext(label, scene, scene_line)
 
     @staticmethod
     def _nearest(

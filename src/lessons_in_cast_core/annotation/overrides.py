@@ -103,6 +103,14 @@ def apply_override(
     if stage == "cleaning":
         base.pop("emotion", None)
         base.pop("delivery", None)
+    if (
+        "spoken_text" in raw_override
+        and raw_override["spoken_text"] != base.get("spoken_text")
+        and "performance" not in raw_override
+    ):
+        performance = dict(base.get("performance", {}))
+        performance["cues"] = []
+        base["performance"] = performance
     merged = {**base, **raw_override, "id": item.dialogue_id}
     batch = DialogueBatch(
         id=f"manual:{item.dialogue_id}",

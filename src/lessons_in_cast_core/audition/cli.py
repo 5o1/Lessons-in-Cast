@@ -74,6 +74,13 @@ def main(argv=None) -> int:
                 from ..polish import PolishStage
                 PolishStage(config).check_inputs(layout)
                 layout = layout.polish
+            if getattr(config, stage).backend == "api" and (args.command.endswith("next") or args.command == "polish-prepare"):
+                if args.command == "polish-prepare":
+                    print(json.dumps({"status": "awaiting_api_annotation"}))
+                else:
+                    from ..annotation.agent import AnnotationAgent
+                    print(json.dumps(AnnotationAgent(root, config, load_characters(repository_root=root), stage).run(layout)))
+                return 0
             exchange = workflow(root, directory, stage=stage)
             workspace = CodexWorkspace(layout.root / "codex")
             if args.command.endswith("next") or args.command == "polish-prepare":

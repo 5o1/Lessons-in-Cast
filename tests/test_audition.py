@@ -279,6 +279,7 @@ class AuditionTests(unittest.TestCase):
 
     def test_formal_cleaning_roundtrip_and_request_binding(self):
         config = load_pipeline_config(repository_root=ROOT)
+        config = replace(config, cleaning=replace(config.cleaning, backend="codex"))
         prompt = self.root / config.codex.prompt_path
         prompt.parent.mkdir(parents=True)
         prompt.write_text("Clean and annotate all targets.")

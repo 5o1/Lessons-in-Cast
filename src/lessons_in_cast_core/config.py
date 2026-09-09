@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import tomllib
+import re
+from urllib.parse import urlsplit
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -42,7 +44,7 @@ class CodexConfig:
     prompt_path: str = "prompts/codex_dialogue_cleanup_v4.md"
     prompt_version: str = "cleaning-v4"
     polish_prompt_path: str = "prompts/codex_dialogue_polish.md"
-    polish_prompt_version: str = "polish-v2"
+    polish_prompt_version: str = "polish-v3"
 
 
 @dataclass(frozen=True, slots=True)
@@ -65,12 +67,92 @@ class GalgameConfig:
 
 
 @dataclass(frozen=True, slots=True)
+class AnnotationApiConfig:
+    base_url: str = ""
+    model: str = ""
+    api_key_environment: str = "LLM_API_KEY"
+    response_format: str = "json_schema"
+    context_window_tokens: int = 65536
+    max_completion_tokens: int = 16384
+    completion_token_parameter: str = "max_completion_tokens"
+    reasoning_split: bool | None = None
+    max_repair_attempts: int = 2
+    timeout_seconds: int = 180
+    parallel_workers: int = 1
+
+
+@dataclass(frozen=True, slots=True)
+class AnnotationContextConfig:
+    recent_lines: int = 24
+    lookahead_lines: int = 12
+    memory_tokens: int = 3000
+
+
+@dataclass(frozen=True, slots=True)
+class AnnotationStageConfig:
+    backend: str = "codex"
+    api: AnnotationApiConfig = AnnotationApiConfig()
+    context: AnnotationContextConfig = AnnotationContextConfig()
+
+
+@dataclass(frozen=True, slots=True)
+class KantokuConfig:
+    directory: str = "kantoku"
+
+
+def _annotation_stage(value: dict, name: str) -> AnnotationStageConfig:
+    try:
+        result = AnnotationStageConfig(**{**value,
+            "api": AnnotationApiConfig(**value.get("api", {})),
+            "context": AnnotationContextConfig(**value.get("context", {}))})
+    except (TypeError, AttributeError) as exc:
+        raise ConfigurationError(f"Invalid {name} configuration: {exc}") from exc
+    if result.backend not in ("codex", "api"):
+        raise ConfigurationError(f"{name}.backend must be codex or api")
+    api = result.api
+    for key in ("base_url", "model", "api_key_environment"):
+        if not isinstance(getattr(api, key), str):
+            raise ConfigurationError(f"{name}.api.{key} must be a string")
+    if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", api.api_key_environment):
+        raise ConfigurationError(f"{name}.api.api_key_environment is invalid")
+    if api.base_url:
+        url = urlsplit(api.base_url)
+        if url.scheme not in ("https", "http") or not url.hostname or url.username or url.password or url.query or url.fragment:
+            raise ConfigurationError(f"{name}.api.base_url must be an HTTP(S) URL without credentials or query")
+    if result.backend == "api" and (not api.base_url or not api.model.strip()):
+        raise ConfigurationError(f"{name}.api requires base_url and model")
+    if api.response_format not in ("json_schema", "json_object"):
+        raise ConfigurationError(f"{name}.api.response_format must be json_schema or json_object")
+    if api.completion_token_parameter not in ("max_tokens", "max_completion_tokens"):
+        raise ConfigurationError(f"{name}.api.completion_token_parameter is invalid")
+    if api.reasoning_split is not None and type(api.reasoning_split) is not bool:
+        raise ConfigurationError(f"{name}.api.reasoning_split must be a boolean")
+    for key, minimum in (("context_window_tokens", 1), ("max_completion_tokens", 1),
+                         ("max_repair_attempts", 0), ("timeout_seconds", 1),
+                         ("parallel_workers", 1)):
+        number = getattr(api, key)
+        if type(number) is not int or number < minimum:
+            raise ConfigurationError(f"{name}.api.{key} must be an integer >= {minimum}")
+    for key in ("recent_lines", "lookahead_lines", "memory_tokens"):
+        number = getattr(result.context, key)
+        if type(number) is not int or number < 0:
+            raise ConfigurationError(f"{name}.context.{key} must be a nonnegative integer")
+    if api.max_completion_tokens + result.context.memory_tokens + 1024 >= api.context_window_tokens:
+        raise ConfigurationError(f"{name}: context window must leave room for input and output")
+    return result
+
+
+@dataclass(frozen=True, slots=True)
 class PipelineConfig:
     batching: BatchingConfig
     annotation: AnnotationConfig
     audio: AudioConfig
     codex: CodexConfig = CodexConfig()
     galgame: GalgameConfig = GalgameConfig()
+    cleaning: AnnotationStageConfig = AnnotationStageConfig()
+    polish: AnnotationStageConfig = AnnotationStageConfig()
+    kantoku: KantokuConfig = KantokuConfig()
+    repository_root: Path | None = None
 
 
 def _load_toml(path: Path) -> dict[str, Any]:
@@ -179,10 +261,17 @@ def load_pipeline_config(
             ),
             prompt_version=codex.get("prompt_version", "cleaning-v4"),
             polish_prompt_path=codex.get("polish_prompt_path", "prompts/codex_dialogue_polish.md"),
-            polish_prompt_version=codex.get("polish_prompt_version", "polish-v2"),
+            polish_prompt_version=codex.get("polish_prompt_version", "polish-v3"),
         ),
         galgame=GalgameConfig(backend=galgame.get("backend", "renpy")),
+        cleaning=_annotation_stage(data.get("cleaning", {}), "cleaning"),
+        polish=_annotation_stage(data.get("polish", {}), "polish"),
+        kantoku=KantokuConfig(**data.get("kantoku", {})),
+        repository_root=root,
     )
+    directory = result.kantoku.directory
+    if not isinstance(directory, str) or not directory.strip() or Path(directory).is_absolute() or ".." in Path(directory).parts:
+        raise ConfigurationError("kantoku.directory must be a safe relative path")
     if result.batching.target_size < 1:
         raise ConfigurationError("batching.target_size must be positive")
     if result.batching.context_before < 0 or result.batching.context_after < 0:

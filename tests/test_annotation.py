@@ -116,6 +116,17 @@ class AnnotationValidationTests(unittest.TestCase):
             {issue.code for issue in result.records[0].issues},
         )
 
+    def test_rejects_pause_that_splits_a_word(self) -> None:
+        response = self._response()
+        response["annotations"][0]["performance"] = {
+            "cues": [{"kind": "pause", "offset": 2, "duration_seconds": 0.2, "intensity": None}]
+        }
+        result = self.validator.validate_batch(
+            self.batch, response, prompt_version="2", annotator_configuration={}
+        )
+        self.assertEqual(result.records[0].status, ValidationStatus.RETRYABLE)
+        self.assertIn("performance_cue_word_split", {issue.code for issue in result.records[0].issues})
+
     def test_missing_target_is_retryable(self) -> None:
         result = self.validator.validate_batch(
             self.batch,
@@ -166,6 +177,17 @@ class AnnotationValidationTests(unittest.TestCase):
         )
         self.assertEqual(result.records[0].status, ValidationStatus.REVIEW_REQUIRED)
 
+    def test_gross_lexical_mismatch_is_retryable(self) -> None:
+        target = record(1, dialogue="...sei?")
+        batch = DialogueBatch("batch", (), (target,), ())
+        response = self._response()
+        response["annotations"][0].update(id=target.id, spoken_text="What?")
+        result = self.validator.validate_batch(
+            batch, response, prompt_version="1", annotator_configuration={}
+        )
+        self.assertEqual(result.records[0].status, ValidationStatus.RETRYABLE)
+        self.assertIn("lexical_mismatch", {issue.code for issue in result.records[0].issues})
+
     def test_punctuation_only_speech_requires_review(self) -> None:
         response = self._response()
         response["annotations"][0]["spoken_text"] = "........."
@@ -194,7 +216,7 @@ class AnnotationValidationTests(unittest.TestCase):
         )
         overrides = {
             self.target.id: {
-                "spoken_text": "A much longer manually approved rendering.",
+                "spoken_text": "Wait?! Wait?! Wait?! Wait?! Wait?!",
                 "approved": True,
             }
         }
@@ -208,6 +230,22 @@ class AnnotationValidationTests(unittest.TestCase):
         self.assertEqual(applied[0].status, ValidationStatus.ACCEPTED)
         self.assertEqual(applied[0].source, "manual")
         self.assertEqual(overrides, original)
+
+    def test_text_override_drops_stale_pause_offsets(self) -> None:
+        response = self._response()
+        response["annotations"][0]["performance"] = {
+            "cues": [{"kind": "pause", "offset": 4, "duration_seconds": 0.2, "intensity": None}]
+        }
+        validated = list(self.validator.validate_batch(
+            self.batch, response, prompt_version="1", annotator_configuration={}
+        ).records)
+        applied = apply_overrides(
+            validated,
+            {self.target.id: self.target},
+            {self.target.id: {"spoken_text": "Sensei?", "approved": True}},
+            self.validator,
+        )
+        self.assertEqual(applied[0].annotation.performance.cues, ())
 
     def test_manual_rejection(self) -> None:
         validated = list(

@@ -53,22 +53,41 @@ def index_emotion_vector(emotion: str) -> list[float]:
     return normalize_index_emotion_vector(list(EMOTION_VECTORS[emotion]))
 
 
-def apply_index_pronunciations(text: str, pronunciations: Mapping[str, str]) -> str:
+def apply_index_pronunciations(
+    text: str, pronunciations: Mapping[str, str],
+    rules: Sequence[SelectedPronunciation] = (),
+) -> str:
     """Add official word-and-ARPABET pronunciation annotations."""
 
-    result = text
+    configured = {rule.term: rule for rule in rules}
+    patterns = []
     for word, phonemes in sorted(
         pronunciations.items(), key=lambda item: len(item[0]), reverse=True
     ):
         if not word or not phonemes:
             raise ValueError("Pronunciation entries cannot be empty")
-        result = re.sub(
-            rf"(?<!\w){re.escape(word)}(?!\w)",
-            lambda match: f"<{match.group(0)}|{phonemes}>",
-            result,
-            flags=re.IGNORECASE,
+        rule = configured.get(word)
+        pattern = re.escape(word)
+        if rule is None or rule.whole_word:
+            pattern = rf"(?<!\w){pattern}(?!\w)"
+        if rule is None or not rule.case_sensitive:
+            pattern = f"(?i:{pattern})"
+        patterns.append((pattern, phonemes))
+    if not patterns:
+        return text
+    # A single substitution prevents nested annotations for overlapping names.
+    # Existing frontend annotations must remain opaque and idempotent.
+    protected = r"<\|SPECIAL_TOKEN_\d+\|>.*?<\|SPECIAL_TOKEN_\d+\|>|<[^|>\n]+\|[^>\n]+>"
+    combined = re.compile("|".join(f"({pattern})" for pattern, _ in patterns))
+    def annotate(piece):
+        return combined.sub(
+            lambda match: f"<{match.group(0)}|{patterns[match.lastindex - 1][1]}>", piece
         )
-    return result
+    result, offset = [], 0
+    for match in re.finditer(protected, text):
+        result.extend((annotate(text[offset:match.start()]), match.group()))
+        offset = match.end()
+    return "".join(result) + annotate(text[offset:])
 
 
 class IndexTtsSubprocessSynthesizer:
@@ -290,7 +309,7 @@ class IndexTtsSubprocessSynthesizer:
             performance.cues,
             self._expressive_pause,
         )
-        text = apply_index_pronunciations(text, self._pronunciations)
+        text = apply_index_pronunciations(text, self._pronunciations, self._pronunciation_rules)
         notes = [*legacy_notes, *cue_notes]
         voice_reference = self._voice_reference(job) if job.voice is not None else None
         speed = self._base_speed * (performance.speed or 1.0)

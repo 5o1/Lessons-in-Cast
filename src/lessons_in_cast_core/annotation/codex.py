@@ -166,6 +166,11 @@ class CodexAnnotationWorkflow:
                     continue
                 if completed or self._source_file(request) != source_file:
                     break
+                if request.get("independent_context") or selected[0].get("independent_context"):
+                    break
+                from .context import scope_for
+                if scope_for(request, request["batch"]["targets"][0]) != scope_for(selected[0], selected[0]["batch"]["targets"][0]):
+                    break
                 selected.append(request)
                 if len(selected) >= batches_per_packet:
                     break
@@ -368,6 +373,8 @@ class CodexAnnotationWorkflow:
         ordered_records: dict[str, dict[str, Any]] = {}
         director_notes: dict[str, Any] = {}
         cleaned_annotations: dict[str, Any] = {}
+        original_texts: dict[str, str] = {}
+        direction_context: dict[str, Any] = {}
         for request in requests:
             if request.get("stage", "polish") != stage:
                 raise ValueError("Codex packets cannot mix cleaning and polish")
@@ -386,6 +393,8 @@ class CodexAnnotationWorkflow:
                 raise ValueError("Director notes must be keyed by this request's target IDs")
             director_notes.update(supplied_notes)
             cleaned_annotations.update(request.get("cleaned_annotations", {}))
+            original_texts.update(request.get("original_texts", {}))
+            direction_context.update(request.get("direction_context", {}))
             batches.append(
                 {
                     "batch_id": batch["batch_id"],
@@ -431,6 +440,7 @@ class CodexAnnotationWorkflow:
             "stage": stage,
             "emotion_labels": requests[0].get("emotion_labels", {}),
             "cleaned_annotations": cleaned_annotations,
+            "original_texts": original_texts,
             "source_file": source_file,
             "prompt_version": next(iter(prompt_versions)),
             "prompt_sha256": self._configuration["prompt_sha256"],
@@ -439,6 +449,8 @@ class CodexAnnotationWorkflow:
             "batches": batches,
             "records": records,
             "director_notes": director_notes if stage == "polish" else {},
+            "direction_context": direction_context,
+            "independent_context": any(request.get("independent_context", False) for request in requests),
             "response_schema": response_schema,
         }
         return {"packet_id": content_hash(packet)[:24], **packet}
@@ -516,6 +528,17 @@ class CodexAnnotationWorkflow:
                 "this same Codex thread to preserve conversational continuity.\n"
             )
         workspace.task.parent.mkdir(parents=True, exist_ok=True)
+        if packet is not None and packet.get("independent_context"):
+            content += "\nThis is an independent audition side. Reset prior story/acting assumptions and use only its supplied context.\n"
+        if packet is not None and packet.get("direction_context"):
+            content += (
+                "\n## Scoped Kantoku guidance\n\n"
+                "Read direction_context by dialogue ID. It contains human guidance snapshots for each source scope. "
+                "Recompute guidance on file/label/scene entry; do not carry expired scene instructions forward. "
+                "Across labels, reset transient story assumptions unless continuity_from explicitly names the preceding label. "
+                "Cleaning uses background only and never assigns acting. Polish uses full character and acting guidance. "
+                "Kantoku overrides matching upstream director_notes. Render settings are executed by the program, never spoken.\n"
+            )
         if packet is not None and packet.get("director_notes"):
             content += (
                 "\n## Director context\n\n"

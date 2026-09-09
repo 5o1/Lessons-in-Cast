@@ -4,6 +4,11 @@ Lessons in Cast keeps extraction, semantic annotation, validation, synthesis,
 and game integration as independent, restartable stages. All generated
 intermediates and build products are contained under build/current/ by default.
 
+Cleaning and polish independently select Codex or an OpenAI-compatible API in
+`configs/pipeline.toml`. See [annotation execution](annotation-api.md) for commands,
+context management, structured output, and recovery, and [Kantoku](../kantoku/README.md)
+for scoped background and acting guidance.
+
 ## Data flow
 
     configured game release (Ren'Py by default)
@@ -13,6 +18,9 @@ intermediates and build products are contained under build/current/ by default.
       -> build/current/codex/initial/inbox.json
       -> build/current/annotation_responses.jsonl
       -> build/current/validated.jsonl
+      -> build/current/polish/annotation_requests.jsonl
+      -> build/current/polish/annotation_responses.jsonl
+      -> build/current/polish/validated.jsonl
       -> build/current/tts_jobs.jsonl + build/current/render_tasks.jsonl
       -> build/current/synthesis_adaptations.jsonl
       -> build/current/audio/raw/<character>/<cache-key>.wav
@@ -39,10 +47,11 @@ Source paths retain their release-relative directories and use normalized `/`
 separators. A missing label stops matching at the source-path table; a missing
 scene stops matching at the label table.
 
-Annotation requests contain target records plus mechanically adjacent records
-from the same source file. They do not claim to represent a runtime scene. A
-dedicated Codex thread performs semantic text cleaning and emotion/delivery
-annotation. The response JSON Schema is embedded in every request.
+Annotation requests contain targets and mechanically adjacent context from the
+same source file. Prepared targets split at resolved label/scene boundaries;
+these lexical or explicitly configured boundaries do not reconstruct runtime control
+flow. The configured backend performs separate text cleaning and acting passes.
+The response JSON Schema is embedded in every request.
 
 All Codex output is untrusted. The validation gate checks request hashes, batch
 and dialogue IDs, complete target coverage, strict fields, action-dependent

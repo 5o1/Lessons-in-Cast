@@ -13,10 +13,52 @@ from pathlib import Path
 from ..config import AudioConfig
 from .api import AudioEffectProcessor
 from .types import AudioQualityResult, RenderTask, TtsJob
+from ..keyframes import KeyframeProcessor
 
 
 class AudioRenderError(RuntimeError):
     """Raised when a render task requires unavailable audio behavior."""
+
+
+class FfmpegAudioEffectProcessor:
+    """Apply the project's small, fixed effect vocabulary with FFmpeg."""
+
+    _filters = {
+        "chorus": "chorus=0.5:0.9:50|60:0.4|0.3:0.25|0.2:2|2.3",
+        "distortion": "acompressor=threshold=0.1:ratio=9:attack=5:release=50:makeup=2",
+        "echo": "aecho=0.8:0.88:160:0.3",
+        "glitch": "acrusher=bits=6:mix=0.35",
+        "reverb": "aecho=0.8:0.7:45|90:0.25|0.12",
+        "telephone": "highpass=f=300,lowpass=f=3400",
+    }
+
+    def __init__(self, executable: str = "ffmpeg") -> None:
+        self._executable = executable
+
+    def process(
+        self,
+        source: Path | None,
+        destination: Path,
+        effects: tuple[str, ...],
+    ) -> Path:
+        try:
+            filters = ",".join(self._filters[name] for name in effects)
+        except KeyError as exc:
+            raise AudioRenderError(f"Unsupported audio effect: {exc.args[0]}") from exc
+        command = [self._executable, "-hide_banner", "-loglevel", "error", "-y"]
+        if source is None:
+            command += ["-f", "lavfi", "-i", "anoisesrc=color=pink:duration=0.8:amplitude=0.06"]
+        else:
+            command += ["-i", str(source)]
+        command += ["-af", filters, str(destination)]
+        try:
+            completed = subprocess.run(command, capture_output=True, text=True, check=False)
+        except OSError as exc:
+            raise AudioRenderError(f"Unable to start audio effect processor: {exc}") from exc
+        if completed.returncode or not destination.is_file():
+            detail = completed.stderr.strip() or completed.stdout.strip() or "no output file"
+            raise AudioRenderError(f"Audio effect processing failed: {detail}")
+        return destination
 
 
 class WaveRenderer:
@@ -27,9 +69,11 @@ class WaveRenderer:
         effect_processor: AudioEffectProcessor | None = None,
         *,
         audio_config: AudioConfig | None = None,
+        keyframe_processor: KeyframeProcessor | None = None,
     ) -> None:
         self._effect_processor = effect_processor
         self._config = audio_config or AudioConfig()
+        self._keyframe_processor = keyframe_processor
 
     def render(
         self,
@@ -45,6 +89,8 @@ class WaveRenderer:
             artifact_root / jobs_by_id[job_id].output_path
             for job_id in task.component_job_ids
         ]
+        if task.keyframe_program and len(components) != 1:
+            raise AudioRenderError("Keyframe alignment currently requires one final dry voice, not a chorus mix")
         if not components and not task.effects:
             raise AudioRenderError(
                 f"{task.dialogue_id}: render task has no audio components"
@@ -52,7 +98,7 @@ class WaveRenderer:
         destination = artifact_root / task.output_path
         destination.parent.mkdir(parents=True, exist_ok=True)
         delivery_format = destination.suffix.lstrip(".").lower()
-        if delivery_format == "wav" and not task.effects:
+        if delivery_format == "wav" and not task.effects and not task.keyframe_program:
             self._render_components(task, components, destination)
             return destination
         if delivery_format not in {"wav", "opus"}:
@@ -65,10 +111,22 @@ class WaveRenderer:
             temporary_root = Path(directory)
             source = temporary_root / "source.wav"
             rendered = self._render_components(task, components, source)
-            if rendered is None:
+            if rendered is None and not task.effects:
                 raise AudioRenderError(
                     f"{task.dialogue_id}: render task produced no audio"
                 )
+            if task.keyframe_program:
+                if task.keyframe_program["text"] != jobs_by_id[task.component_job_ids[0]].text:
+                    raise AudioRenderError("Keyframe program does not match the synthesized text")
+                try:
+                    processor = self._keyframe_processor or KeyframeProcessor.from_repository()
+                    rendered = processor.process(
+                        rendered, temporary_root / "keyframed.wav", task.keyframe_program,
+                        cache_root=artifact_root / "alignment/cache",
+                        trace_path=artifact_root / "alignment" / f"{task.dialogue_id}.json",
+                    )
+                except (ValueError, OSError, subprocess.SubprocessError) as exc:
+                    raise AudioRenderError(f"{task.dialogue_id}: keyframe rendering failed: {exc}") from exc
             if task.effects:
                 assert self._effect_processor is not None
                 effected = temporary_root / "effected.wav"

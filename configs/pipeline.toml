@@ -2,7 +2,7 @@
 backend = "renpy"
 
 [batching]
-target_size = 50
+target_size = 250
 context_before = 12
 context_after = 12
 max_characters = 40000
@@ -51,7 +51,52 @@ source_files = ["game/script.rpy"]
 prompt_path = "prompts/codex_dialogue_cleanup_v4.md"
 prompt_version = "cleaning-v4"
 polish_prompt_path = "prompts/codex_dialogue_polish.md"
-polish_prompt_version = "polish-v2"
+polish_prompt_version = "polish-v3"
+
+[cleaning]
+backend = "api" # codex | api; selected by the annotate command
+
+[cleaning.api]
+base_url = "https://api.minimaxi.com/v1" # OpenAI-compatible base URL including /v1, without /chat/completions
+model = "MiniMax-M2.7-highspeed"
+api_key_environment = "MINIMAX_API_KEY"
+response_format = "json_object" # MiniMax JSON mode; local schema validation remains enforced
+context_window_tokens = 65536
+max_completion_tokens = 8192
+reasoning_split = true
+completion_token_parameter = "max_tokens" # MiniMax completion-budget parameter
+max_repair_attempts = 2
+timeout_seconds = 180
+parallel_workers = 4
+
+[cleaning.context]
+recent_lines = 12
+lookahead_lines = 8
+memory_tokens = 1500
+
+[polish]
+backend = "api"
+
+[polish.api]
+base_url = "https://api.minimaxi.com/v1"
+model = "MiniMax-M2.7-highspeed"
+api_key_environment = "MINIMAX_API_KEY"
+response_format = "json_object"
+context_window_tokens = 65536
+max_completion_tokens = 16384
+reasoning_split = true
+completion_token_parameter = "max_tokens"
+max_repair_attempts = 2
+timeout_seconds = 180
+parallel_workers = 4
+
+[polish.context]
+recent_lines = 24
+lookahead_lines = 12
+memory_tokens = 3000
+
+[kantoku]
+directory = "kantoku"
 
 [audio]
 format = "opus"

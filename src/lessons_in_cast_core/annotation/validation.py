@@ -5,12 +5,14 @@ from __future__ import annotations
 import re
 from collections import Counter
 from datetime import datetime, timezone
+from difflib import SequenceMatcher
 from typing import Any
 
 from ..config import AnnotationConfig
 from ..dialogue import DialogueBatch, DialogueRecord
 from ..hashing import content_hash
 from ..performance import PerformanceCueKind, SpeechPerformance, VocalMode
+from ..keyframes.program import compile_keyframes, extract_anchors
 from ..speech_markup import parse_emotion_markup
 from .types import (
     Annotation,
@@ -36,6 +38,7 @@ _ALLOWED_FIELDS = {
     "review_required",
     "reason",
     "performance",
+    "keyframe_effects",
 }
 
 
@@ -56,6 +59,7 @@ class AnnotationValidator:
         schema_version: int = 2,
         stage: str = "polish",
         cleaned_annotations: dict | None = None,
+        keyframe_required: tuple[str, ...] | list[str] = (),
     ) -> BatchValidationResult:
         timestamp = processed_at or datetime.now(timezone.utc).isoformat()
         input_hash = content_hash(batch.to_dict())
@@ -175,6 +179,7 @@ class AnnotationValidator:
                     raw_by_id[target.id],
                     schema_version=schema_version,
                     stage=stage,
+                    keyframe_required=target.id in keyframe_required,
                 )
                 issues.extend(issue for issue in annotation_issues
                               if cleaned_annotations is None or issue.code != "high_impact_action")
@@ -184,11 +189,15 @@ class AnnotationValidator:
                         issues.append(ValidationIssue("missing_cleaning_binding", "Polish has no accepted cleaning input.", "error", target.id))
                     else:
                         plain = "".join(s.text for s in parse_emotion_markup(annotation.spoken_text)) if annotation.spoken_text else ""
+                        if annotation.keyframe_effects is not None:
+                            plain = compile_keyframes(plain, annotation.keyframe_effects)["text"]
                         if plain != original["spoken_text"] or annotation.action.value != original["action"] or list(annotation.effects) != original["effects"]:
                             issues.append(ValidationIssue("polish_changed_cleaning", "Polish must preserve cleaned speech, action and effects exactly.", "error", target.id))
                         pauses = [cue.to_dict() for cue in annotation.performance.cues if cue.kind is PerformanceCueKind.PAUSE]
                         if pauses != original.get("performance", {}).get("cues", []):
                             issues.append(ValidationIssue("polish_changed_pauses", "Polish must preserve cleaning pause cues exactly.", "error", target.id))
+                        if target.id in keyframe_required and annotation.keyframe_effects is None:
+                            issues.append(ValidationIssue("missing_keyframe_effect", "This partially heard line requires a gain envelope.", "error", target.id))
 
             if annotation is None or any(issue.severity == "error" for issue in issues):
                 status = ValidationStatus.RETRYABLE
@@ -216,7 +225,7 @@ class AnnotationValidator:
         self,
         target: DialogueRecord,
         raw: dict[str, Any],
-        *, schema_version: int = 2, stage: str = "polish",
+        *, schema_version: int = 2, stage: str = "polish", keyframe_required: bool = False,
     ) -> tuple[Annotation | None, list[ValidationIssue]]:
         issues: list[ValidationIssue] = []
 
@@ -259,7 +268,7 @@ class AnnotationValidator:
         performance_raw = raw.get("performance")
 
         speaking = action in {DialogueAction.SPEAK, DialogueAction.SPEAK_WITH_EFFECT}
-        markup = stage != "cleaning" and isinstance(spoken_text, str) and (schema_version >= 3 or "<emotion" in spoken_text)
+        markup = stage != "cleaning" and isinstance(spoken_text, str) and (schema_version >= 3 or "<emotion" in spoken_text or "<arbitrary_emotion" in spoken_text)
         if schema_version >= 3 and ({"emotion", "intensity"} & set(raw)):
             error("line_level_emotion", "Use a single semantic label inside each emotion tag, without numerical intensity.")
         segments = ()
@@ -272,6 +281,23 @@ class AnnotationValidator:
 
         if not isinstance(spoken_text, str):
             error("spoken_text_type", "spoken_text must be a string.")
+        keyframe_effects = raw.get("keyframe_effects")
+        if "keyframe_effects" in raw:
+            if stage == "cleaning" or not speaking:
+                error("keyframe_stage", "Keyframe effects are supported only on speaking polish annotations")
+            elif not isinstance(keyframe_effects, list):
+                error("keyframe_effects", "keyframe_effects must be an array")
+            elif isinstance(spoken_text, str):
+                try:
+                    program = compile_keyframes(spoken_text, keyframe_effects)
+                    spoken_text = program["text"]
+                    if any(not extract_anchors(segment.text)[0].strip() for segment in segments):
+                        error("keyframe_effects", "Markers must accompany speech, not occupy an empty emotion span")
+                    if keyframe_required and any(
+                            offset not in (0, len(spoken_text)) for offset in program["anchors"].values()):
+                        error("keyframe_alignment", "Automatic fade-ins require start/end anchors, including trailing punctuation.")
+                except ValueError as exc:
+                    error("keyframe_effects", str(exc))
         if emotion is not None and not isinstance(emotion, str):
             error("emotion_type", "emotion must be a string or null.")
         elif emotion is not None and emotion not in self._config.allowed_emotions:
@@ -362,6 +388,7 @@ class AnnotationValidator:
                 review_required=review_required,
                 reason=reason,
                 performance=performance,
+                keyframe_effects=keyframe_effects,
             ),
             issues,
         )
@@ -462,6 +489,16 @@ class AnnotationValidator:
                         f"Cue {index} offset must be ordered and within spoken_text.",
                     )
                     continue
+                if (
+                    0 < offset < len(spoken_text)
+                    and spoken_text[offset - 1].isalpha()
+                    and spoken_text[offset].isalpha()
+                ):
+                    error(
+                        "performance_cue_word_split",
+                        f"Cue {index} cannot split a word.",
+                    )
+                    continue
                 previous_offset = offset
                 duration = cue.get("duration_seconds")
                 if duration is not None and (
@@ -553,6 +590,27 @@ class AnnotationValidator:
                     "placeholder_change",
                     "Square-bracket placeholders changed during cleaning.",
                     "warning",
+                    target.id,
+                )
+            )
+        original_lexical = "".join(
+            character.casefold()
+            for character in _TEXT_TAG.sub("", target.dialogue)
+            if character.isalnum()
+        )
+        spoken_lexical = "".join(
+            character.casefold() for character in spoken_text if character.isalnum()
+        )
+        if (
+            len(original_lexical) >= 2
+            and spoken_lexical
+            and SequenceMatcher(None, original_lexical, spoken_lexical).ratio() < 0.2
+        ):
+            issues.append(
+                ValidationIssue(
+                    "lexical_mismatch",
+                    "spoken_text has almost no lexical overlap with its source line.",
+                    "error",
                     target.id,
                 )
             )

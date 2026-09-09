@@ -39,7 +39,7 @@ from .synthesis import (
     TtsJob,
     WaveRenderer,
 )
-from .synthesis.audio import AudioRenderError
+from .synthesis.audio import AudioRenderError, FfmpegAudioEffectProcessor
 from .workflow import (
     ArtifactLayout,
     PipelineRequest,
@@ -74,7 +74,10 @@ class DialoguePipeline:
                 "Configured galgame backend ID does not match the injected backend: "
                 f"{config.galgame.backend!r} != {galgame_backend.backend_id!r}"
             )
-        self._renderer = renderer or WaveRenderer(audio_config=config.audio)
+        self._renderer = renderer or WaveRenderer(
+            FfmpegAudioEffectProcessor(config.audio.ffmpeg_executable),
+            audio_config=config.audio,
+        )
         self._validation = AnnotationValidationStage(config)
 
     def _require_galgame_backend(self) -> GalgameBackend:
@@ -141,18 +144,24 @@ class DialoguePipeline:
                 else None
             ),
         )
-        batch_count = write_jsonl(
-            (
-                build_annotation_request(
+        from .kantoku import Kantoku, bind_direction, split_directed_request
+        from .config import find_repository_root
+        director = Kantoku(self._config.repository_root or find_repository_root(), self._config, self._characters,
+                           request.source_root if self._config.galgame.backend == "renpy" else None)
+        def annotation_requests():
+            for batch in batches:
+                bound = bind_direction(build_annotation_request(
                     batch,
                     prompt_version=request.prompt_version,
                     annotation_config=self._config.annotation,
                     stage="cleaning",
-                )
-                for batch in batches
-            ),
-            layout.annotation_requests,
-        )
+                ), director)
+                if self._config.cleaning.backend == "api":
+                    yield bound
+                else:
+                    yield from split_directed_request(bound)
+
+        batch_count = write_jsonl(annotation_requests(), layout.annotation_requests)
         source_audit = audit_dialogue(
             JsonlDialogueReader().read(layout.raw_dialogue),
             known_characters=set(self._characters),
@@ -246,6 +255,8 @@ class DialoguePipeline:
         if summary.retryable_count or summary.review_required_count or summary.rejected_count or summary.batch_issue_count:
             raise ValueError("Polish is not fully accepted; synthesis cannot bypass polish validation")
         route_checker = getattr(self._synthesizer, "supports", None)
+        direction_context = {key: value for request in read_jsonl(layout.annotation_requests)
+                             for key, value in request.get("direction_context", {}).items()}
         planner = SynthesisPlanner(
             self._characters,
             audio_config=self._config.audio,
@@ -260,6 +271,7 @@ class DialoguePipeline:
             voice_route_available=(
                 route_checker if callable(route_checker) else None
             ),
+            direction_context=direction_context,
         )
         with JsonlIndex(layout.raw_dialogue, "id") as record_index:
             def records_and_results() -> Any:

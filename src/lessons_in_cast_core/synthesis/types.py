@@ -80,6 +80,7 @@ class RenderTask:
     effects: tuple[str, ...]
     output_path: str
     virtual_path: str
+    keyframe_program: dict | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -91,6 +92,7 @@ class RenderTask:
             "effects": list(self.effects),
             "output_path": self.output_path,
             "virtual_path": self.virtual_path,
+            "keyframe_program": self.keyframe_program,
         }
 
     @classmethod
@@ -104,6 +106,7 @@ class RenderTask:
             effects=tuple(value["effects"]),
             output_path=value["output_path"],
             virtual_path=value["virtual_path"],
+            keyframe_program=value.get("keyframe_program"),
         )
 
 

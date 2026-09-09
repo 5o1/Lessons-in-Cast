@@ -35,6 +35,7 @@ class Annotation:
     review_required: bool
     reason: str | None = None
     performance: SpeechPerformance = SpeechPerformance()
+    keyframe_effects: list[dict] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         result = {
@@ -51,6 +52,8 @@ class Annotation:
         }
         if self.emotion is None:
             result.pop("emotion")
+        if self.keyframe_effects is not None:
+            result["keyframe_effects"] = self.keyframe_effects
         return result
 
     @classmethod
@@ -66,6 +69,7 @@ class Annotation:
             review_required=value.get("review_required", False),
             reason=value.get("reason"),
             performance=SpeechPerformance.from_dict(value.get("performance")),
+            keyframe_effects=value.get("keyframe_effects"),
         )
 
 

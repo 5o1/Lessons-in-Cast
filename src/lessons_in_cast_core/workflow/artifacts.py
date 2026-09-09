@@ -146,6 +146,7 @@ class ArtifactLayout:
             self.root / "audio",
             self.root / "voice",
             self.root / "codex",
+            self.root / "api",
             self.polish.root,
             self.galgame_artifacts,
             self.release_bundle,
@@ -184,6 +185,7 @@ class ArtifactLayout:
             self.root / "audio",
             self.root / "voice",
             self.root / "codex",
+            self.root / "api",
             self.polish.root,
             self.galgame_artifacts,
         ):

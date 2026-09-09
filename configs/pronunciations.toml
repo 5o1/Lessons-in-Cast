@@ -64,3 +64,843 @@ whole_word = true
 arpabet = "CH IY1 . N AA0 . M IY0"
 ipa = "ˈtʃiː.nɑː.mi"
 respelling = "CHEE-nah-mee"
+
+# Initial English-TTS phoneme approximations for registered names and Sensei.
+# Stress digits are English synthesis controls, not Japanese pitch-accent claims.
+# Existing listener-approved Ami/Maya/Ayane/Chinami readings above are unchanged.
+# Titles, anonymous speakers, encrypted labels and ensemble punctuation are not names.
+# Names inside decorated/ensemble labels reuse these component-word entries.
+# Unusual/fictitious names are provisional until auditioned; no F0 contour is invented.
+
+[proper_nouns."Sensei"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "S EH1 N . S EY0", respelling = "SEN-say" }
+
+# Spelling-to-phone boundaries for post-polish keyframe alignment, not F0 targets.
+[proper_nouns.Sensei.prosody]
+unit_kind = "phoneme"
+units = [
+    { label = "S", forms = { arpabet = "S" } },
+    { label = "e", forms = { arpabet = "EH1" } },
+    { label = "n", forms = { arpabet = "N" } },
+    { label = "s", forms = { arpabet = "S" } },
+    { label = "ei", forms = { arpabet = "EY0" } },
+]
+
+[proper_nouns."Kumon-mi"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "K UW0 . M OW1 N . M IY0", respelling = "koo-MOHN-mee" }
+
+[proper_nouns."Ai"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "AA1 IY0", respelling = "ah-ee" }
+
+[proper_nouns."Chiaki"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "CH IY0 . AA1 . K IY0", respelling = "chee-AH-kee" }
+
+[proper_nouns."Chika"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "CH IY1 . K AA0", respelling = "CHEE-kah" }
+
+[proper_nouns."Chinko"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "CH IY1 N . K OW0", respelling = "CHEEN-koh" }
+
+[proper_nouns."Futaba"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "F UW1 . T AA0 . B AA0", respelling = "FOO-tah-bah" }
+
+[proper_nouns."Ginro"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "G IY1 N . R OW0", respelling = "GEEN-roh" }
+
+[proper_nouns."Haruka"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "HH AA1 . R UW0 . K AA0", respelling = "HAH-roo-kah" }
+
+[proper_nouns."Hidari"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "HH IY0 . D AA1 . R IY0", respelling = "hee-DAH-ree" }
+
+[proper_nouns."Himawari"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "HH IY0 . M AA1 . W AA0 . R IY0", respelling = "hee-MAH-wah-ree" }
+
+[proper_nouns."Io"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "IY1 . OW0", respelling = "EE-oh" }
+
+[proper_nouns."Imani"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "IY0 . M AA1 . N IY0", respelling = "ee-MAH-nee" }
+
+[proper_nouns."Issa"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "IY1 . S AA0", respelling = "EE-sah" }
+
+[proper_nouns."Kanon"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "K AA1 . N OW0 N", respelling = "KAH-nohn" }
+
+[proper_nouns."Kaori"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "K AA1 . OW0 . R IY0", respelling = "KAH-oh-ree" }
+
+[proper_nouns."Karin"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "K AA1 . R IY0 N", respelling = "KAH-reen" }
+
+[proper_nouns."Karins"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "K AA1 . R IY0 N Z", respelling = "KAH-reenz" }
+
+[proper_nouns."Kenji"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "K EH1 N . JH IY0", respelling = "KEN-jee" }
+
+[proper_nouns."Kentaro"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "K EH0 N . T AA1 . R OW0", respelling = "ken-TAH-roh" }
+
+[proper_nouns."Kirin"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "K IY1 . R IY0 N", respelling = "KEE-reen" }
+
+[proper_nouns."Kyoko"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "K Y OW1 . K OW0", respelling = "KYOH-koh" }
+
+[proper_nouns."Makoto"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "M AA0 . K OW1 . T OW0", respelling = "mah-KOH-toh" }
+
+[proper_nouns."Maki"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "M AA1 . K IY0", respelling = "MAH-kee" }
+
+[proper_nouns."Masahiro"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "M AA0 . S AA0 . HH IY1 . R OW0", respelling = "mah-sah-HEE-roh" }
+
+[proper_nouns."Meowri"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "M IY0 AW1 . R IY0", respelling = "mee-OW-ree" }
+
+[proper_nouns."Migi"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "M IY1 . G IY0", respelling = "MEE-gee" }
+
+[proper_nouns."Miku"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "M IY1 . K UW0", respelling = "MEE-koo" }
+
+[proper_nouns."Miu"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "M IY1 . UW0", respelling = "MEE-oo" }
+
+[proper_nouns."Moyo"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "M OW1 . Y OW0", respelling = "MOH-yoh" }
+
+[proper_nouns."Nao"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "N AA1 . OW0", respelling = "NAH-oh" }
+
+[proper_nouns."Niki"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "N IY1 . K IY0", respelling = "NEE-kee" }
+
+[proper_nouns."Nodoka"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "N OW1 . D OW0 . K AA0", respelling = "NOH-doh-kah" }
+
+[proper_nouns."Noriko"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "N OW1 . R IY0 . K OW0", respelling = "NOH-ree-koh" }
+
+[proper_nouns."Osako"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "OW0 . S AA1 . K OW0", respelling = "oh-SAH-koh" }
+
+[proper_nouns."Otoha"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "OW1 . T OW0 . HH AA0", respelling = "OH-toh-hah" }
+
+[proper_nouns."Rika"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "R IY1 . K AA0", respelling = "REE-kah" }
+
+[proper_nouns."Rin"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "R IY1 N", respelling = "REEN" }
+
+[proper_nouns."Saki"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "S AA1 . K IY0", respelling = "SAH-kee" }
+
+[proper_nouns."Sana"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "S AA1 . N AA0", respelling = "SAH-nah" }
+
+[proper_nouns."Sara"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "S AA1 . R AA0", respelling = "SAH-rah" }
+
+[proper_nouns."Sato"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "S AA1 . T OW0", respelling = "SAH-toh" }
+
+[proper_nouns."Sekai"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "S EH0 . K AA1 IY0", respelling = "seh-KAH-ee" }
+
+[proper_nouns."Shiori"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "SH IY0 . OW1 . R IY0", respelling = "shee-OH-ree" }
+
+[proper_nouns."Taki"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "T AA1 . K IY0", respelling = "TAH-kee" }
+
+[proper_nouns."Tebiso"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "T EH0 . B IY1 . S OW0", respelling = "teh-BEE-soh" }
+
+[proper_nouns."Tenchou"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "T EH1 N . CH OW0", respelling = "TEN-choh" }
+
+[proper_nouns."Tsubasa"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "T S UW0 . B AA1 . S AA0", respelling = "tsoo-BAH-sah" }
+
+[proper_nouns."Tsukasa"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "T S UW0 . K AA1 . S AA0", respelling = "tsoo-KAH-sah" }
+
+[proper_nouns."Tsuneyo"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "T S UW0 . N EH1 . Y OW0", respelling = "tsoo-NEH-yoh" }
+
+[proper_nouns."Tsurumi"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "T S UW0 . R UW1 . M IY0", respelling = "tsoo-ROO-mee" }
+
+[proper_nouns."Touka"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "T OW1 . K AA0", respelling = "TOH-kah" }
+
+[proper_nouns."Uta"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "UW1 . T AA0", respelling = "OO-tah" }
+
+[proper_nouns."Wakana"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "W AA0 . K AA1 . N AA0", respelling = "wah-KAH-nah" }
+
+[proper_nouns."Yamaguchi"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "Y AA0 . M AA0 . G UW1 . CH IY0", respelling = "yah-mah-GOO-chee" }
+
+[proper_nouns."Yasu"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "Y AA1 . S UW0", respelling = "YAH-soo" }
+
+[proper_nouns."Yoshitsugu"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "Y OW0 . SH IY0 . T S UW1 . G UW0", respelling = "yoh-shee-TSOO-goo" }
+
+[proper_nouns."Yuki"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "Y UW1 . K IY0", respelling = "YOO-kee" }
+
+[proper_nouns."Yumi"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "Y UW1 . M IY0", respelling = "YOO-mee" }
+
+[proper_nouns."Yuu"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "Y UW1", respelling = "YOO" }
+
+[proper_nouns."Adam"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "AE1 . D AH0 M", respelling = "AD-um" }
+
+[proper_nouns."Sapple"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "S AE1 . P AH0 L", respelling = "SAP-ul" }
+
+[proper_nouns."Alexis"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "AH0 . L EH1 K . S IH0 S", respelling = "uh-LEK-sis" }
+
+[proper_nouns."Alessandro"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "AA0 . L EH0 . S AA1 N . D R OW0", respelling = "ah-leh-SAHN-droh" }
+
+[proper_nouns."Accetta"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "AA0 . CH EH1 . T AA0", respelling = "ah-CHEH-tah" }
+
+[proper_nouns."Alexa"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "AH0 . L EH1 K . S AH0", respelling = "uh-LEK-suh" }
+
+[proper_nouns."Amber"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "AE1 M . B ER0", respelling = "AM-ber" }
+
+[proper_nouns."Amy"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "EY1 . M IY0", respelling = "AY-mee" }
+
+[proper_nouns."Arjuna"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "AA0 R . JH UW1 . N AH0", respelling = "ar-JOO-nuh" }
+
+[proper_nouns."Harish"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "HH AH0 . R IY1 SH", respelling = "huh-REESH" }
+
+[proper_nouns."Barbara"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "B AA1 R . B ER0 . AH0", respelling = "BAR-ber-uh" }
+
+[proper_nouns."Beatrice"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "B IY1 . AH0 . T R IH0 S", respelling = "BEE-uh-triss" }
+
+[proper_nouns."Benjamin"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "B EH1 N . JH AH0 . M IH0 N", respelling = "BEN-juh-min" }
+
+[proper_nouns."Boyle"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "B OY1 L", respelling = "BOYL" }
+
+[proper_nouns."Catherine"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "K AE1 . TH ER0 . IH0 N", respelling = "KATH-er-in" }
+
+[proper_nouns."Connor"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "K AA1 . N ER0", respelling = "KON-er" }
+
+[proper_nouns."Eve"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "IY1 V", respelling = "EEV" }
+
+[proper_nouns."Frank"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "F R AE1 NG K", respelling = "FRANK" }
+
+[proper_nouns."Laura"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "L AO1 . R AH0", respelling = "LAW-ruh" }
+
+[proper_nouns."Giuseppe"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "JH UW0 . Z EH1 . P EY0", respelling = "joo-ZEH-pay" }
+
+[proper_nouns."Gregg"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "G R EH1 G", respelling = "GREG" }
+
+[proper_nouns."Jones"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "JH OW1 N Z", respelling = "JOHNZ" }
+
+[proper_nouns."Hailey"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "HH EY1 . L IY0", respelling = "HAY-lee" }
+
+[proper_nouns."Hank"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "HH AE1 NG K", respelling = "HANK" }
+
+[proper_nouns."Howard"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "HH AW1 . ER0 D", respelling = "HOW-erd" }
+
+[proper_nouns."Jimmy"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "JH IH1 . M IY0", respelling = "JIM-ee" }
+
+[proper_nouns."John"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "JH AA1 N", respelling = "JON" }
+
+[proper_nouns."Kerubiel"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "K EH0 . R UW1 . B IY0 . EH0 L", respelling = "keh-ROO-bee-el" }
+
+[proper_nouns."Kokabiel"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "K OW0 . K AA1 . B IY0 . EH0 L", respelling = "koh-KAH-bee-el" }
+
+[proper_nouns."Lamar"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "L AH0 . M AA1 R", respelling = "luh-MAR" }
+
+[proper_nouns."Mary"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "M EH1 . R IY0", respelling = "MAIR-ee" }
+
+[proper_nouns."Manny"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "M AE1 . N IY0", respelling = "MAN-ee" }
+
+[proper_nouns."Malvin"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "M AE1 L . V IH0 N", respelling = "MAL-vin" }
+
+[proper_nouns."Matthew"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "M AE1 . TH Y UW0", respelling = "MATH-yoo" }
+
+[proper_nouns."Miles"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "M AY1 L Z", respelling = "MYLZ" }
+
+[proper_nouns."Molly"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "M AA1 . L IY0", respelling = "MOL-ee" }
+
+[proper_nouns."MacCormack"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "M AH0 . K AO1 R . M AH0 K", respelling = "muh-KOR-muk" }
+
+[proper_nouns."Blake"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "B L EY1 K", respelling = "BLAYK" }
+
+[proper_nouns."Octavia"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "AA0 K . T EY1 . V IY0 . AH0", respelling = "ok-TAY-vee-uh" }
+
+[proper_nouns."Oliver"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "AA1 . L IH0 . V ER0", respelling = "OL-i-ver" }
+
+[proper_nouns."Oldmannington"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "OW1 L D . M AE0 . N IH0 NG . T AH0 N", respelling = "OLD-man-ing-tun" }
+
+[proper_nouns."Onund"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "OW1 . N UH0 N D", respelling = "OH-noond" }
+
+[proper_nouns."Patrice"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "P AH0 . T R IY1 S", respelling = "puh-TREESS" }
+
+[proper_nouns."Paul"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "P AO1 L", respelling = "PAWL" }
+
+[proper_nouns."Pegasus"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "P EH1 . G AH0 . S AH0 S", respelling = "PEG-uh-sus" }
+
+[proper_nouns."Robbie"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "R AA1 . B IY0", respelling = "ROB-ee" }
+
+[proper_nouns."Receptionson"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "R IH0 . S EH1 P . SH AH0 N . S AH0 N", respelling = "rih-SEP-shun-sun" }
+
+[proper_nouns."Salvador"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "S AE0 L . V AH0 . D AO1 R", respelling = "sal-vuh-DOR" }
+
+[proper_nouns."Dalí"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "D AA0 . L IY1", respelling = "dah-LEE" }
+
+[proper_nouns."Jerry"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "JH EH1 . R IY0", respelling = "JERR-ee" }
+
+[proper_nouns."Seinfeld"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "S AY1 N . F EH0 L D", respelling = "SYNE-feld" }
+
+[proper_nouns."Steve"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "S T IY1 V", respelling = "STEEV" }
+
+[proper_nouns."Tony"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "T OW1 . N IY0", respelling = "TOH-nee" }
+
+[proper_nouns."Todd"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "T AA1 D", respelling = "TOD" }
+
+[proper_nouns."Tom"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "T AA1 M", respelling = "TOM" }
+
+[proper_nouns."Mato"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "M AA1 . T OW0", respelling = "MAH-toh" }
+
+[proper_nouns."Wilford"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "W IH1 L . F ER0 D", respelling = "WIL-ferd" }
+
+[proper_nouns."William"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "W IH1 L . Y AH0 M", respelling = "WIL-yum" }
+
+[proper_nouns."Yomiel"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "Y OW1 . M IY0 . EH0 L", respelling = "YOH-mee-el" }
+
+[proper_nouns."ShadowNinja64"]
+language = "en"
+case_sensitive = false
+whole_word = true
+forms = { arpabet = "SH AE1 . D OW0 . N IH1 N . JH AH0 . S IH1 K . S T IY0 . F AO1 R", respelling = "SHAD-oh NIN-juh SIX-tee FOUR" }
+
+[proper_nouns."Blue"]
+language = "en"
+case_sensitive = true
+whole_word = true
+forms = { arpabet = "B L UW1", respelling = "BLOO" }
+
+[proper_nouns."Green"]
+language = "en"
+case_sensitive = true
+whole_word = true
+forms = { arpabet = "G R IY1 N", respelling = "GREEN" }
+
+[proper_nouns."Red"]
+language = "en"
+case_sensitive = true
+whole_word = true
+forms = { arpabet = "R EH1 D", respelling = "RED" }
+
+[proper_nouns."Pink"]
+language = "en"
+case_sensitive = true
+whole_word = true
+forms = { arpabet = "P IH1 NG K", respelling = "PINK" }
+
+[proper_nouns."Sky"]
+language = "en"
+case_sensitive = true
+whole_word = true
+forms = { arpabet = "S K AY1", respelling = "SKY" }
+
+[proper_nouns."Moon"]
+language = "en"
+case_sensitive = true
+whole_word = true
+forms = { arpabet = "M UW1 N", respelling = "MOON" }
+
+[proper_nouns."Diamond"]
+language = "en"
+case_sensitive = true
+whole_word = true
+forms = { arpabet = "D AY1 . M AH0 N D", respelling = "DYE-mund" }
+
+[proper_nouns."Gossamer"]
+language = "en"
+case_sensitive = true
+whole_word = true
+forms = { arpabet = "G AA1 . S AH0 . M ER0", respelling = "GOSS-uh-mer" }
+
+[proper_nouns."Halftone"]
+language = "en"
+case_sensitive = true
+whole_word = true
+forms = { arpabet = "HH AE1 F . T OW2 N", respelling = "HAF-tone" }
+
+[proper_nouns."HOPE"]
+language = "en"
+case_sensitive = true
+whole_word = true
+forms = { arpabet = "HH OW1 P", respelling = "HOHP" }
+
+[proper_nouns."Wormwood"]
+language = "en"
+case_sensitive = true
+whole_word = true
+forms = { arpabet = "W ER1 M . W UH0 D", respelling = "WERM-wood" }
+
+[proper_nouns.Blackhole]
+language = "en"
+case_sensitive = true
+whole_word = true
+forms = { arpabet = "B L AE1 K . HH OW2 L", respelling = "BLACK-hole" }
+
+[proper_nouns.Hands]
+language = "en"
+case_sensitive = true
+whole_word = true
+forms = { arpabet = "HH AE1 N D Z", respelling = "HANDZ" }
+
+[proper_nouns.Spork]
+language = "en"
+case_sensitive = true
+whole_word = true
+forms = { arpabet = "S P AO1 R K", respelling = "SPORK" }
+
+[proper_nouns.Noodles]
+language = "en"
+case_sensitive = true
+whole_word = true
+forms = { arpabet = "N UW1 . D AH0 L Z", respelling = "NOO-dulz" }
+
+[proper_nouns.Parrot]
+language = "en"
+case_sensitive = true
+whole_word = true
+forms = { arpabet = "P EH1 . R AH0 T", respelling = "PAIR-ut" }
+
+[proper_nouns.DOUBT]
+language = "en"
+case_sensitive = true
+whole_word = true
+forms = { arpabet = "D AW1 T", respelling = "DOWT" }

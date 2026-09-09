@@ -84,6 +84,37 @@ class PolishTests(unittest.TestCase):
         self.assertEqual(result["annotation"]["performance"]["cues"], [self.pause])
         self.assertNotIn("intensity", result["annotation"])
 
+    def test_polish_keyframes_preserve_cleaning_and_original_text(self):
+        from .test_keyframes import curve
+        self.prepare()
+        request = next(read_jsonl(self.layout.polish.annotation_requests))
+        self.assertEqual(request["original_texts"][self.source.id], self.source.dialogue)
+        self.assertIn("keyframe_effects", request["response_schema"]["properties"]["annotations"]["items"]["properties"])
+        self.modify(self.layout.polish.annotation_responses, lambda row: row.update(
+            spoken_text='<emotion name="calm">{1}I will try. {2}Stay here.{3}</emotion>',
+            keyframe_effects=curve(("1", 0), ("2", .5), ("3", 1))))
+        self.assertEqual(self.stage.validate(self.layout).accepted_count, 1)
+        result = next(read_jsonl(self.layout.polish.validated))
+        self.assertEqual(result["annotation"]["performance"]["cues"], [self.pause])
+        self.modify(self.layout.polish.annotation_responses, lambda row: row.update(
+            spoken_text='<emotion name="calm">{1}I will not try. {2}Stay here.{3}</emotion>'))
+        self.assertEqual(self.stage.validate(self.layout).retryable_count, 1)
+
+    def test_partial_original_requires_polish_gain_envelope(self):
+        from .test_keyframes import curve
+        self.source = replace(self.source, dialogue="...Stay here.")
+        write_jsonl([self.source.to_dict()], self.layout.raw_dialogue)
+        self.assertEqual(AnnotationValidationStage(self.config).run(self.layout).accepted_count, 1)
+        self.stage.prepare(self.layout)
+        request = next(read_jsonl(self.layout.polish.annotation_requests))
+        self.assertEqual(request["keyframe_required"], [self.source.id])
+        write_mock_responses(self.layout.polish.annotation_requests, self.layout.polish.annotation_responses)
+        self.assertEqual(self.stage.validate(self.layout).retryable_count, 1)
+        self.modify(self.layout.polish.annotation_responses, lambda row: row.update(
+            spoken_text='<emotion name="calm">{1}I will try. Stay here.{2}</emotion>',
+            keyframe_effects=curve(("1", 0), ("2", 1), interpolation="smooth")))
+        self.assertEqual(self.stage.validate(self.layout).accepted_count, 1)
+
     def test_polish_cannot_rewrite_words_or_change_pauses_actions_effects(self):
         self.prepare()
         original = list(read_jsonl(self.layout.polish.annotation_responses))

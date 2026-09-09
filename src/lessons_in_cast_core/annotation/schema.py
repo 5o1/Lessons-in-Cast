@@ -156,6 +156,9 @@ def annotation_response_schema(
             },
         },
     }
+    if stage == "polish":
+        from ..keyframes.program import keyframe_effects_schema
+        annotation["properties"]["keyframe_effects"] = keyframe_effects_schema()
     if stage == "cleaning":
         annotation["required"].remove("delivery")
         del annotation["properties"]["delivery"]

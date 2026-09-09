@@ -83,6 +83,10 @@ def _parser() -> argparse.ArgumentParser:
     )
     codex_status.add_argument("--retry", action="store_true")
     codex_status.add_argument("--stage", choices=["cleaning", "polish"], default="cleaning")
+    annotate = commands.add_parser("annotate", help="Execute the configured annotation backend, or export its Codex task")
+    annotate.add_argument("--stage", choices=["cleaning", "polish"], default="cleaning")
+    annotate.add_argument("--retry", action="store_true")
+    annotate.add_argument("--preview", action="store_true", help="Write API messages without making a request")
     commands.add_parser("polish-prepare", help="Prepare a separate acting pass from accepted cleaning results")
     polish_validate = commands.add_parser("polish-validate")
     polish_validate.add_argument("--retry", action="store_true")
@@ -178,6 +182,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "codex_source_files": list(config.codex.source_files),
                     "codex_prompt_path": config.codex.prompt_path,
                     "codex_prompt_version": config.codex.prompt_version,
+                    "cleaning_backend": config.cleaning.backend,
+                    "polish_backend": config.polish.backend,
                 },
                 indent=2,
             )
@@ -276,7 +282,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(path)
         return 0
 
-    if args.command in {"codex-next", "codex-import", "codex-status"}:
+    if args.command in {"annotate", "codex-next", "codex-import", "codex-status"}:
         from .annotation import CodexAnnotationWorkflow, CodexWorkspace
 
         base_layout = layout
@@ -284,6 +290,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             from .polish import PolishStage
             PolishStage(config).check_inputs(base_layout)
             layout = layout.polish
+        if args.command == "annotate" and getattr(config, args.stage).backend == "api":
+            from .annotation.agent import AnnotationAgent
+            print(json.dumps(AnnotationAgent(root, config, characters, args.stage).run(
+                layout, retry=args.retry, preview=args.preview, source_files=config.codex.source_files)))
+            return 0
         retry = args.retry
         requests_path = (
             layout.retry_requests if retry else layout.annotation_requests
@@ -305,14 +316,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             config.codex.source_files,
             task_commands=(f"{prefix} codex-import{options}", f"{prefix} codex-next{options}"),
         )
-        if args.command == "codex-next":
+        if args.command in {"annotate", "codex-next"}:
             packet = workflow.export_next(
                 requests_path,
                 responses_path,
                 workspace,
                 batches_per_packet=(
                     args.batches_per_packet
-                    if args.batches_per_packet is not None
+                    if getattr(args, "batches_per_packet", None) is not None
                     else config.codex.batches_per_packet
                 ),
             )

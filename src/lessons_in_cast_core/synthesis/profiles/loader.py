@@ -206,10 +206,12 @@ def load_configured_voice_profiles(
         models = load_model_registry(repository_root=repository_root)
     pipelines: dict[tuple[str, str], VoicePipeline] = {}
     default_profiles: dict[str, str] = {}
+    from ...kantoku import Kantoku
+    directed = list(Kantoku(repository_root, project_config, characters).profile_variants())
     for character_id, base in characters.items():
         if base.default_voice_profile:
             default_profiles[character_id] = base.default_voice_profile
-        for character in base.configured_variants():
+        for character in (*base.configured_variants(), *(v for v in directed if v.id == character_id)):
             entrypoint = character.default_voice_profile
             if not entrypoint:
                 continue

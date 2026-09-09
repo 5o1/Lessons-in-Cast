@@ -71,6 +71,8 @@ class DialogueBatch:
                         raise ValueError(
                             f"Batch field {name!r} contains invalid record fields"
                         )
+                    if any(not isinstance(item.get(key, ""), str) for key in ("label", "scene")):
+                        raise ValueError(f"Batch field {name!r} has invalid label or scene")
                     resolved.append(
                         DialogueRecord(
                             id=item["id"],
@@ -81,6 +83,8 @@ class DialogueBatch:
                             filename=item["filename"],
                             line_number=item["line_number"],
                             source_statement="",
+                            label=item.get("label", ""),
+                            scene=item.get("scene", ""),
                         )
                     )
                 else:

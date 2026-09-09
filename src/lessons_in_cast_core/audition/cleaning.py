@@ -62,6 +62,7 @@ def prepare_cleaning(root: Path, project_path: Path, dialogue: Path, directory: 
             tuple(rows[max(0, index-config.batching.context_before):index]), (target,),
             tuple(rows[index+1:index+1+config.batching.context_after]))
         request = build_annotation_request(batch, prompt_version="cleaning-v4", annotation_config=config.annotation, stage="cleaning")
+        request["independent_context"] = True
         request["director_notes"] = {target.id: {"role_brief": project.brief, "case": case.id,
             "state": case.state, "background": case.background, "addressee": case.addressee,
             "intention": case.intention, "direction": case.direction,
@@ -69,6 +70,9 @@ def prepare_cleaning(root: Path, project_path: Path, dialogue: Path, directory: 
         requests.append(request)
     # Source-file/line order preserves the normal independent-thread reading workflow.
     requests.sort(key=lambda r: (r["batch"]["targets"][0]["filename"], r["batch"]["targets"][0]["line_number"]))
+    from ..kantoku import Kantoku, bind_direction
+    director = Kantoku(root, config, load_characters(repository_root=root), release if config.galgame.backend == "renpy" else None)
+    requests = [bind_direction(request, director) for request in requests]
     directory.mkdir(parents=True)
     layout = ArtifactLayout(directory)
     write_jsonl((target.to_dict() for target in targets), layout.raw_dialogue)
@@ -78,8 +82,9 @@ def prepare_cleaning(root: Path, project_path: Path, dialogue: Path, directory: 
                 "requests_sha256": file_hash(layout.annotation_requests), "annotation_config": annotation_configuration(config),
                 "prompt_sha256": file_hash(root / config.codex.prompt_path)}
     (directory / "audition-cleaning.json").write_text(json.dumps(metadata, indent=2, ensure_ascii=False)+"\n")
-    workflow(root, directory).export_next(layout.annotation_requests, layout.annotation_responses, CodexWorkspace(directory / "codex"), batches_per_packet=1)
-    return {"targets": len(targets), "directory": str(directory), "status": "awaiting_codex_annotation"}
+    if config.cleaning.backend == "codex":
+        workflow(root, directory).export_next(layout.annotation_requests, layout.annotation_responses, CodexWorkspace(directory / "codex"), batches_per_packet=1)
+    return {"targets": len(targets), "directory": str(directory), "status": f"awaiting_{config.cleaning.backend}_annotation"}
 
 
 def validate_cleaning(root: Path, project, directory: Path, *, require_polish: bool = True) -> tuple[dict, dict, dict]:

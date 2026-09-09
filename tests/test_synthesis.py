@@ -160,6 +160,26 @@ class SynthesisTests(unittest.TestCase):
             self.assertTrue(result.valid)
             self.assertGreater(result.duration_seconds or 0, 0)
 
+    def test_ffmpeg_effect_processor_handles_effect_only_audio(self) -> None:
+        from unittest.mock import patch
+
+        from lessons_in_cast_core.synthesis.audio import FfmpegAudioEffectProcessor
+
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "effect.wav"
+
+            def run(command, **_):
+                output.write_bytes(b"wav")
+                return type("Completed", (), {"returncode": 0, "stderr": "", "stdout": ""})()
+
+            with patch("lessons_in_cast_core.synthesis.audio.subprocess.run", side_effect=run) as invoked:
+                self.assertEqual(
+                    FfmpegAudioEffectProcessor().process(None, output, ("glitch",)),
+                    output,
+                )
+            self.assertTrue(any(value.startswith("anoisesrc=") for value in invoked.call_args.args[0]))
+            self.assertIn("acrusher=bits=6:mix=0.35", invoked.call_args.args[0])
+
     def test_unsafe_identifier_is_not_planned(self) -> None:
         item = record(1, character="a")
         item = type(item)(

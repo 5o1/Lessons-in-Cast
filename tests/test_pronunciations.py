@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import tempfile
+import re
+import tomllib
 import unittest
 from pathlib import Path
 
@@ -15,8 +17,9 @@ class PronunciationLexiconTests(unittest.TestCase):
 
     def test_project_lexicon_exposes_selected_arpabet_entries(self) -> None:
         lexicon = load_pronunciation_lexicon(repository_root=self.root)
+        entries = lexicon.for_system("arpabet")
         self.assertEqual(
-            lexicon.for_system("arpabet"),
+            {name: entries[name] for name in ("Ami", "Ayane", "Chinami", "Maya")},
             {
                 "Ami": "EY1 . M IY0",
                 "Ayane": "AA0 . Y AA1 . N EH0",
@@ -24,6 +27,59 @@ class PronunciationLexiconTests(unittest.TestCase):
                 "Maya": "M AY1 . Y AH0",
             },
         )
+
+    def test_registered_personal_names_have_explicit_pronunciations(self):
+        entries = load_pronunciation_lexicon(repository_root=self.root).for_system("arpabet")
+        characters = tomllib.loads((self.root / "configs/characters.toml").read_text())["characters"]
+        # Human-selected name-bearing speakers; descriptive labels are not names.
+        ids = "a ai ale ales alexa amy arj barb ben c catherine ch chi chinko eve girl1 gregg h hi i ima iss jimmy john k ka kanon kas ken kenji ker ki kok m mak maki mal masa matt me mi mil miu mo mod moyo n na ni no o oli onu os pat r ri robbie s sa saki salvykun sar se shi t tb tbiso tk to tsurumi u w wil will yo yom yu yuu".split()
+        for character_id in ids:
+            name = characters[character_id]["name"].split(",")[0]
+            for component in name.split():
+                with self.subTest(character=character_id, component=component):
+                    self.assertIn(component, entries)
+        decorated = {
+            "amb": "Amber", "beatrice": "Beatrice", "connor": "Connor",
+            "fff": "Frank", "fff2": "Tony", "flo": "Laura", "gi": "Giuseppe",
+            "ginro": "Ginro", "hailey": "Hailey", "hank": "Hank", "hid": "Hidari",
+            "howard": "Howard", "lamar": "Lamar", "legitmom": "Mary", "mag": "Manny",
+            "manny": "Manny", "mig": "Migi", "mrb": "Blake", "octavia": "Octavia",
+            "paul": "Paul", "peggy": "Pegasus", "sato": "Sato", "seinfeld": "Seinfeld",
+            "steve": "Steve", "taki": "Taki", "tenc": "Tenchou", "tod": "Todd", "tom": "Mato",
+        }
+        for character_id, term in decorated.items():
+            with self.subTest(character=character_id):
+                self.assertIn(term, characters[character_id]["name"])
+                self.assertIn(term, entries)
+        for character in characters.values():
+            for member in character.get("members", []):
+                self.assertIn(characters[member]["name"], entries)
+
+    def test_all_configured_arpabet_tokens_and_fallbacks_are_explicit(self):
+        lexicon = load_pronunciation_lexicon(repository_root=self.root)
+        consonants = set("B CH D DH F G HH JH K L M N NG P R S SH T TH V W Y Z ZH".split())
+        for entry in lexicon.entries:
+            arpa = entry.for_system("arpabet")
+            with self.subTest(name=entry.term):
+                self.assertTrue(arpa)
+                self.assertTrue(entry.for_system("respelling"))
+                for token in arpa.split():
+                    self.assertTrue(token == "." or token in consonants or re.fullmatch(r"(?:AA|AE|AH|AO|AW|AY|EH|ER|EY|IH|IY|OW|OY|UH|UW)[012]", token), token)
+
+    def test_index_name_matching_respects_boundaries_case_and_existing_markup(self):
+        from lessons_in_cast_core.synthesis.backends.index_tts.adapter import apply_index_pronunciations
+        lexicon = load_pronunciation_lexicon(repository_root=self.root)
+        def apply(text):
+            return apply_index_pronunciations(text, lexicon.for_system("arpabet"), lexicon.select(("arpabet",), language="en"))
+        text = "Sensei! sensei? Kumon-mi, Ami's Karins. hope HOPE. sensory."
+        result = apply(text)
+        self.assertIn("<Sensei|S EH1 N . S EY0>!", result)
+        self.assertIn("<sensei|S EH1 N . S EY0>?", result)
+        self.assertIn("<Kumon-mi|K UW0 . M OW1 N . M IY0>", result)
+        self.assertIn("<Ami|EY1 . M IY0>'s", result)
+        self.assertIn("hope <HOPE|HH OW1 P>", result)
+        self.assertIn("sensory.", result)
+        self.assertEqual(apply(result), result)
 
     def test_systems_remain_backend_specific(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

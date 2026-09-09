@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Callable, Iterable, Iterator
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from pathlib import PurePosixPath
 from typing import Any
 
@@ -14,6 +14,8 @@ from ..config import AudioConfig
 from ..dialogue import DialogueRecord
 from ..hashing import content_hash
 from .types import RenderTask, SynthesisIssue, SynthesisPlan, TtsJob
+from ..keyframes.program import compile_keyframes, extract_anchors
+from ..speech_markup import parse_emotion_markup, emotion_markup
 
 
 _UNSAFE_PATH = re.compile(r"[^A-Za-z0-9_.-]+")
@@ -36,6 +38,7 @@ class SynthesisPlanner:
         synthesizer_configuration: dict[str, Any] | None = None,
         virtual_path_resolver: Callable[[str, str, str], str] | None = None,
         voice_route_available: Callable[[str, str | None], bool] | None = None,
+        direction_context: dict[str, Any] | None = None,
     ) -> None:
         self._characters = characters
         self._audio_config = audio_config or AudioConfig()
@@ -52,6 +55,7 @@ class SynthesisPlanner:
             )
         )
         self._voice_route_available = voice_route_available
+        self._direction_context = direction_context or {}
 
     def plan(
         self,
@@ -122,6 +126,7 @@ class SynthesisPlanner:
                 record.label,
                 record.scene,
             )
+            render_overrides = self._direction_context.get(record.id, {}).get("render", {})
 
             if annotation.action is DialogueAction.OMIT:
                 continue
@@ -151,6 +156,9 @@ class SynthesisPlanner:
                         record.label,
                         record.scene,
                     )
+                    override = render_overrides.get(member_id, {})
+                    if "default_voice_profile" in override:
+                        member = replace(member, default_voice_profile=override["default_voice_profile"])
                     if (
                         self._voice_route_available is not None
                         and not self._voice_route_available(
@@ -165,7 +173,12 @@ class SynthesisPlanner:
                             "profile for this source context; speech was skipped.",
                         )
                         continue
-                    job = self._create_job(record, annotation, member)
+                    from ..performance import SpeechPerformance
+                    performance = {**render_overrides.get(character_id, {}).get("performance", {}),
+                                   **override.get("performance", {})}
+                    directed = replace(annotation, performance=SpeechPerformance.from_dict(
+                        {**annotation.performance.to_dict(), **performance})) if performance else annotation
+                    job = self._create_job(record, directed, member)
                     existing_id = job_id_by_cache_key.get(job.cache_key)
                     if existing_id is None:
                         job_id_by_cache_key[job.cache_key] = job.id
@@ -191,6 +204,10 @@ class SynthesisPlanner:
                 effects=annotation.effects,
                 output_path=str(PurePosixPath("voice") / output_name),
                 virtual_path=virtual_path,
+                keyframe_program=(compile_keyframes(
+                    "".join(s.text for s in parse_emotion_markup(annotation.spoken_text)),
+                    annotation.keyframe_effects,
+                ) if annotation.keyframe_effects else None),
             )
 
     def _create_job(
@@ -207,9 +224,14 @@ class SynthesisPlanner:
         segments = (parse_emotion_markup(annotation.spoken_text)
                     if "<emotion" in annotation.spoken_text or "<arbitrary_emotion" in annotation.spoken_text else ())
         text = "".join(segment.text for segment in segments) if segments else annotation.spoken_text
+        cache_text = annotation.spoken_text
+        if annotation.keyframe_effects is not None:
+            text = compile_keyframes(text, annotation.keyframe_effects)["text"]
+            segments = tuple(replace(s, text=extract_anchors(s.text)[0]) for s in segments)
+            cache_text = emotion_markup(segments) if segments else text
         identity = {
             "character": member.id,
-            "text": annotation.spoken_text,
+            "text": cache_text,
             "emotion": annotation.emotion,
             "delivery": annotation.delivery,
             "performance": annotation.performance.to_dict(),
